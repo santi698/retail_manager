@@ -1,9 +1,9 @@
 use actix_web::{Error, HttpRequest, HttpResponse, Responder};
+use anyhow::Result;
 use futures::future::{ready, Ready};
 use serde::{Deserialize, Serialize};
+use sqlx::postgres::{PgPool, PgQueryAs, PgRow};
 use sqlx::{FromRow, Row};
-use sqlx::postgres::{PgQueryAs, PgPool, PgRow};
-use anyhow::Result;
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientCreateRequest {
@@ -33,25 +33,29 @@ pub struct Client {
 }
 
 impl Responder for Client {
-  type Error = Error;
-  type Future = Ready<Result<HttpResponse, Error>>;
-  fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-    let body = serde_json::to_string(&self).unwrap();
-    ready(Ok(HttpResponse::Ok()
-    .content_type("application/json")
-    .body(body)))
-  }
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+        ready(Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(body)))
+    }
 }
 
 impl Client {
     pub async fn find_all(pool: &sqlx::PgPool) -> Result<Vec<Client>> {
-      let clients = sqlx::query_as::<_, Client>(r#"
+        let clients = sqlx::query_as::<_, Client>(
+            r#"
         SELECT *
         FROM clients
         ORDER BY client_id;
-      "#).fetch_all(pool).await?;
+      "#,
+        )
+        .fetch_all(pool)
+        .await?;
 
-      Ok(clients)
+        Ok(clients)
     }
 
     pub async fn find_by_id(client_id: i32, pool: &PgPool) -> Result<Client> {

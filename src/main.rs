@@ -11,6 +11,7 @@ use std::env;
 
 mod products;
 mod clients;
+mod client_orders;
 
 #[get("/{id}/{name}/index.html")]
 async fn index(info: web::Path<(u32, String)>, db_pool: web::Data<PgPool>) -> impl Responder {
@@ -46,6 +47,7 @@ async fn main() -> Result<()> {
             .service(index)
             .configure(products::init)
             .configure(clients::init)
+            .configure(client_orders::init)
     })
     .bind(format!("{}:{}", host, port))?
     .run()
