@@ -3,7 +3,7 @@ extern crate pretty_env_logger;
 extern crate log;
 
 use actix_web::middleware::Logger;
-use actix_web::{get, web, App, HttpServer, Responder};
+use actix_web::{App, HttpServer};
 use anyhow::Result;
 use dotenv::dotenv;
 use sqlx::postgres::PgPool;
@@ -12,20 +12,6 @@ use std::env;
 mod products;
 mod clients;
 mod client_orders;
-
-#[get("/{id}/{name}/index.html")]
-async fn index(info: web::Path<(u32, String)>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = sqlx::query!("SELECT 1 as one")
-        .fetch_one(db_pool.get_ref())
-        .await
-        .expect("Error executing query");
-    format!(
-        "Hello {}! id:{} one={}",
-        info.1,
-        info.0,
-        result.one.unwrap()
-    )
-}
 
 #[actix_rt::main]
 async fn main() -> Result<()> {
@@ -44,7 +30,6 @@ async fn main() -> Result<()> {
         App::new()
             .wrap(Logger::default())
             .data(db_pool.clone())
-            .service(index)
             .configure(products::init)
             .configure(clients::init)
             .configure(client_orders::init)

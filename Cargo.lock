@@ -1599,10 +1599,21 @@ dependencies = [
  "futures",
  "log",
  "pretty_env_logger",
+ "rust_decimal",
  "serde",
  "serde_json",
  "sqlx",
  "uuid",
+]
+
+[[package]]
+name = "rust_decimal"
+version = "1.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "95ba36e8c41bf675947e200af432325f332f60a0aea0ef2dc456636c2f6037d7"
+dependencies = [
+ "num-traits",
+ "serde",
 ]
 
 [[package]]
