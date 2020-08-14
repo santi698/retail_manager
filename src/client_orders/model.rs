@@ -25,6 +25,16 @@ pub struct ClientOrder {
     pub order_city_id: i32,
 }
 
+#[derive(Serialize, FromRow)]
+pub struct ClientOrderItem {
+    pub client_order_item_id: i32,
+    pub order_timestamp: chrono::NaiveDateTime,
+    pub product_id: i32,
+    pub client_order_id: i32,
+    pub quantity: f64,
+    pub selling_price: f64,
+}
+
 impl Responder for ClientOrder {
     type Error = Error;
     type Future = Ready<Result<HttpResponse, Error>>;
@@ -66,9 +76,10 @@ impl ClientOrder {
     pub async fn create(request: ClientOrderCreateRequest, pool: &PgPool) -> Result<ClientOrder> {
         let order = sqlx::query_as::<_, ClientOrder>(
             r#"
-            INSERT INTO client_orders (client_id, order_city_id)
-            VALUES ($1, $2)
-            RETURNING order_id, client_id, order_city_id"#,
+              INSERT INTO client_orders (client_id, order_city_id)
+              VALUES ($1, $2)
+              RETURNING order_id, client_id, order_city_id
+            "#,
         )
         .bind(request.client_id)
         .bind(request.order_city_id)
@@ -77,17 +88,50 @@ impl ClientOrder {
         Ok(order)
     }
 
+    pub async fn find_item(order_id: i32, item_id: i32, pool: &PgPool) -> Result<ClientOrderItem> {
+        let item = sqlx::query_as::<_, ClientOrderItem>(
+            r#"
+            SELECT *
+              FROM client_order_items
+             WHERE client_order_id = $1 AND client_order_item_id = $2
+        "#,
+        )
+        .bind(order_id)
+        .bind(item_id)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(item)
+    }
+
+    pub async fn find_items(order_id: i32, pool: &PgPool) -> Result<Vec<ClientOrderItem>> {
+        let items = sqlx::query_as::<_, ClientOrderItem>(
+            r#"
+            SELECT *
+              FROM client_order_items
+             WHERE client_order_id = $1
+        "#,
+        )
+        .bind(order_id)
+        .fetch_all(pool)
+        .await?;
+
+        Ok(items)
+    }
+
     pub async fn add_item(
         order_id: i32,
         request: ClientOrderAddItemRequest,
         pool: &PgPool,
-    ) -> Result<()> {
-        sqlx::query(
+    ) -> Result<ClientOrderItem> {
+        let order_item = sqlx::query_as::<_, ClientOrderItem>(
             r#"
             INSERT INTO client_order_items (
                 order_timestamp, product_id, client_order_id, quantity, selling_price
             )
             VALUES ($1, $2, $3, $4, $5)
+            RETURNING client_order_item_id, order_timestamp, product_id, client_order_id,
+                      quantity, selling_price
         "#,
         )
         .bind(chrono::Utc::now().naive_utc())
@@ -95,6 +139,22 @@ impl ClientOrder {
         .bind(order_id)
         .bind(request.quantity)
         .bind(request.selling_price)
+        .fetch_one(pool)
+        .await?;
+
+        Ok(order_item)
+    }
+
+    pub async fn remove_item(order_id: i32, item_id: i32, pool: &PgPool) -> Result<()> {
+        sqlx::query(
+            r#"
+            DELETE FROM client_order_items
+             WHERE client_order_item_id = $1
+               AND client_order_id = $2
+            "#,
+        )
+        .bind(item_id)
+        .bind(order_id)
         .execute(pool)
         .await?;
 

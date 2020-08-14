@@ -4,6 +4,6 @@ CREATE TABLE client_order_items (
   order_timestamp      TIMESTAMP NOT NULL,
   product_id           INTEGER   NOT NULL REFERENCES products(product_code),
   client_order_id      INTEGER   NOT NULL REFERENCES client_orders(order_id),
-  quantity             DECIMAL   NOT NULL,
-  selling_price        DECIMAL   NOT NULL
+  quantity             FLOAT     NOT NULL,
+  selling_price        FLOAT     NOT NULL
 )
