@@ -39,9 +39,11 @@ pub struct ClientOrder {
 #[derive(Serialize, FromRow)]
 pub struct ClientOrderWithTotal {
     pub order_id: i32,
+    pub ordered_at: chrono::NaiveDateTime,
     pub client_id: i32,
     pub order_city_id: i32,
     pub order_status: String,
+    pub payment_status: String,
     pub total_price: f64,
 }
 
