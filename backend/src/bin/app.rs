@@ -2,16 +2,12 @@ extern crate pretty_env_logger;
 #[macro_use]
 extern crate log;
 
-use actix_web::middleware::Logger;
-use actix_web::{App, HttpServer};
+use retail_manager::run;
+
 use anyhow::Result;
 use dotenv::dotenv;
 use sqlx::postgres::PgPool;
 use std::env;
-
-mod products;
-mod clients;
-mod client_orders;
 
 #[actix_rt::main]
 async fn main() -> Result<()> {
@@ -26,17 +22,7 @@ async fn main() -> Result<()> {
 
     info!("Server listening on {}:{}", host, port);
 
-    HttpServer::new(move || {
-        App::new()
-            .wrap(Logger::default())
-            .data(db_pool.clone())
-            .configure(products::init)
-            .configure(clients::init)
-            .configure(client_orders::init)
-    })
-    .bind(format!("{}:{}", host, port))?
-    .run()
-    .await?;
+    run(host, port, db_pool)?.await?;
 
     Ok(())
 }

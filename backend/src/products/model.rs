@@ -2,7 +2,7 @@ use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use anyhow::Result;
 use futures::future::{ready, Ready};
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::{PgRow, PgPool, PgQueryAs};
+use sqlx::postgres::{PgPool, PgQueryAs, PgRow};
 use sqlx::{FromRow, Row};
 
 #[derive(Serialize, Deserialize)]
@@ -40,10 +40,10 @@ impl Product {
     pub async fn find_all(pool: &PgPool) -> Result<Vec<Product>> {
         let products = sqlx::query_as::<_, Product>(
             r#"
-        SELECT *
-        FROM products
-        ORDER BY product_name
-      "#
+                SELECT *
+                FROM products
+                ORDER BY product_name
+            "#,
         )
         .fetch_all(pool)
         .await?;
@@ -55,8 +55,8 @@ impl Product {
         let product = sqlx::query_as!(
             Product,
             r#"
-        SELECT * FROM products WHERE product_code = $1
-      "#,
+                SELECT * FROM products WHERE product_code = $1
+            "#,
             product_code
         )
         .fetch_one(pool)
@@ -69,9 +69,9 @@ impl Product {
         let mut tx = pool.begin().await?;
         let product = sqlx::query(
             r#"
-        INSERT INTO products (product_name, measurement_unit_id) VALUES ($1, $2)
-        RETURNING product_code, product_name, measurement_unit_id
-      "#,
+                INSERT INTO products (product_name, measurement_unit_id) VALUES ($1, $2)
+                RETURNING product_code, product_name, measurement_unit_id
+            "#,
         )
         .bind(&request.product_name)
         .bind(&request.measurement_unit_id)
@@ -95,10 +95,10 @@ impl Product {
         let mut tx = pool.begin().await.unwrap();
         let product = sqlx::query(
             r#"
-        UPDATE products SET product_name = $1
-        WHERE product_code = $2
-        RETURNING product_code, product_name, measurement_unit_id
-      "#,
+                UPDATE products SET product_name = $1
+                WHERE product_code = $2
+                RETURNING product_code, product_name, measurement_unit_id
+            "#,
         )
         .bind(&request.product_name)
         .bind(product_code)

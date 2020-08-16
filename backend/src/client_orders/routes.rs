@@ -1,5 +1,8 @@
-use crate::client_orders::{ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest};
-use actix_web::{delete, get, post, web, HttpResponse, Responder};
+use super::{
+    ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest,
+};
+use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use log::error;
 use serde::Deserialize;
 use sqlx::PgPool;
 
@@ -9,7 +12,8 @@ async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
 
     match result {
         Ok(orders) => HttpResponse::Ok().json(orders),
-        Err(_) => {
+        Err(e) => {
+            error!("{}", e);
             HttpResponse::BadRequest().body("Error trying to read all orders from the database")
         }
     }
@@ -18,6 +22,28 @@ async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
 #[get("/client_orders/{order_id}")]
 async fn find_by_id(order_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
     let result = ClientOrder::find_by_id(order_id.into_inner(), db_pool.get_ref()).await;
+
+    match result {
+        Ok(order) => HttpResponse::Ok().json(order),
+        Err(e) => {
+            error!("{}", e);
+            HttpResponse::BadRequest().body("ClientOrder not found")
+        }
+    }
+}
+
+#[put("/client_orders/{order_id}")]
+async fn update(
+    order_id: web::Path<i32>,
+    request: web::Json<ClientOrderUpdateRequest>,
+    db_pool: web::Data<PgPool>,
+) -> impl Responder {
+    let result = ClientOrder::update(
+        order_id.into_inner(),
+        request.into_inner(),
+        db_pool.get_ref(),
+    )
+    .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
@@ -127,6 +153,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);
     cfg.service(find_by_id);
     cfg.service(create);
+    cfg.service(update);
     cfg.service(find_items);
     cfg.service(find_item);
     cfg.service(add_item);

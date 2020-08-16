@@ -47,10 +47,10 @@ impl Client {
     pub async fn find_all(pool: &sqlx::PgPool) -> Result<Vec<Client>> {
         let clients = sqlx::query_as::<_, Client>(
             r#"
-        SELECT *
-        FROM clients
-        ORDER BY client_id;
-      "#,
+                SELECT *
+                FROM clients
+                ORDER BY client_id;
+            "#,
         )
         .fetch_all(pool)
         .await?;
@@ -62,8 +62,8 @@ impl Client {
         let client = sqlx::query_as!(
             Client,
             r#"
-        SELECT * FROM clients WHERE client_id = $1
-      "#,
+                SELECT * FROM clients WHERE client_id = $1
+            "#,
             client_id
         )
         .fetch_one(pool)
@@ -76,10 +76,10 @@ impl Client {
         let mut tx = pool.begin().await?;
         let client = sqlx::query(
             r#"
-        INSERT INTO clients (first_name, last_name, email, phone_number, residence_city_id)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING client_id, first_name, last_name, email, phone_number, residence_city_id
-      "#,
+                INSERT INTO clients (first_name, last_name, email, phone_number, residence_city_id)
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING client_id, first_name, last_name, email, phone_number, residence_city_id
+            "#,
         )
         .bind(&request.first_name)
         .bind(&request.last_name)

@@ -1,5 +1,6 @@
 use crate::clients::{Client, ClientCreateRequest};
 use actix_web::{get, post, web, HttpResponse, Responder};
+use log::error;
 use sqlx::PgPool;
 
 #[get("/clients")]
@@ -21,14 +22,17 @@ async fn find_by_id(client_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> im
 }
 
 #[post("/clients")]
-async fn create(request: web::Json<ClientCreateRequest>, db_pool: web::Data<PgPool>) -> impl Responder {
+async fn create(
+    request: web::Json<ClientCreateRequest>,
+    db_pool: web::Data<PgPool>,
+) -> impl Responder {
     let result = Client::create(request.into_inner(), db_pool.get_ref()).await;
     match result {
         Ok(clients) => HttpResponse::Ok().json(clients),
         Err(e) => {
-          error!("{}", e);
-          HttpResponse::BadRequest().body("Error trying create a new client")
-        },
+            error!("{}", e);
+            HttpResponse::BadRequest().body("Error trying create a new client")
+        }
     }
 }
 

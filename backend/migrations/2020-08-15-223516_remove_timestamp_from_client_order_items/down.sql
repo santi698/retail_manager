@@ -1,0 +1,1 @@
+ALTER TABLE client_order_items ADD order_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL;
