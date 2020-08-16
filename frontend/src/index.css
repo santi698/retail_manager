@@ -12,30 +12,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-table {
-  border-collapse: collapse;
-}
-
-th {
-  color: #6a6a6a;
-}
-
-td, th {
-  font-size: 15px;
-  border-bottom: 1px solid #AAA;
-  padding: 16px;
-}
-
-.currency {
-  text-align: right;
-}
-
-.badge {
-  border-radius: 16px;
-  height: 24px;
-  width: 100px;
-  padding: 4px 16px;
-  background: #dce1ff;
-  color: #4f49c1;
-}

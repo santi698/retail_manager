@@ -3,8 +3,8 @@ export interface ClientOrder {
   client_id: number;
   ordered_at: string;
   order_city_id: number;
-  order_status: String;
-  payment_status: String;
+  order_status: string;
+  payment_status: string;
   total_price: number;
 }
 

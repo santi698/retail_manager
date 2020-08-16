@@ -2,6 +2,7 @@ import React from "react";
 import { useClients } from "../hooks/useClients";
 import { ClientOrder } from "../model";
 import { OrderRow } from "./OrderRow";
+import { Table } from "../components/Table";
 
 export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
   const clients = useClients();
@@ -9,7 +10,7 @@ export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
   if (orders === null) return null;
 
   return (
-    <table>
+    <Table>
       <thead>
         <tr>
           <th>#</th>
@@ -23,16 +24,19 @@ export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
         </tr>
       </thead>
       <tbody>
-        {orders?.map((order) => {
-          const client = clients?.find(
+        {orders.map((order) => {
+          if (clients === null) return null;
+          const client = clients.find(
             (client) => client.client_id === order.client_id
           );
           if (client === undefined) {
             throw new Error("Client must exist for all orders");
           }
-          return <OrderRow client={client} order={order} />;
+          return (
+            <OrderRow client={client} key={order.order_id} order={order} />
+          );
         })}
       </tbody>
-    </table>
+    </Table>
   );
 }
