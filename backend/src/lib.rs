@@ -4,8 +4,10 @@ use actix_web::{dev::Server, http, App, HttpServer};
 use anyhow::Result;
 use sqlx::PgPool;
 
+mod cities;
 mod client_orders;
 mod clients;
+mod measurement_units;
 mod products;
 
 pub fn run(host: String, port: String, db_pool: PgPool) -> Result<Server> {
@@ -24,6 +26,8 @@ pub fn run(host: String, port: String, db_pool: PgPool) -> Result<Server> {
             .configure(products::init)
             .configure(clients::init)
             .configure(client_orders::init)
+            .configure(cities::init)
+            .configure(measurement_units::init)
     })
     .bind(format!("{}:{}", host, port))?
     .run();
