@@ -51,7 +51,7 @@ impl Product {
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                 FROM products
                 JOIN current_product_prices
-                  ON products.product_code = product_prices.product_code
+                  ON products.product_code = current_product_prices.product_code
                 ORDER BY product_name
             "#,
         )

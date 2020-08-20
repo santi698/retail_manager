@@ -19,7 +19,7 @@ export function OrderItemsTable({ items }: { items: ClientOrderItem[] }) {
       </thead>
       <tbody>
         {items?.map((item) => (
-          <OrderItemRow item={item} />
+          <OrderItemRow item={item} key={item.client_order_item_id} />
         ))}
       </tbody>
     </Table>
