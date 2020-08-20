@@ -13,7 +13,8 @@ export function OrderItemsTable({ items }: { items: ClientOrderItem[] }) {
           <th>Nombre</th>
           <th>Precio unitario</th>
           <th>Cantidad</th>
-          <th>Total</th>
+          <th>Precio de venta</th>
+          <th>Descuento</th>
         </tr>
       </thead>
       <tbody>

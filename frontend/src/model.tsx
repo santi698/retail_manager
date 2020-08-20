@@ -30,3 +30,16 @@ export interface Product {
   product_name: string;
   measurement_unit_id: number;
 }
+
+export interface ProductWithPrice {
+  product_code: number;
+  product_name: string;
+  measurement_unit_id: number;
+  list_unit_price: number;
+}
+
+export interface MeasurementUnit {
+  id: number;
+  symbol: string;
+  unit_name: string;
+}

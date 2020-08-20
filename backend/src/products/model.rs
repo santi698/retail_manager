@@ -23,6 +23,14 @@ pub struct Product {
     pub measurement_unit_id: i32,
 }
 
+#[derive(Serialize, FromRow)]
+pub struct ProductWithPrice {
+    pub product_code: i32,
+    pub product_name: String,
+    pub measurement_unit_id: i32,
+    pub list_unit_price: f64,
+}
+
 impl Responder for Product {
     type Error = Error;
     type Future = Ready<Result<HttpResponse, Error>>;
@@ -37,11 +45,13 @@ impl Responder for Product {
 }
 
 impl Product {
-    pub async fn find_all(pool: &PgPool) -> Result<Vec<Product>> {
-        let products = sqlx::query_as::<_, Product>(
+    pub async fn find_all(pool: &PgPool) -> Result<Vec<ProductWithPrice>> {
+        let products = sqlx::query_as::<_, ProductWithPrice>(
             r#"
-                SELECT *
+                SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                 FROM products
+                JOIN current_product_prices
+                  ON products.product_code = product_prices.product_code
                 ORDER BY product_name
             "#,
         )
@@ -51,11 +61,15 @@ impl Product {
         Ok(products)
     }
 
-    pub async fn find_by_code(product_code: i32, pool: &PgPool) -> Result<Product> {
+    pub async fn find_by_code(product_code: i32, pool: &PgPool) -> Result<ProductWithPrice> {
         let product = sqlx::query_as!(
-            Product,
+            ProductWithPrice,
             r#"
-                SELECT * FROM products WHERE product_code = $1
+                SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
+                  FROM products
+                  JOIN current_product_prices
+                    ON products.product_code = current_product_prices.product_code
+                 WHERE products.product_code = $1
             "#,
             product_code
         )

@@ -11,9 +11,9 @@ export const Table = styled.table`
   td,
   th {
     text-align: left;
-    font-size: 15px;
+    font-size: 0.9em;
     border-bottom: 1px solid #e3e3e3;
-    padding: 16px;
+    padding: 1em;
   }
 
   .currency {

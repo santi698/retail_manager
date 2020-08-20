@@ -1,7 +1,7 @@
 import { useFetch } from "./useFetch";
 
-import { Product } from "../model";
+import { ProductWithPrice } from "../model";
 
 export function useProduct(id: number) {
-  return useFetch<Product>(`http://localhost:5000/products/${id}`);
+  return useFetch<ProductWithPrice>(`http://localhost:5000/products/${id}`);
 }
