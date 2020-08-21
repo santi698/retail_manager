@@ -2,11 +2,13 @@ import React from "react";
 import { useClientOrders } from "../hooks/useClientOrders";
 import { OrdersTable } from "../containers/OrdersTable";
 export function OrdersView() {
-  const clientOrders = useClientOrders();
+  const { data: clientOrders } = useClientOrders();
   return (
     <>
       <h1>Pedidos</h1>
-      <OrdersTable orders={clientOrders} />
+      {clientOrders.status === "loaded" && (
+        <OrdersTable orders={clientOrders.data} />
+      )}
     </>
   );
 }

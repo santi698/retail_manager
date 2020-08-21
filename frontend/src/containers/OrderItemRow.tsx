@@ -7,9 +7,16 @@ import { Number } from "../components/Number";
 import { Percentage } from "../components/Percentage";
 
 export function OrderItemRow({ item }: { item: ClientOrderItem }) {
-  const measurementUnits = useMeasurementUnits();
-  const product = useProduct(item.product_id);
-  if (product === null || measurementUnits === null) return null;
+  const { data: loadingMeasurementUnits } = useMeasurementUnits();
+  const { data: loadingProduct } = useProduct(item.product_id);
+  if (
+    loadingProduct.status !== "loaded" ||
+    loadingMeasurementUnits.status !== "loaded"
+  ) {
+    return null;
+  }
+  const measurementUnits = loadingMeasurementUnits.data;
+  const product = loadingProduct.data;
   const measurementUnit = measurementUnits.find(
     (u) => u.id === product.measurement_unit_id
   );

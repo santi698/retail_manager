@@ -5,7 +5,9 @@ import { OrderRow } from "./OrderRow";
 import { Table } from "../components/Table";
 
 export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
-  const clients = useClients();
+  const { data: loadingClients } = useClients();
+  if (loadingClients.status !== "loaded") return null;
+  const clients = loadingClients.data;
 
   if (orders === null) return null;
 

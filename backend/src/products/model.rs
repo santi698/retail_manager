@@ -130,8 +130,7 @@ impl Product {
 
     pub async fn delete(product_code: i32, pool: &PgPool) -> Result<u64> {
         let mut tx = pool.begin().await?;
-        let deleted = sqlx::query("DELETE FROM notifications WHERE product_code = $1")
-            .bind(product_code)
+        let deleted = sqlx::query!("DELETE FROM products WHERE product_code = $1", product_code)
             .execute(&mut tx)
             .await?;
 

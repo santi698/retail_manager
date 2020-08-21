@@ -3,7 +3,7 @@ import { useClients } from "../hooks/useClients";
 import { Table } from "../components/Table";
 
 export function ClientsView() {
-  const clients = useClients();
+  const { data: clients } = useClients();
   return (
     <>
       <h1>Clientes</h1>
@@ -17,14 +17,15 @@ export function ClientsView() {
           </tr>
         </thead>
         <tbody>
-          {clients?.map((client) => (
-            <tr key={client.client_id}>
-              <td />
-              <td>{`${client.first_name} ${client.last_name}`}</td>
-              <td>{client.email}</td>
-              <td>{client.phone_number}</td>
-            </tr>
-          ))}
+          {clients.status === "loaded" &&
+            clients.data.map((client) => (
+              <tr key={client.client_id}>
+                <td />
+                <td>{`${client.first_name} ${client.last_name}`}</td>
+                <td>{client.email}</td>
+                <td>{client.phone_number}</td>
+              </tr>
+            ))}
         </tbody>
       </Table>
     </>

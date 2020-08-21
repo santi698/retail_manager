@@ -34,7 +34,9 @@ export function OrderRow({
   const toggleExpanded = () => {
     setExpanded((p) => !p);
   };
-  const items = useClientOrderItems(order.order_id);
+  const { data: loadingItems } = useClientOrderItems(order.order_id);
+  if (loadingItems.status !== "loaded") return null;
+  const items = loadingItems.data;
   return (
     <>
       <tr>

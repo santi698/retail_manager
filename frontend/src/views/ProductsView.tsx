@@ -4,7 +4,7 @@ import { Table } from "../components/Table";
 import { Currency } from "../components/Currency";
 
 export function ProductsView() {
-  const products = useProducts();
+  const { data: products } = useProducts();
   return (
     <>
       <h1>Productos</h1>
@@ -17,15 +17,16 @@ export function ProductsView() {
           </tr>
         </thead>
         <tbody>
-          {products?.map((product) => (
-            <tr key={product.product_code}>
-              <td />
-              <td>{product.product_name}</td>
-              <td>
-                <Currency>{product.list_unit_price}</Currency>
-              </td>
-            </tr>
-          ))}
+          {products.status === "loaded" &&
+            products.data.map((product) => (
+              <tr key={product.product_code}>
+                <td />
+                <td>{product.product_name}</td>
+                <td>
+                  <Currency>{product.list_unit_price}</Currency>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </Table>
     </>
