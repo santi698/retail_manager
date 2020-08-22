@@ -1,8 +1,8 @@
 import React from "react";
-import { useClientOrders } from "../hooks/useClientOrders";
 import { OrdersTable } from "../containers/OrdersTable";
+import { useClientOrders } from "../contexts/ClientOrdersContext";
 export function OrdersView() {
-  const { data: clientOrders } = useClientOrders();
+  const clientOrders = useClientOrders();
   return (
     <>
       <h1>Pedidos</h1>

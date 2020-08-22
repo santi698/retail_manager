@@ -23,6 +23,21 @@ function orderStatusToColorVariant(status: string): ColorVariant {
   }
 }
 
+function paymentStatusToColorVariant(status: string): ColorVariant {
+  switch (status) {
+    case "pending":
+      return ColorVariant.Purple;
+    case "confirmed":
+      return ColorVariant.Green;
+    case "cancelled":
+      return ColorVariant.Red;
+    case "delivered":
+      return ColorVariant.Blue;
+    default:
+      return ColorVariant.Yellow;
+  }
+}
+
 export function OrderRow({
   order,
   client,
@@ -55,7 +70,9 @@ export function OrderRow({
           )}
         </td>
         <td>
-          <StatusBadge colorVariant={ColorVariant.Purple}>
+          <StatusBadge
+            colorVariant={paymentStatusToColorVariant(order.payment_status)}
+          >
             {translatePaymentStatus(order.payment_status)}
           </StatusBadge>
         </td>

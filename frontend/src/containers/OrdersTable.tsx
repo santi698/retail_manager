@@ -1,11 +1,11 @@
 import React from "react";
-import { useClients } from "../hooks/useClients";
 import { ClientOrder } from "../model";
 import { OrderRow } from "./OrderRow";
 import { Table } from "../components/Table";
+import { useClients } from "../contexts/ClientsContext";
 
 export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
-  const { data: loadingClients } = useClients();
+  const loadingClients = useClients();
   if (loadingClients.status !== "loaded") return null;
   const clients = loadingClients.data;
 

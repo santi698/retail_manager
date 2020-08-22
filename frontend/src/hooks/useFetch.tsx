@@ -1,35 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-
-export interface Idle<T> {
-  status: "idle";
-}
-
-export interface Loading<T> {
-  status: "loading";
-}
-
-export interface Reloading<T> {
-  status: "reloading";
-  data: T;
-}
-
-export interface Loaded<T> {
-  status: "loaded";
-  data: T;
-}
-
-export interface LoadError<T> {
-  status: "error";
-  data?: T;
-  error: Error;
-}
-
-export type Loadable<T> =
-  | Idle<T>
-  | Loading<T>
-  | Reloading<T>
-  | Loaded<T>
-  | LoadError<T>;
+import { Loadable } from "../Loadable";
 
 export interface UseFetchResult<T> {
   data: Loadable<T>;

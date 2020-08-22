@@ -1,10 +1,10 @@
 import React from "react";
-import { useProducts } from "../hooks/useProducts";
+import { useProducts } from "../contexts/ProductsContext";
 import { Table } from "../components/Table";
 import { Currency } from "../components/Currency";
 
 export function ProductsView() {
-  const { data: products } = useProducts();
+  const products = useProducts();
   return (
     <>
       <h1>Productos</h1>

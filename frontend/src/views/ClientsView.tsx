@@ -1,9 +1,9 @@
 import React from "react";
-import { useClients } from "../hooks/useClients";
 import { Table } from "../components/Table";
+import { useClients } from "../contexts/ClientsContext";
 
 export function ClientsView() {
-  const { data: clients } = useClients();
+  const clients = useClients();
   return (
     <>
       <h1>Clientes</h1>
