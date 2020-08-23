@@ -50,8 +50,6 @@ export function OrderRow({
     setExpanded((p) => !p);
   };
   const { data: loadingItems } = useClientOrderItems(order.order_id);
-  if (loadingItems.status !== "loaded") return null;
-  const items = loadingItems.data;
   return (
     <>
       <tr>
@@ -93,11 +91,11 @@ export function OrderRow({
           </button>
         </td>
       </tr>
-      {items && (
+      {loadingItems.state === "loaded" && (
         <tr style={expanded ? {} : { display: "none" }}>
           <td colSpan={8}>
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <OrderItemsTable items={items} />
+              <OrderItemsTable items={loadingItems.data} />
             </div>
           </td>
         </tr>

@@ -17,7 +17,7 @@ export function ClientsView() {
           </tr>
         </thead>
         <tbody>
-          {clients.status === "loaded" &&
+          {clients.state === "loaded" &&
             clients.data.map((client) => (
               <tr key={client.client_id}>
                 <td />

@@ -10,8 +10,8 @@ export function OrderItemRow({ item }: { item: ClientOrderItem }) {
   const loadingMeasurementUnits = useMeasurementUnits();
   const loadingProduct = useProduct(item.product_id);
   if (
-    loadingProduct.status !== "loaded" ||
-    loadingMeasurementUnits.status !== "loaded"
+    loadingProduct.state !== "loaded" ||
+    loadingMeasurementUnits.state !== "loaded"
   ) {
     return null;
   }

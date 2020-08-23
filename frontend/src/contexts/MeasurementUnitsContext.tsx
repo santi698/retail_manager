@@ -6,7 +6,6 @@ const {
   useData: useMeasurementUnits,
 } = makeLoadableContext<MeasurementUnit[]>({
   fetchUrl: "http://localhost:5000/measurement_units",
-  refetchInterval: 60000,
 });
 
 export { MeasurementUnitsProvider, useMeasurementUnits };

@@ -17,7 +17,7 @@ export function ProductsView() {
           </tr>
         </thead>
         <tbody>
-          {products.status === "loaded" &&
+          {products.state === "loaded" &&
             products.data.map((product) => (
               <tr key={product.product_code}>
                 <td />

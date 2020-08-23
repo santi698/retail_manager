@@ -1,31 +1,92 @@
-export interface Idle<T> {
-  status: "idle";
-  data?: undefined;
-  error?: undefined;
+export class Idle<T> {
+  public readonly state = "idle";
+  public readonly data?: undefined;
+  public readonly error?: undefined;
+
+  onLoadingStarted(): Loading<T> {
+    return new Loading<T>();
+  }
+
+  map<E>(_fn: (from: T) => E): Loadable<E> {
+    return new Idle();
+  }
 }
 
-export interface Loading<T> {
-  status: "loading";
-  data?: undefined;
-  error?: undefined;
+export class Loading<T> {
+  public readonly state = "loading";
+  public readonly data?: undefined;
+  public readonly error?: undefined;
+
+  onLoaded(data: T): Loaded<T> {
+    return new Loaded(data);
+  }
+
+  onError(error: Error): LoadError<T> {
+    return new LoadError(error);
+  }
+
+  map<E>(_fn: (from: T) => E): Loadable<E> {
+    return new Loading();
+  }
 }
 
-export interface Reloading<T> {
-  status: "reloading";
-  data: T;
-  error?: undefined;
+export class Reloading<T> {
+  public readonly state = "reloading";
+  public readonly data: T;
+  public readonly error?: undefined;
+
+  constructor(data: T) {
+    this.data = data;
+  }
+
+  onLoaded(data: T): Loaded<T> {
+    return new Loaded(data);
+  }
+
+  onError(error: Error): LoadError<T> {
+    return new LoadError(error);
+  }
+
+  map<E>(fn: (from: T) => E): Loadable<E> {
+    return new Reloading(fn(this.data));
+  }
 }
 
-export interface Loaded<T> {
-  status: "loaded";
-  data: T;
-  error?: undefined;
+export class Loaded<T> {
+  public readonly state = "loaded";
+  public readonly data: T;
+  public readonly error?: undefined;
+
+  constructor(data: T) {
+    this.data = data;
+  }
+
+  onReloadStarted(): Reloading<T> {
+    return new Reloading(this.data);
+  }
+
+  map<E>(fn: (from: T) => E): Loadable<E> {
+    return new Loaded(fn(this.data));
+  }
 }
 
-export interface LoadError<T> {
-  status: "error";
-  data?: T;
-  error: Error;
+export class LoadError<T> {
+  public readonly state = "error";
+  public readonly data?: T;
+  public readonly error: Error;
+
+  constructor(error: Error, data?: T) {
+    this.error = error;
+    this.data = data;
+  }
+
+  onRetry(): Loading<T> {
+    return new Loading();
+  }
+
+  map<E>(fn: (from: T) => E): Loadable<E> {
+    return new LoadError(this.error, this.data ? fn(this.data) : undefined);
+  }
 }
 
 export type Loadable<T> =
@@ -34,28 +95,3 @@ export type Loadable<T> =
   | Reloading<T>
   | Loaded<T>
   | LoadError<T>;
-
-export function mapLoadable<T, E>(
-  loadable: Loadable<T>,
-  fn: (data: T) => E
-): Loadable<E> {
-  switch (loadable.status) {
-    case "error":
-      return {
-        status: loadable.status,
-        data: loadable.data ? fn(loadable.data) : undefined,
-        error: loadable.error,
-      };
-    case "loaded":
-    case "reloading":
-      return {
-        status: loadable.status,
-        data: fn(loadable.data),
-        error: undefined,
-      };
-    case "idle":
-    case "loading":
-    default:
-      return loadable;
-  }
-}

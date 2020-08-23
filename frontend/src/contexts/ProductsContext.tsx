@@ -1,13 +1,12 @@
 import { makeLoadableContext } from "./LoadableContext";
 import { ProductWithPrice } from "../model";
-import { Loadable, mapLoadable } from "../Loadable";
+import { Loadable } from "../Loadable";
 
 const {
   Provider: ProductsProvider,
   useData: useProducts,
 } = makeLoadableContext<ProductWithPrice[]>({
   fetchUrl: "http://localhost:5000/products",
-  refetchInterval: 60000,
 });
 
 export { ProductsProvider, useProducts };
@@ -15,7 +14,7 @@ export { ProductsProvider, useProducts };
 export function useProduct(product_code: number): Loadable<ProductWithPrice> {
   const loadable = useProducts();
 
-  return mapLoadable(loadable, (products) => {
+  return loadable.map<ProductWithPrice>((products) => {
     const product = products.find(
       (product) => product.product_code === product_code
     );

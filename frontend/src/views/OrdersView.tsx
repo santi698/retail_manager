@@ -6,7 +6,7 @@ export function OrdersView() {
   return (
     <>
       <h1>Pedidos</h1>
-      {clientOrders.status === "loaded" && (
+      {clientOrders.state === "loaded" && (
         <OrdersTable orders={clientOrders.data} />
       )}
     </>

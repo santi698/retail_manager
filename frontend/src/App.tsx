@@ -18,12 +18,16 @@ const Layout = styled.div`
   grid-template-rows: 100%;
 `;
 
+const GLOBAL_REFETCH_INTERVAL = 60000;
+
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ClientOrdersProvider>
-      <ClientsProvider>
-        <ProductsProvider>
-          <MeasurementUnitsProvider>{children}</MeasurementUnitsProvider>
+    <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+      <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+        <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+          <MeasurementUnitsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+            {children}
+          </MeasurementUnitsProvider>
         </ProductsProvider>
       </ClientsProvider>
     </ClientOrdersProvider>

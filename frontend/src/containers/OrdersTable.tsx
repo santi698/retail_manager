@@ -6,7 +6,7 @@ import { useClients } from "../contexts/ClientsContext";
 
 export function OrdersTable({ orders }: { orders: ClientOrder[] | null }) {
   const loadingClients = useClients();
-  if (loadingClients.status !== "loaded") return null;
+  if (loadingClients.state !== "loaded") return null;
   const clients = loadingClients.data;
 
   if (orders === null) return null;
