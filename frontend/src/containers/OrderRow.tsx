@@ -7,6 +7,7 @@ import { translatePaymentStatus } from "../translatePaymentStatus";
 import { translateOrderStatus } from "../translateOrderStatus";
 import { useClientOrderItems } from "../hooks/useClientOrderItems";
 import { OrderItemsTable } from "./OrderItemsTable";
+import { useCity } from "../contexts/CitiesContext";
 
 function orderStatusToColorVariant(status: string): ColorVariant {
   switch (status) {
@@ -45,6 +46,7 @@ export function OrderRow({
   order: ClientOrder;
   client: Client;
 }) {
+  const city = useCity(order.order_city_id);
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
     setExpanded((p) => !p);
@@ -55,6 +57,9 @@ export function OrderRow({
       <tr>
         <td />
         <td>{order.order_id}</td>
+        <td style={{ width: "10em" }}>
+          {city.state === "loaded" && city.data.name}
+        </td>
         <td>
           {order.ordered_at && (
             <DateTime>{new Date(order.ordered_at)}</DateTime>

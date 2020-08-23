@@ -9,6 +9,7 @@ import { ProductsProvider } from "./contexts/ProductsContext";
 import { MeasurementUnitsProvider } from "./contexts/MeasurementUnitsContext";
 import { ClientsProvider } from "./contexts/ClientsContext";
 import { ClientOrdersProvider } from "./contexts/ClientOrdersContext";
+import { CitiesProvider } from "./contexts/CitiesContext";
 
 const Layout = styled.div`
   display: grid;
@@ -22,15 +23,17 @@ const GLOBAL_REFETCH_INTERVAL = 60000;
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-      <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-        <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-          <MeasurementUnitsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-            {children}
-          </MeasurementUnitsProvider>
-        </ProductsProvider>
-      </ClientsProvider>
-    </ClientOrdersProvider>
+    <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+      <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+        <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+          <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+            <MeasurementUnitsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+              {children}
+            </MeasurementUnitsProvider>
+          </ProductsProvider>
+        </ClientsProvider>
+      </ClientOrdersProvider>
+    </CitiesProvider>
   );
 }
 

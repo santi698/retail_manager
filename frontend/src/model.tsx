@@ -44,3 +44,8 @@ export interface MeasurementUnit {
   symbol: string;
   unit_name: string;
 }
+
+export interface City {
+  id: number;
+  name: string;
+}
