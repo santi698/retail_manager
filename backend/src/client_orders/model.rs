@@ -2,8 +2,8 @@ use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use anyhow::Result;
 use futures::future::{ready, Ready};
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::{PgPool, PgQueryAs};
-use sqlx::FromRow;
+use sqlx::postgres::{PgPool, PgQueryAs, PgRow};
+use sqlx::{FromRow, Row};
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientOrderCreateRequest {
@@ -34,17 +34,8 @@ pub struct ClientOrder {
     pub order_city_id: i32,
     pub order_status: String,
     pub payment_status: String,
-}
-
-#[derive(Serialize, FromRow)]
-pub struct ClientOrderWithTotal {
-    pub order_id: i32,
-    pub ordered_at: chrono::NaiveDateTime,
-    pub client_id: i32,
-    pub order_city_id: i32,
-    pub order_status: String,
-    pub payment_status: String,
     pub total_price: f64,
+    pub address: Option<String>,
 }
 
 #[derive(Serialize, FromRow)]
@@ -68,8 +59,8 @@ impl Responder for ClientOrder {
 }
 
 impl ClientOrder {
-    pub async fn find_all(pool: &PgPool) -> Result<Vec<ClientOrderWithTotal>> {
-        let orders = sqlx::query_as::<_, ClientOrderWithTotal>(
+    pub async fn find_all(pool: &PgPool) -> Result<Vec<ClientOrder>> {
+        let orders = sqlx::query_as::<_, ClientOrder>(
             r#"
                 SELECT client_orders.*,
                        (
@@ -88,8 +79,8 @@ impl ClientOrder {
         Ok(orders)
     }
 
-    pub async fn find_by_id(id: i32, pool: &PgPool) -> Result<ClientOrderWithTotal> {
-        let order = sqlx::query_as::<_, ClientOrderWithTotal>(
+    pub async fn find_by_id(id: i32, pool: &PgPool) -> Result<ClientOrder> {
+        let order = sqlx::query_as::<_, ClientOrder>(
             r#"
                 SELECT client_orders.*,
                        (
@@ -109,19 +100,21 @@ impl ClientOrder {
     }
 
     pub async fn create(request: ClientOrderCreateRequest, pool: &PgPool) -> Result<ClientOrder> {
-        let order = sqlx::query_as::<_, ClientOrder>(
+        let id = sqlx::query(
             r#"
                 INSERT INTO client_orders (client_id, order_city_id)
                 VALUES ($1, $2)
-                RETURNING order_id, ordered_at, client_id, order_city_id, order_status,
-                          payment_status
+                RETURNING order_id
             "#,
         )
         .bind(request.client_id)
         .bind(request.order_city_id)
+        .map(|row: PgRow| row.get(0))
         .fetch_one(pool)
         .await?;
-        Ok(order)
+
+        let new_order = Self::find_by_id(id, pool).await?;
+        Ok(new_order)
     }
 
     pub async fn update(
@@ -129,7 +122,7 @@ impl ClientOrder {
         request: ClientOrderUpdateRequest,
         pool: &PgPool,
     ) -> Result<ClientOrder> {
-        let order = sqlx::query_as::<_, ClientOrder>(
+        sqlx::query(
             r#"
                    UPDATE client_orders (client_id, order_city_id)
                       SET ordered_at = $1,
@@ -137,12 +130,6 @@ impl ClientOrder {
                           order_status = $3,
                           payment_status = $4
                     WHERE id = $5
-                RETURNING order_id,
-                          ordered_at,
-                          client_id,
-                          order_city_id,
-                          order_status,
-                          payment_status
             "#,
         )
         .bind(request.ordered_at)
@@ -150,9 +137,12 @@ impl ClientOrder {
         .bind(request.order_status)
         .bind(request.payment_status)
         .bind(id)
-        .fetch_one(pool)
+        .execute(pool)
         .await?;
-        Ok(order)
+
+        let order_after = Self::find_by_id(id, pool).await?;
+
+        Ok(order_after)
     }
 
     pub async fn find_item(order_id: i32, item_id: i32, pool: &PgPool) -> Result<ClientOrderItem> {

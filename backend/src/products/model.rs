@@ -21,13 +21,6 @@ pub struct Product {
     pub product_code: i32,
     pub product_name: String,
     pub measurement_unit_id: i32,
-}
-
-#[derive(Serialize, FromRow)]
-pub struct ProductWithPrice {
-    pub product_code: i32,
-    pub product_name: String,
-    pub measurement_unit_id: i32,
     pub list_unit_price: f64,
 }
 
@@ -45,8 +38,8 @@ impl Responder for Product {
 }
 
 impl Product {
-    pub async fn find_all(pool: &PgPool) -> Result<Vec<ProductWithPrice>> {
-        let products = sqlx::query_as::<_, ProductWithPrice>(
+    pub async fn find_all(pool: &PgPool) -> Result<Vec<Product>> {
+        let products = sqlx::query_as::<_, Product>(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                 FROM products
@@ -61,9 +54,8 @@ impl Product {
         Ok(products)
     }
 
-    pub async fn find_by_code(product_code: i32, pool: &PgPool) -> Result<ProductWithPrice> {
-        let product = sqlx::query_as!(
-            ProductWithPrice,
+    pub async fn find_by_code(product_code: i32, pool: &PgPool) -> Result<Product> {
+        let product = sqlx::query_as::<_, Product>(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                   FROM products
@@ -71,8 +63,8 @@ impl Product {
                     ON products.product_code = current_product_prices.product_code
                  WHERE products.product_code = $1
             "#,
-            product_code
         )
+        .bind(product_code)
         .fetch_one(pool)
         .await?;
 
@@ -80,24 +72,20 @@ impl Product {
     }
 
     pub async fn create(request: ProductCreateRequest, pool: &PgPool) -> Result<Product> {
-        let mut tx = pool.begin().await?;
-        let product = sqlx::query(
+        let product_code = sqlx::query(
             r#"
                 INSERT INTO products (product_name, measurement_unit_id) VALUES ($1, $2)
-                RETURNING product_code, product_name, measurement_unit_id
+                RETURNING product_code
             "#,
         )
         .bind(&request.product_name)
         .bind(&request.measurement_unit_id)
-        .map(|row: PgRow| Product {
-            product_code: row.get(0),
-            product_name: row.get(1),
-            measurement_unit_id: row.get(2),
-        })
-        .fetch_one(&mut tx)
+        .map(|row: PgRow| row.get(0))
+        .fetch_one(pool)
         .await?;
 
-        tx.commit().await?;
+        let product = Self::find_by_code(product_code, pool).await?;
+
         Ok(product)
     }
 
@@ -106,25 +94,19 @@ impl Product {
         request: ProductUpdateRequest,
         pool: &PgPool,
     ) -> Result<Product> {
-        let mut tx = pool.begin().await.unwrap();
-        let product = sqlx::query(
+        sqlx::query(
             r#"
                 UPDATE products SET product_name = $1
                 WHERE product_code = $2
-                RETURNING product_code, product_name, measurement_unit_id
             "#,
         )
         .bind(&request.product_name)
         .bind(product_code)
-        .map(|row: PgRow| Product {
-            product_code: row.get(0),
-            product_name: row.get(1),
-            measurement_unit_id: row.get(2),
-        })
-        .fetch_one(&mut tx)
+        .execute(pool)
         .await?;
 
-        tx.commit().await.unwrap();
+        let product = Self::find_by_code(product_code, pool).await?;
+
         Ok(product)
     }
 

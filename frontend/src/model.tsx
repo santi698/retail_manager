@@ -6,6 +6,7 @@ export interface ClientOrder {
   order_status: string;
   payment_status: string;
   total_price: number;
+  address: string | null;
 }
 
 export interface ClientOrderItem {
