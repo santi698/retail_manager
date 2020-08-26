@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Currency } from "../components/Currency";
-import { ClientOrder, Client } from "../model";
+import {
+  ClientOrder,
+  Client,
+  ClientOrderStatus,
+  ClientOrderPaymentStatus,
+} from "../model";
 import { StatusBadge, ColorVariant } from "../components/StatusBadge";
 import { DateTime } from "../components/DateTime";
 import { translatePaymentStatus } from "../translatePaymentStatus";
@@ -8,8 +13,10 @@ import { translateOrderStatus } from "../translateOrderStatus";
 import { useClientOrderItems } from "../hooks/useClientOrderItems";
 import { OrderItemsTable } from "./OrderItemsTable";
 import { useCity } from "../contexts/CitiesContext";
+import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
+import { InvisibleButton } from "../components/InvisibleButton";
 
-function orderStatusToColorVariant(status: string): ColorVariant {
+function orderStatusToColorVariant(status: ClientOrderStatus): ColorVariant {
   switch (status) {
     case "draft":
       return ColorVariant.Purple;
@@ -24,16 +31,16 @@ function orderStatusToColorVariant(status: string): ColorVariant {
   }
 }
 
-function paymentStatusToColorVariant(status: string): ColorVariant {
+function paymentStatusToColorVariant(
+  status: ClientOrderPaymentStatus
+): ColorVariant {
   switch (status) {
     case "pending":
       return ColorVariant.Purple;
-    case "confirmed":
+    case "paid":
       return ColorVariant.Green;
     case "cancelled":
       return ColorVariant.Red;
-    case "delivered":
-      return ColorVariant.Blue;
     default:
       return ColorVariant.Yellow;
   }
@@ -88,12 +95,19 @@ export function OrderRow({
         </td>
         <td className="currency">{<Currency>{order.total_price}</Currency>}</td>
         <td>
-          <button
-            onClick={toggleExpanded}
-            style={{ transform: expanded ? "none" : "rotate(180deg)" }}
-          >
-            ^
-          </button>
+          <InvisibleButton onClick={toggleExpanded}>
+            {expanded ? (
+              <BsCaretUpFill
+                size="1.25em"
+                style={{ verticalAlign: "middle" }}
+              />
+            ) : (
+              <BsCaretDownFill
+                size="1.25em"
+                style={{ verticalAlign: "middle" }}
+              />
+            )}
+          </InvisibleButton>
         </td>
       </tr>
       {loadingItems.state === "loaded" && (

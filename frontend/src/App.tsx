@@ -10,6 +10,13 @@ import { MeasurementUnitsProvider } from "./contexts/MeasurementUnitsContext";
 import { ClientsProvider } from "./contexts/ClientsContext";
 import { ClientOrdersProvider } from "./contexts/ClientOrdersContext";
 import { CitiesProvider } from "./contexts/CitiesContext";
+import {
+  BsBagFill,
+  BsFillPeopleFill,
+  BsFillTagFill,
+  BsFillBarChartFill,
+} from "react-icons/bs";
+import { NavBar } from "./NavBar";
 
 const Layout = styled.div`
   display: grid;
@@ -42,21 +49,8 @@ function App() {
     <AppProviders>
       <BrowserRouter>
         <Layout>
-          <div
-            style={{
-              gridArea: "navBar",
-              height: "100%",
-              boxShadow: "0 0 16px rgba(0,0,0,0.1)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Link to="/">Vista General</Link>
-            <Link to="/orders">Pedidos</Link>
-            <Link to="/products">Productos</Link>
-            <Link to="/clients">Clientes</Link>
-          </div>
-          <div style={{ gridArea: "main", padding: "16px" }}>
+          <NavBar />
+          <div style={{ gridArea: "main", padding: "48px" }}>
             <Routes>
               <Route path="/" element={<StatsView />} />
               <Route path="/orders" element={<OrdersView />} />

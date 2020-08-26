@@ -1,4 +1,6 @@
-export function translateOrderStatus(status: string) {
+import { ClientOrderStatus } from "./model";
+
+export function translateOrderStatus(status: ClientOrderStatus): string {
   switch (status) {
     case "draft":
       return "Borrador";
