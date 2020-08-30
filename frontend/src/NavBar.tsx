@@ -7,6 +7,7 @@ import {
 } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { IconButton } from "@chakra-ui/core";
 
 const Wrapper = styled.ul`
   height: 100%;
@@ -14,14 +15,7 @@ const Wrapper = styled.ul`
   display: flex;
   flex-direction: column;
   list-style: none;
-  a {
-    color: #787878;
-  }
-  a.active {
-    color: #6a64d9;
-  }
   padding: 16px 0;
-  font-size: 20px;
   align-items: center;
   margin: 0;
 
@@ -34,23 +28,47 @@ export function NavBar() {
   return (
     <Wrapper>
       <li>
-        <NavLink aria-label="Vista General" to="/" title="Vista General" end>
-          <BsFillBarChartFill />
+        <NavLink to="/" end title="Vista General">
+          <IconButton
+            aria-label="Vista General"
+            icon={BsFillBarChartFill}
+            size="lg"
+            variant="ghost"
+            variantColor="purple"
+          />
         </NavLink>
       </li>
       <li>
-        <NavLink aria-label="Pedidos" to="/orders" title="Pedidos">
-          <BsBagFill />
+        <NavLink to="/orders" title="Pedidos">
+          <IconButton
+            aria-label="Pedidos"
+            icon={BsBagFill}
+            size="lg"
+            variant="ghost"
+            variantColor="purple"
+          />
         </NavLink>
       </li>
       <li>
         <NavLink aria-label="Productos" to="/products" title="Productos">
-          <BsFillTagFill />
+          <IconButton
+            aria-label="Productos"
+            icon={BsFillTagFill}
+            size="lg"
+            variant="ghost"
+            variantColor="purple"
+          />
         </NavLink>
       </li>
       <li>
-        <NavLink aria-label="Clientes" to="/clients" title="Clientes">
-          <BsFillPeopleFill />
+        <NavLink to="/clients" title="Clientes">
+          <IconButton
+            aria-label="Clientes"
+            icon={BsFillPeopleFill}
+            size="lg"
+            variant="ghost"
+            variantColor="purple"
+          />
         </NavLink>
       </li>
     </Wrapper>

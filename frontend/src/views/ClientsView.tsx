@@ -1,12 +1,13 @@
 import React from "react";
 import { Table } from "../components/Table";
 import { useClients } from "../contexts/ClientsContext";
+import { ViewTitle } from "../components/ViewTitle";
 
 export function ClientsView() {
   const clients = useClients();
   return (
     <>
-      <h1>Clientes</h1>
+      <ViewTitle>Clientes</ViewTitle>
       <Table>
         <thead>
           <tr>

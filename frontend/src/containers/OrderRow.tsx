@@ -95,7 +95,7 @@ export function OrderRow({
         </td>
         <td className="currency">{<Currency>{order.total_price}</Currency>}</td>
         <td>
-          <InvisibleButton onClick={toggleExpanded}>
+          <InvisibleButton onClick={toggleExpanded} size="xs">
             {expanded ? (
               <BsCaretUpFill
                 size="1.25em"

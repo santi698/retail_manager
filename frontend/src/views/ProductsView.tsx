@@ -2,12 +2,13 @@ import React from "react";
 import { useProducts } from "../contexts/ProductsContext";
 import { Table } from "../components/Table";
 import { Currency } from "../components/Currency";
+import { ViewTitle } from "../components/ViewTitle";
 
 export function ProductsView() {
   const products = useProducts();
   return (
     <>
-      <h1>Productos</h1>
+      <ViewTitle>Productos</ViewTitle>
       <Table>
         <thead>
           <tr>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, BrowserRouter, Link } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import styled from "styled-components";
 import { OrdersView } from "./views/OrdersView";
 import { StatsView } from "./views/StatsView";
@@ -10,13 +10,9 @@ import { MeasurementUnitsProvider } from "./contexts/MeasurementUnitsContext";
 import { ClientsProvider } from "./contexts/ClientsContext";
 import { ClientOrdersProvider } from "./contexts/ClientOrdersContext";
 import { CitiesProvider } from "./contexts/CitiesContext";
-import {
-  BsBagFill,
-  BsFillPeopleFill,
-  BsFillTagFill,
-  BsFillBarChartFill,
-} from "react-icons/bs";
 import { NavBar } from "./NavBar";
+import { CSSReset, ThemeProvider } from "@chakra-ui/core";
+import theme from "./theme";
 
 const Layout = styled.div`
   display: grid;
@@ -30,23 +26,28 @@ const GLOBAL_REFETCH_INTERVAL = 60000;
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-      <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-        <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-          <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-            <MeasurementUnitsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-              {children}
-            </MeasurementUnitsProvider>
-          </ProductsProvider>
-        </ClientsProvider>
-      </ClientOrdersProvider>
-    </CitiesProvider>
+    <ThemeProvider theme={theme}>
+      <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+        <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+          <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+            <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+              <MeasurementUnitsProvider
+                refetchInterval={GLOBAL_REFETCH_INTERVAL}
+              >
+                {children}
+              </MeasurementUnitsProvider>
+            </ProductsProvider>
+          </ClientsProvider>
+        </ClientOrdersProvider>
+      </CitiesProvider>
+    </ThemeProvider>
   );
 }
 
 function App() {
   return (
     <AppProviders>
+      <CSSReset />
       <BrowserRouter>
         <Layout>
           <NavBar />

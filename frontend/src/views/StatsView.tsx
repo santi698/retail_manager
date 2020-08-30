@@ -1,9 +1,10 @@
 import React from "react";
+import { ViewTitle } from "../components/ViewTitle";
 
 export function StatsView() {
   return (
     <>
-      <h1>Vista General</h1>
+      <ViewTitle>Vista General</ViewTitle>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { ThemeProvider } from "styled-components";
+import { Tag } from "@chakra-ui/core";
 
 export enum ColorVariant {
   Purple,
@@ -17,21 +17,12 @@ declare module "styled-components" {
 }
 
 const colorThemes = {
-  [ColorVariant.Purple]: { background: "#dce1ff", color: "#463fbd" },
-  [ColorVariant.Green]: { background: "#cbffe4", color: "#248552" },
-  [ColorVariant.Yellow]: { background: "#fff797", color: "black" },
-  [ColorVariant.Red]: { background: "#ffc6ba", color: "black" },
-  [ColorVariant.Blue]: { background: "#c3f3ff", color: "black" },
+  [ColorVariant.Purple]: "purple",
+  [ColorVariant.Green]: "green",
+  [ColorVariant.Yellow]: "yellow",
+  [ColorVariant.Red]: "red",
+  [ColorVariant.Blue]: "blue",
 };
-
-const Wrapper = styled.div`
-  border-radius: 16px;
-  height: 24px;
-  width: 100px;
-  padding: 4px 16px;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.color};
-`;
 
 export function StatusBadge({
   colorVariant,
@@ -40,9 +31,5 @@ export function StatusBadge({
   colorVariant: ColorVariant;
   children: React.ReactNode;
 }) {
-  return (
-    <ThemeProvider theme={colorThemes[colorVariant]}>
-      <Wrapper>{children}</Wrapper>
-    </ThemeProvider>
-  );
+  return <Tag variantColor={colorThemes[colorVariant]}>{children}</Tag>;
 }
