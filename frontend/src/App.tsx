@@ -11,8 +11,18 @@ import { ClientsProvider } from "./contexts/ClientsContext";
 import { ClientOrdersProvider } from "./contexts/ClientOrdersContext";
 import { CitiesProvider } from "./contexts/CitiesContext";
 import { NavBar } from "./NavBar";
-import { CSSReset, ThemeProvider } from "@chakra-ui/core";
+import {
+  ChakraProvider,
+  Stack,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  Container,
+} from "@chakra-ui/core";
 import theme from "./theme";
+import { CreateOrderView } from "./views/CreateOrderView";
+import { CreateClientView } from "./views/CreateClientView";
 
 const Layout = styled.div`
   display: grid;
@@ -22,11 +32,11 @@ const Layout = styled.div`
   grid-template-rows: 100%;
 `;
 
-const GLOBAL_REFETCH_INTERVAL = 60000;
+const GLOBAL_REFETCH_INTERVAL = 600000;
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
+    <ChakraProvider theme={theme} resetCSS>
       <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
         <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
           <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
@@ -40,14 +50,13 @@ function AppProviders({ children }: { children: React.ReactNode }) {
           </ClientsProvider>
         </ClientOrdersProvider>
       </CitiesProvider>
-    </ThemeProvider>
+    </ChakraProvider>
   );
 }
 
 function App() {
   return (
     <AppProviders>
-      <CSSReset />
       <BrowserRouter>
         <Layout>
           <NavBar />
@@ -55,11 +64,21 @@ function App() {
             <Routes>
               <Route path="/" element={<StatsView />} />
               <Route path="/orders" element={<OrdersView />} />
+              <Route path="/orders/create" element={<CreateOrderView />} />
               <Route path="/clients" element={<ClientsView />} />
+              <Route path="/clients/create" element={<CreateClientView />} />
               <Route path="/products" element={<ProductsView />} />
             </Routes>
           </div>
-          <div style={{ background: "#f9f8ff" }}></div>
+          <Container background="#f9f8ff" centerContent>
+            <Stack padding="4">
+              <Stat>
+                <StatLabel>Pedidos</StatLabel>
+                <StatNumber>43</StatNumber>
+                <StatHelpText>12/08 - 28/08</StatHelpText>
+              </Stat>
+            </Stack>
+          </Container>
         </Layout>
       </BrowserRouter>
     </AppProviders>

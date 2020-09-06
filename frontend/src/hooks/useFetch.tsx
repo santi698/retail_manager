@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Loadable, Idle } from "../Loadable";
+import { simpleFetch } from "../simpleFetch";
 
 export interface UseFetchResult<T> {
   data: Loadable<T>;
@@ -10,7 +11,6 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
   const [data, setData] = useState<Loadable<T>>(new Idle<T>());
 
   const fetchData = useCallback(() => {
-    const controller = new AbortController();
     setData((prev) => {
       switch (prev.state) {
         case "idle":
@@ -23,26 +23,22 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
           throw new Error(`Loading started on invalid state ${prev.state}`);
       }
     });
-    fetch(url, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Request failed with status code ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((result: T) => {
+    const { response, abort } = simpleFetch(url);
+    response
+      .then((response) => response.json())
+      .then((data) =>
         setData((prev) => {
           switch (prev.state) {
             case "loading":
             case "reloading":
-              return prev.onLoaded(result);
+              return prev.onLoaded(data);
             default:
               throw new Error(
                 `Loading finished on invalid state ${prev.state}`
               );
           }
-        });
-      })
+        })
+      )
       .catch((error: Error) => {
         setData((prev) => {
           switch (prev.state) {
@@ -54,8 +50,9 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
           }
         });
       });
+
     return () => {
-      controller.abort();
+      abort();
     };
   }, [url]);
 

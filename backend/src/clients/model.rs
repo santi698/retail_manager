@@ -1,6 +1,7 @@
 use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use anyhow::Result;
 use futures::future::{ready, Ready};
+use log::info;
 use serde::{Deserialize, Serialize};
 use sqlx::postgres::{PgPool, PgQueryAs, PgRow};
 use sqlx::{FromRow, Row};
@@ -74,6 +75,7 @@ impl Client {
 
     pub async fn create(request: ClientCreateRequest, pool: &PgPool) -> Result<Client> {
         let mut tx = pool.begin().await?;
+        info!("{}", &request.phone_number.clone().expect("msg"));
         let client = sqlx::query(
             r#"
                 INSERT INTO clients (first_name, last_name, email, phone_number, residence_city_id)

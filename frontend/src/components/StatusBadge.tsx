@@ -31,5 +31,5 @@ export function StatusBadge({
   colorVariant: ColorVariant;
   children: React.ReactNode;
 }) {
-  return <Tag variantColor={colorThemes[colorVariant]}>{children}</Tag>;
+  return <Tag colorScheme={colorThemes[colorVariant]}>{children}</Tag>;
 }

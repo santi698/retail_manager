@@ -31,10 +31,10 @@ export function NavBar() {
         <NavLink to="/" end title="Vista General">
           <IconButton
             aria-label="Vista General"
-            icon={BsFillBarChartFill}
+            icon={<BsFillBarChartFill />}
             size="lg"
             variant="ghost"
-            variantColor="purple"
+            colorScheme="purple"
           />
         </NavLink>
       </li>
@@ -42,10 +42,10 @@ export function NavBar() {
         <NavLink to="/orders" title="Pedidos">
           <IconButton
             aria-label="Pedidos"
-            icon={BsBagFill}
+            icon={<BsBagFill />}
             size="lg"
             variant="ghost"
-            variantColor="purple"
+            colorScheme="purple"
           />
         </NavLink>
       </li>
@@ -53,10 +53,10 @@ export function NavBar() {
         <NavLink aria-label="Productos" to="/products" title="Productos">
           <IconButton
             aria-label="Productos"
-            icon={BsFillTagFill}
+            icon={<BsFillTagFill />}
             size="lg"
             variant="ghost"
-            variantColor="purple"
+            colorScheme="purple"
           />
         </NavLink>
       </li>
@@ -64,10 +64,10 @@ export function NavBar() {
         <NavLink to="/clients" title="Clientes">
           <IconButton
             aria-label="Clientes"
-            icon={BsFillPeopleFill}
+            icon={<BsFillPeopleFill />}
             size="lg"
             variant="ghost"
-            variantColor="purple"
+            colorScheme="purple"
           />
         </NavLink>
       </li>

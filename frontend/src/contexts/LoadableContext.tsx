@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useContext } from "react";
+import React, { createContext, useEffect, useContext, useMemo } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { Loadable, Idle } from "../Loadable";
 
@@ -14,11 +14,15 @@ export interface LoadableProviderProps {
 export function makeLoadableContext<T>({
   fetchUrl,
 }: MakeLoadableContextProps<T>) {
-  const Context = createContext<Loadable<T>>(new Idle<T>());
+  const Context = createContext<{ data: Loadable<T>; refetch: () => void }>({
+    data: new Idle<T>(),
+    refetch: () => {},
+  });
 
   return {
     Provider: function ({ children, refetchInterval }: LoadableProviderProps) {
       const { data, refetch } = useFetch<T>(fetchUrl);
+      const value = useMemo(() => ({ data, refetch }), [data, refetch]);
 
       useEffect(() => {
         if (refetchInterval === undefined) return;
@@ -31,10 +35,13 @@ export function makeLoadableContext<T>({
           clearInterval(intervalId);
         };
       }, [refetch, refetchInterval]);
-      return <Context.Provider value={data}>{children}</Context.Provider>;
+      return <Context.Provider value={value}>{children}</Context.Provider>;
     },
     useData: function () {
-      return useContext(Context);
+      return useContext(Context).data;
+    },
+    useRefetch: function () {
+      return useContext(Context).refetch;
     },
   };
 }

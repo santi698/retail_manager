@@ -3,11 +3,12 @@ import { useProducts } from "../contexts/ProductsContext";
 import { Table } from "../components/Table";
 import { Currency } from "../components/Currency";
 import { ViewTitle } from "../components/ViewTitle";
+import { ViewContainer } from "../components/ViewContainer";
 
 export function ProductsView() {
   const products = useProducts();
   return (
-    <>
+    <ViewContainer>
       <ViewTitle>Productos</ViewTitle>
       <Table>
         <thead>
@@ -30,6 +31,6 @@ export function ProductsView() {
             ))}
         </tbody>
       </Table>
-    </>
+    </ViewContainer>
   );
 }

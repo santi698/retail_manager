@@ -17,6 +17,8 @@ import {
   Box,
   Stack,
 } from "@chakra-ui/core";
+import { Link } from "react-router-dom";
+import { ViewContainer } from "../components/ViewContainer";
 
 export interface OrdersViewFilters {
   order_city_id: string;
@@ -33,7 +35,7 @@ export function OrdersView() {
     payment_status: "",
   });
   return (
-    <>
+    <ViewContainer>
       <ViewTitle>Pedidos</ViewTitle>
       <Flex justify="space-between" align="end">
         <Stack direction="row" spacing={4}>
@@ -106,8 +108,13 @@ export function OrdersView() {
           </FormControl>
         </Stack>
         <Box>
-          <InvisibleButton variantColor="purple">
-            <BsPlus size="1.5em" /> Nuevo pedido
+          <InvisibleButton
+            as={Link}
+            colorScheme="purple"
+            leftIcon={<BsPlus size="1.5em" />}
+            to="/orders/create"
+          >
+            Nuevo pedido
           </InvisibleButton>
         </Box>
       </Flex>
@@ -133,6 +140,6 @@ export function OrdersView() {
           />
         )}
       </Box>
-    </>
+    </ViewContainer>
   );
 }
