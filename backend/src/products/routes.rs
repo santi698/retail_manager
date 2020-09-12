@@ -1,11 +1,29 @@
-use crate::products::{Product, ProductCreateRequest, ProductUpdateRequest};
+use crate::{
+    products::{Product, ProductCreateRequest, ProductUpdateRequest},
+    AppContext,
+};
+
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use actix_web::{Error, HttpRequest};
+use futures::future::{ready, Ready};
 use log::error;
-use sqlx::PgPool;
+
+impl Responder for Product {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+        // create response and set content type
+        ready(Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(body)))
+    }
+}
 
 #[get("/products")]
-async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = Product::find_all(db_pool.get_ref()).await;
+async fn find_all(context: web::Data<AppContext>) -> impl Responder {
+    let result = context.product_repository.find_all().await;
     match result {
         Ok(products) => HttpResponse::Ok().json(products),
         Err(e) => {
@@ -16,8 +34,11 @@ async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
 }
 
 #[get("/products/{product_code}")]
-async fn find(product_code: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = Product::find_by_code(product_code.into_inner(), db_pool.get_ref()).await;
+async fn find(product_code: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+    let result = context
+        .product_repository
+        .find_by_code(product_code.into_inner())
+        .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
         _ => HttpResponse::BadRequest().body("Product not found"),
@@ -27,9 +48,12 @@ async fn find(product_code: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl 
 #[post("/products")]
 async fn create(
     product: web::Json<ProductCreateRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = Product::create(product.into_inner(), db_pool.get_ref()).await;
+    let result = context
+        .product_repository
+        .create(product.into_inner())
+        .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
         _ => HttpResponse::BadRequest().body("Error trying to create new product {}"),
@@ -40,14 +64,12 @@ async fn create(
 async fn update(
     product_code: web::Path<i32>,
     product: web::Json<ProductUpdateRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = Product::update(
-        product_code.into_inner(),
-        product.into_inner(),
-        db_pool.get_ref(),
-    )
-    .await;
+    let result = context
+        .product_repository
+        .update(product_code.into_inner(), product.into_inner())
+        .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
         _ => HttpResponse::BadRequest().body("Product not found"),
@@ -55,8 +77,11 @@ async fn update(
 }
 
 #[delete("/products/{product_code}")]
-async fn delete(product_code: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = Product::delete(product_code.into_inner(), db_pool.get_ref()).await;
+async fn delete(product_code: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+    let result = context
+        .product_repository
+        .delete(product_code.into_inner())
+        .await;
     match result {
         Ok(rows) => {
             if rows > 0 {

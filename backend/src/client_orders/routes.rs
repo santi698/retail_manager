@@ -1,14 +1,28 @@
+use crate::AppContext;
+
 use super::{
     ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest,
 };
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use actix_web::{Error, HttpRequest};
+use futures::future::{ready, Ready};
 use log::error;
 use serde::Deserialize;
-use sqlx::PgPool;
+
+impl Responder for ClientOrder {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+        ready(Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(body)))
+    }
+}
 
 #[get("/client_orders")]
-async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = ClientOrder::find_all(&db_pool).await;
+async fn find_all(context: web::Data<AppContext>) -> impl Responder {
+    let result = context.client_order_repository.find_all().await;
 
     match result {
         Ok(orders) => HttpResponse::Ok().json(orders),
@@ -20,8 +34,11 @@ async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
 }
 
 #[get("/client_orders/{order_id}")]
-async fn find_by_id(order_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = ClientOrder::find_by_id(order_id.into_inner(), db_pool.get_ref()).await;
+async fn find_by_id(order_id: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+    let result = context
+        .client_order_repository
+        .find_by_id(order_id.into_inner())
+        .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
@@ -36,14 +53,12 @@ async fn find_by_id(order_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> imp
 async fn update(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderUpdateRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = ClientOrder::update(
-        order_id.into_inner(),
-        request.into_inner(),
-        db_pool.get_ref(),
-    )
-    .await;
+    let result = context
+        .client_order_repository
+        .update(order_id.into_inner(), request.into_inner())
+        .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
@@ -57,9 +72,12 @@ async fn update(
 #[post("/client_orders")]
 async fn create(
     request: web::Json<ClientOrderCreateRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = ClientOrder::create(request.into_inner(), db_pool.get_ref()).await;
+    let result = context
+        .client_order_repository
+        .create(request.into_inner())
+        .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
@@ -79,9 +97,12 @@ struct FindItemPathParams {
 #[get("/client_orders/{order_id}/items/{item_id}")]
 async fn find_item(
     params: web::Path<FindItemPathParams>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = ClientOrder::find_item(params.order_id, params.item_id, db_pool.get_ref()).await;
+    let result = context
+        .client_order_repository
+        .find_item(params.order_id, params.item_id)
+        .await;
 
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
@@ -93,8 +114,11 @@ async fn find_item(
 }
 
 #[get("/client_orders/{order_id}/items")]
-async fn find_items(order_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = ClientOrder::find_items(order_id.into_inner(), db_pool.get_ref()).await;
+async fn find_items(order_id: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+    let result = context
+        .client_order_repository
+        .find_items(order_id.into_inner())
+        .await;
 
     match result {
         Ok(items) => HttpResponse::Ok().json(items),
@@ -109,14 +133,12 @@ async fn find_items(order_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> imp
 async fn add_item(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderAddItemRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = ClientOrder::add_item(
-        order_id.into_inner(),
-        request.into_inner(),
-        db_pool.get_ref(),
-    )
-    .await;
+    let result = context
+        .client_order_repository
+        .add_item(order_id.into_inner(), request.into_inner())
+        .await;
 
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
@@ -136,9 +158,12 @@ struct RemoveItemPathParams {
 #[delete("/client_orders/{order_id}/items/{item_id}")]
 async fn remove_item(
     params: web::Path<RemoveItemPathParams>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = ClientOrder::remove_item(params.order_id, params.item_id, db_pool.get_ref()).await;
+    let result = context
+        .client_order_repository
+        .remove_item(params.order_id, params.item_id)
+        .await;
 
     match result {
         Ok(_) => HttpResponse::NoContent().finish(),

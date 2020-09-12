@@ -1,11 +1,28 @@
-use crate::clients::{Client, ClientCreateRequest};
+use crate::{
+    clients::{Client, ClientCreateRequest},
+    AppContext,
+};
+
 use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{Error, HttpRequest};
+use anyhow::Result;
+use futures::future::{ready, Ready};
 use log::error;
-use sqlx::PgPool;
+
+impl Responder for Client {
+    type Error = Error;
+    type Future = Ready<Result<HttpResponse, Error>>;
+    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
+        let body = serde_json::to_string(&self).unwrap();
+        ready(Ok(HttpResponse::Ok()
+            .content_type("application/json")
+            .body(body)))
+    }
+}
 
 #[get("/clients")]
-async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = Client::find_all(db_pool.get_ref()).await;
+async fn find_all(context: web::Data<AppContext>) -> impl Responder {
+    let result = context.client_repository.find_all().await;
     match result {
         Ok(clients) => HttpResponse::Ok().json(clients),
         _ => HttpResponse::BadRequest().body("Error trying to read all clients from database"),
@@ -13,8 +30,11 @@ async fn find_all(db_pool: web::Data<PgPool>) -> impl Responder {
 }
 
 #[get("/clients/{client_id}")]
-async fn find_by_id(client_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> impl Responder {
-    let result = Client::find_by_id(client_id.into_inner(), db_pool.get_ref()).await;
+async fn find_by_id(client_id: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+    let result = context
+        .client_repository
+        .find_by_id(client_id.into_inner())
+        .await;
     match result {
         Ok(client) => HttpResponse::Ok().json(client),
         _ => HttpResponse::BadRequest().body("Client not found"),
@@ -24,9 +44,9 @@ async fn find_by_id(client_id: web::Path<i32>, db_pool: web::Data<PgPool>) -> im
 #[post("/clients")]
 async fn create(
     request: web::Json<ClientCreateRequest>,
-    db_pool: web::Data<PgPool>,
+    context: web::Data<AppContext>,
 ) -> impl Responder {
-    let result = Client::create(request.into_inner(), db_pool.get_ref()).await;
+    let result = context.client_repository.create(request.into_inner()).await;
     match result {
         Ok(clients) => HttpResponse::Ok().json(clients),
         Err(e) => {

@@ -1,0 +1,57 @@
+use anyhow::Result;
+use async_trait::async_trait;
+use sqlx::{postgres::PgRow, PgPool, Row};
+
+use super::{City, CityRepository};
+
+fn city_from_row(row: PgRow) -> City {
+    City {
+        id: row.try_get("id").expect("Error getting city id from row"),
+        name: row
+            .try_get("name")
+            .expect("Error getting city name from row"),
+    }
+}
+
+#[derive(Clone)]
+pub struct PostgresCityRepository {
+    pool: PgPool,
+}
+
+impl PostgresCityRepository {
+    pub fn new(pool: PgPool) -> PostgresCityRepository {
+        PostgresCityRepository { pool }
+    }
+}
+
+#[async_trait]
+impl CityRepository for PostgresCityRepository {
+    async fn find_all(&self) -> Result<Vec<City>> {
+        let products = sqlx::query(
+            r#"
+                SELECT *
+                FROM cities
+                ORDER BY id
+            "#,
+        )
+        .map(city_from_row)
+        .fetch_all(&self.pool)
+        .await?;
+
+        Ok(products)
+    }
+
+    async fn find_by_id(&self, id: i32) -> Result<City> {
+        let product = sqlx::query(
+            r#"
+                SELECT * FROM cities WHERE id = $1
+            "#,
+        )
+        .bind(id)
+        .map(city_from_row)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(product)
+    }
+}

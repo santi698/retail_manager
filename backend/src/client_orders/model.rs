@@ -1,9 +1,6 @@
-use actix_web::{Error, HttpRequest, HttpResponse, Responder};
 use anyhow::Result;
-use futures::future::{ready, Ready};
+use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use sqlx::postgres::{PgPool, PgQueryAs, PgRow};
-use sqlx::{FromRow, Row};
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientOrderCreateRequest {
@@ -21,12 +18,12 @@ pub struct ClientOrderUpdateRequest {
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientOrderAddItemRequest {
-    product_id: i32,
-    quantity: f64,
-    selling_price: f64,
+    pub product_id: i32,
+    pub quantity: f64,
+    pub selling_price: f64,
 }
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize)]
 pub struct ClientOrder {
     pub order_id: i32,
     pub ordered_at: chrono::NaiveDateTime,
@@ -38,7 +35,7 @@ pub struct ClientOrder {
     pub address: Option<String>,
 }
 
-#[derive(Serialize, FromRow)]
+#[derive(Serialize)]
 pub struct ClientOrderItem {
     pub client_order_item_id: i32,
     pub product_id: i32,
@@ -47,174 +44,18 @@ pub struct ClientOrderItem {
     pub selling_price: f64,
 }
 
-impl Responder for ClientOrder {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
-}
-
-impl ClientOrder {
-    pub async fn find_all(pool: &PgPool) -> Result<Vec<ClientOrder>> {
-        let orders = sqlx::query_as::<_, ClientOrder>(
-            r#"
-                SELECT client_orders.*,
-                       (
-                           SELECT COALESCE(SUM(selling_price), 0)
-                             FROM client_order_items
-                            WHERE client_order_items.client_order_id =
-                                    client_orders.order_id
-                       ) AS total_price
-                  FROM client_orders
-                 ORDER BY order_id;
-            "#,
-        )
-        .fetch_all(pool)
-        .await?;
-
-        Ok(orders)
-    }
-
-    pub async fn find_by_id(id: i32, pool: &PgPool) -> Result<ClientOrder> {
-        let order = sqlx::query_as::<_, ClientOrder>(
-            r#"
-                SELECT client_orders.*,
-                       (
-                           SELECT COALESCE(SUM(selling_price), 0)
-                             FROM client_order_items
-                            WHERE client_order_items.client_order_id =
-                                    client_orders.order_id
-                       ) AS total_price
-                  FROM client_orders
-                 WHERE order_id = $1
-            "#,
-        )
-        .bind(id)
-        .fetch_one(pool)
-        .await?;
-        Ok(order)
-    }
-
-    pub async fn create(request: ClientOrderCreateRequest, pool: &PgPool) -> Result<ClientOrder> {
-        let id = sqlx::query(
-            r#"
-                INSERT INTO client_orders (client_id, order_city_id)
-                VALUES ($1, $2)
-                RETURNING order_id
-            "#,
-        )
-        .bind(request.client_id)
-        .bind(request.order_city_id)
-        .map(|row: PgRow| row.get(0))
-        .fetch_one(pool)
-        .await?;
-
-        let new_order = Self::find_by_id(id, pool).await?;
-        Ok(new_order)
-    }
-
-    pub async fn update(
-        id: i32,
-        request: ClientOrderUpdateRequest,
-        pool: &PgPool,
-    ) -> Result<ClientOrder> {
-        sqlx::query(
-            r#"
-                   UPDATE client_orders (client_id, order_city_id)
-                      SET ordered_at = $1,
-                          order_city_id = $2,
-                          order_status = $3,
-                          payment_status = $4
-                    WHERE id = $5
-            "#,
-        )
-        .bind(request.ordered_at)
-        .bind(request.order_city_id)
-        .bind(request.order_status)
-        .bind(request.payment_status)
-        .bind(id)
-        .execute(pool)
-        .await?;
-
-        let order_after = Self::find_by_id(id, pool).await?;
-
-        Ok(order_after)
-    }
-
-    pub async fn find_item(order_id: i32, item_id: i32, pool: &PgPool) -> Result<ClientOrderItem> {
-        let item = sqlx::query_as::<_, ClientOrderItem>(
-            r#"
-              SELECT *
-                FROM client_order_items
-               WHERE client_order_id = $1 AND client_order_item_id = $2
-            "#,
-        )
-        .bind(order_id)
-        .bind(item_id)
-        .fetch_one(pool)
-        .await?;
-
-        Ok(item)
-    }
-
-    pub async fn find_items(order_id: i32, pool: &PgPool) -> Result<Vec<ClientOrderItem>> {
-        let items = sqlx::query_as::<_, ClientOrderItem>(
-            r#"
-            SELECT *
-              FROM client_order_items
-             WHERE client_order_id = $1
-        "#,
-        )
-        .bind(order_id)
-        .fetch_all(pool)
-        .await?;
-
-        Ok(items)
-    }
-
-    pub async fn add_item(
+#[async_trait]
+pub trait ClientOrderRepository {
+    async fn find_all(&self) -> Result<Vec<ClientOrder>>;
+    async fn find_by_id(&self, id: i32) -> Result<ClientOrder>;
+    async fn create(&self, request: ClientOrderCreateRequest) -> Result<ClientOrder>;
+    async fn update(&self, id: i32, request: ClientOrderUpdateRequest) -> Result<ClientOrder>;
+    async fn find_item(&self, order_id: i32, item_id: i32) -> Result<ClientOrderItem>;
+    async fn find_items(&self, order_id: i32) -> Result<Vec<ClientOrderItem>>;
+    async fn add_item(
+        &self,
         order_id: i32,
         request: ClientOrderAddItemRequest,
-        pool: &PgPool,
-    ) -> Result<ClientOrderItem> {
-        let order_item = sqlx::query_as::<_, ClientOrderItem>(
-            r#"
-            INSERT INTO client_order_items (
-                product_id, client_order_id, quantity, selling_price
-            )
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING client_order_item_id, product_id, client_order_id,
-                      quantity, selling_price
-        "#,
-        )
-        .bind(chrono::Utc::now().naive_utc())
-        .bind(request.product_id)
-        .bind(order_id)
-        .bind(request.quantity)
-        .bind(request.selling_price)
-        .fetch_one(pool)
-        .await?;
-
-        Ok(order_item)
-    }
-
-    pub async fn remove_item(order_id: i32, item_id: i32, pool: &PgPool) -> Result<()> {
-        sqlx::query(
-            r#"
-            DELETE FROM client_order_items
-             WHERE client_order_item_id = $1
-               AND client_order_id = $2
-            "#,
-        )
-        .bind(item_id)
-        .bind(order_id)
-        .execute(pool)
-        .await?;
-
-        Ok(())
-    }
+    ) -> Result<ClientOrderItem>;
+    async fn remove_item(&self, order_id: i32, item_id: i32) -> Result<()>;
 }
