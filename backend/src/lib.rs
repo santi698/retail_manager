@@ -12,6 +12,7 @@ use sqlx::PgPool;
 mod cities;
 mod client_orders;
 mod clients;
+mod common;
 mod measurement_units;
 mod products;
 
