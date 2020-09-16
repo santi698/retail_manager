@@ -53,7 +53,7 @@ pub fn run(host: String, port: String, db_pool: PgPool) -> Result<Server> {
             .wrap(
                 Cors::new()
                     .allowed_origin("http://localhost:3000")
-                    .allowed_methods(vec!["GET", "POST"])
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
                     .finish(),

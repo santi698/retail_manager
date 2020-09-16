@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { Currency } from "../components/Currency";
-import {
-  ClientOrder,
-  Client,
-  ClientOrderStatus,
-  ClientOrderPaymentStatus,
-} from "../model";
-import { StatusBadge, ColorVariant } from "../components/StatusBadge";
+import { ClientOrder, Client } from "../model";
+import { StatusBadge } from "../components/StatusBadge";
 import { DateTime } from "../components/DateTime";
 import { translatePaymentStatus } from "../translatePaymentStatus";
 import { translateOrderStatus } from "../translateOrderStatus";
@@ -15,36 +10,8 @@ import { OrderItemsTable } from "./OrderItemsTable";
 import { useCity } from "../contexts/CitiesContext";
 import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
 import { InvisibleButton } from "../components/InvisibleButton";
-
-function orderStatusToColorVariant(status: ClientOrderStatus): ColorVariant {
-  switch (status) {
-    case "draft":
-      return ColorVariant.Purple;
-    case "confirmed":
-      return ColorVariant.Green;
-    case "cancelled":
-      return ColorVariant.Red;
-    case "delivered":
-      return ColorVariant.Blue;
-    default:
-      return ColorVariant.Yellow;
-  }
-}
-
-function paymentStatusToColorVariant(
-  status: ClientOrderPaymentStatus
-): ColorVariant {
-  switch (status) {
-    case "pending":
-      return ColorVariant.Purple;
-    case "paid":
-      return ColorVariant.Green;
-    case "cancelled":
-      return ColorVariant.Red;
-    default:
-      return ColorVariant.Yellow;
-  }
-}
+import { orderStatusToColorVariant } from "../orderStatusToColorVariant";
+import { paymentStatusToColorVariant } from "../paymentStatusToColorVariant";
 
 export function OrderRow({
   order,

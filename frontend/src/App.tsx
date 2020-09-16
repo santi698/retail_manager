@@ -23,6 +23,8 @@ import {
 import theme from "./theme";
 import { CreateOrderView } from "./views/CreateOrderView";
 import { CreateClientView } from "./views/CreateClientView";
+import { EditClientView } from "./views/EditClientView";
+import { ShowClientView } from "./views/ShowClientView";
 
 const Layout = styled.div`
   display: grid;
@@ -67,6 +69,8 @@ function App() {
               <Route path="/orders/create" element={<CreateOrderView />} />
               <Route path="/clients" element={<ClientsView />} />
               <Route path="/clients/create" element={<CreateClientView />} />
+              <Route path="/clients/:id/edit" element={<EditClientView />} />
+              <Route path="/clients/:id" element={<ShowClientView />} />
               <Route path="/products" element={<ProductsView />} />
             </Routes>
           </div>

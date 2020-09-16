@@ -1,5 +1,6 @@
 import { makeLoadableContext } from "./LoadableContext";
 import { Client } from "../model";
+import { Loadable, Loading } from "../Loadable";
 
 const {
   Provider: ClientsProvider,
@@ -10,3 +11,15 @@ const {
 });
 
 export { ClientsProvider, useClients, useRefetchClients };
+
+export function useClient(id: number | undefined): Loadable<Client> {
+  const loadable = useClients();
+
+  if (id === undefined) return new Loading();
+
+  return loadable.map<Client>((clients) => {
+    const client = clients.find((client) => client.client_id === id);
+    if (client === undefined) throw new Error(`Client with id ${id} not found`);
+    return client;
+  });
+}

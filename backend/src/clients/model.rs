@@ -16,6 +16,7 @@ pub struct ClientUpdateRequest {
     pub last_name: Option<String>,
     pub email: Option<String>,
     pub phone_number: Option<String>,
+    pub residence_city_id: i32,
 }
 
 #[derive(Serialize)]
@@ -33,4 +34,5 @@ pub trait ClientRepository {
     async fn find_all(&self) -> Result<Vec<Client>>;
     async fn find_by_id(&self, client_id: i32) -> Result<Client>;
     async fn create(&self, request: ClientCreateRequest) -> Result<Client>;
+    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> Result<Client>;
 }

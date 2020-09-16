@@ -3,11 +3,13 @@ use crate::{
     AppContext,
 };
 
-use actix_web::{get, post, web, HttpResponse, Responder};
+use actix_web::{get, post, put, web, HttpResponse, Responder};
 use actix_web::{Error, HttpRequest};
 use anyhow::Result;
 use futures::future::{ready, Ready};
 use log::error;
+
+use super::ClientUpdateRequest;
 
 impl Responder for Client {
     type Error = Error;
@@ -56,8 +58,28 @@ async fn create(
     }
 }
 
+#[put("/clients/{client_id}")]
+async fn update(
+    client_id: web::Path<i32>,
+    request: web::Json<ClientUpdateRequest>,
+    context: web::Data<AppContext>,
+) -> impl Responder {
+    let result = context
+        .client_repository
+        .update(client_id.into_inner(), request.into_inner())
+        .await;
+    match result {
+        Ok(client) => HttpResponse::Ok().json(client),
+        Err(e) => {
+            error!("{}", e);
+            HttpResponse::BadRequest().body("Error trying to update client")
+        }
+    }
+}
+
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);
     cfg.service(find_by_id);
     cfg.service(create);
+    cfg.service(update);
 }

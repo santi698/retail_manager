@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
-use super::{Client, ClientCreateRequest, ClientRepository};
+use super::{Client, ClientCreateRequest, ClientRepository, ClientUpdateRequest};
 
 pub struct PostgresClientRepository {
     pool: PgPool,
@@ -59,6 +59,32 @@ impl ClientRepository for PostgresClientRepository {
         .bind(&request.email)
         .bind(&request.phone_number)
         .bind(&request.residence_city_id)
+        .map(client_from_row)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(client)
+    }
+
+    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> Result<Client> {
+        let client = sqlx::query(
+            r#"
+                UPDATE clients
+                SET first_name = $1,
+                    last_name = $2,
+                    email = $3,
+                    phone_number = $4,
+                    residence_city_id = $5
+                WHERE client_id = $6
+                RETURNING client_id, first_name, last_name, email, phone_number, residence_city_id
+            "#,
+        )
+        .bind(&request.first_name)
+        .bind(&request.last_name)
+        .bind(&request.email)
+        .bind(&request.phone_number)
+        .bind(&request.residence_city_id)
+        .bind(client_id)
         .map(client_from_row)
         .fetch_one(&self.pool)
         .await?;
