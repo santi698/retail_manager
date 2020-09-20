@@ -20,6 +20,7 @@ export interface CreateClientRequest {
   email: string;
   phone_number: string;
   residence_city_id: string;
+  address: string;
 }
 
 export function CreateClientForm({
@@ -35,6 +36,7 @@ export function CreateClientForm({
     email: "",
     phone_number: "",
     residence_city_id: "",
+    address: "",
   };
   return (
     <Formik
@@ -164,6 +166,21 @@ export function CreateClientForm({
                 ))}
               </Select>
               <FormErrorMessage>{errors.residence_city_id}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              id="address"
+              isInvalid={
+                errors.address !== undefined && touched.address === true
+              }
+            >
+              <FormLabel>Dirección</FormLabel>
+              <Input
+                name="address"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.address}
+              />
+              <FormErrorMessage>{errors.address}</FormErrorMessage>
             </FormControl>
             <Stack direction="row">
               <Button

@@ -32,6 +32,7 @@ export interface Client {
   email?: string;
   phone_number?: string;
   residence_city_id: number;
+  address?: string;
 }
 
 export interface Product {

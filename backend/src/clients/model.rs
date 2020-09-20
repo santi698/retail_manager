@@ -8,6 +8,7 @@ pub struct ClientCreateRequest {
     pub email: Option<String>,
     pub phone_number: Option<String>,
     pub residence_city_id: i32,
+    pub address: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -17,6 +18,7 @@ pub struct ClientUpdateRequest {
     pub email: Option<String>,
     pub phone_number: Option<String>,
     pub residence_city_id: i32,
+    pub address: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -27,6 +29,7 @@ pub struct Client {
     pub email: Option<String>,
     pub phone_number: Option<String>,
     pub residence_city_id: i32,
+    pub address: Option<String>,
 }
 
 #[async_trait]

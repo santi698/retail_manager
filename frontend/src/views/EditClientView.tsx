@@ -31,6 +31,7 @@ export function EditClientView() {
           email,
           phone_number,
           residence_city_id,
+          address,
         }) => {
           editClient(clientId, {
             first_name,
@@ -38,6 +39,7 @@ export function EditClientView() {
             email,
             phone_number,
             residence_city_id: parseInt(residence_city_id),
+            address,
           }).then(() => {
             refetchClients();
             navigate(`/clients/${clientId}`);

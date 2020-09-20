@@ -54,6 +54,9 @@ export function ShowClientView() {
             )?.name
           }
         </Text>
+        <Text fontSize="lg" lineHeight="1.5">
+          <strong>Dirección:</strong> {client.data.address}
+        </Text>
 
         <Box mt={2} width="300px">
           <Heading fontSize="xl">Pedidos</Heading>

@@ -22,6 +22,7 @@ export interface EditClientRequest {
   email: string;
   phone_number: string;
   residence_city_id: string;
+  address: string;
 }
 
 function clientToForm(client: Client): EditClientRequest {
@@ -31,6 +32,7 @@ function clientToForm(client: Client): EditClientRequest {
     email: client.email || "",
     phone_number: client.phone_number || "",
     residence_city_id: client.residence_city_id.toString(),
+    address: client.address || "",
   };
 }
 
@@ -172,6 +174,21 @@ export function EditClientForm({ clientId, onSubmit }: EditClientFormProps) {
                 ))}
               </Select>
               <FormErrorMessage>{errors.residence_city_id}</FormErrorMessage>
+            </FormControl>
+            <FormControl
+              id="address"
+              isInvalid={
+                errors.address !== undefined && touched.address === true
+              }
+            >
+              <FormLabel>Dirección</FormLabel>
+              <Input
+                name="address"
+                onBlur={handleBlur}
+                onChange={handleChange}
+                value={values.address}
+              />
+              <FormErrorMessage>{errors.address}</FormErrorMessage>
             </FormControl>
             <Stack direction="row">
               <Button

@@ -27,6 +27,7 @@ export function CreateClientView() {
           email,
           phone_number,
           residence_city_id,
+          address,
         }) => {
           createClient({
             first_name,
@@ -34,6 +35,7 @@ export function CreateClientView() {
             email,
             phone_number,
             residence_city_id: parseInt(residence_city_id),
+            address,
           }).then(() => {
             refetchClients();
             navigate("/clients");
