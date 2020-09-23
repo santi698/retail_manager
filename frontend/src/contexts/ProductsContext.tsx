@@ -6,7 +6,7 @@ const {
   Provider: ProductsProvider,
   useData: useProducts,
 } = makeLoadableContext<ProductWithPrice[]>({
-  fetchUrl: "http://localhost:5000/products",
+  fetchUrl: "http://192.168.1.104:5000/api/products",
 });
 
 export { ProductsProvider, useProducts };

@@ -5,7 +5,7 @@ import { Loadable } from "../Loadable";
 const { Provider: CitiesProvider, useData: useCities } = makeLoadableContext<
   City[]
 >({
-  fetchUrl: "http://localhost:5000/cities",
+  fetchUrl: "http://192.168.1.104:5000/api/cities",
 });
 
 export { CitiesProvider, useCities };

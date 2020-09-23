@@ -1,5 +1,4 @@
 use anyhow::Result;
-use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 use super::{City, CityRepository};

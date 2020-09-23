@@ -25,6 +25,7 @@ import { CreateOrderView } from "./views/CreateOrderView";
 import { CreateClientView } from "./views/CreateClientView";
 import { EditClientView } from "./views/EditClientView";
 import { ShowClientView } from "./views/ShowClientView";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const Layout = styled.div`
   display: grid;
@@ -39,27 +40,29 @@ const GLOBAL_REFETCH_INTERVAL = 600000;
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ChakraProvider theme={theme} resetCSS>
-      <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-        <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-          <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-            <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-              <MeasurementUnitsProvider
-                refetchInterval={GLOBAL_REFETCH_INTERVAL}
-              >
-                {children}
-              </MeasurementUnitsProvider>
-            </ProductsProvider>
-          </ClientsProvider>
-        </ClientOrdersProvider>
-      </CitiesProvider>
+      <AuthProvider>
+        <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+          <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+            <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+              <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
+                <MeasurementUnitsProvider
+                  refetchInterval={GLOBAL_REFETCH_INTERVAL}
+                >
+                  {children}
+                </MeasurementUnitsProvider>
+              </ProductsProvider>
+            </ClientsProvider>
+          </ClientOrdersProvider>
+        </CitiesProvider>
+      </AuthProvider>
     </ChakraProvider>
   );
 }
 
 function App() {
   return (
-    <AppProviders>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AppProviders>
         <Layout>
           <NavBar />
           <div style={{ gridArea: "main", padding: "48px" }}>
@@ -84,8 +87,8 @@ function App() {
             </Stack>
           </Container>
         </Layout>
-      </BrowserRouter>
-    </AppProviders>
+      </AppProviders>
+    </BrowserRouter>
   );
 }
 

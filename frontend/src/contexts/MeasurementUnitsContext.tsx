@@ -5,7 +5,7 @@ const {
   Provider: MeasurementUnitsProvider,
   useData: useMeasurementUnits,
 } = makeLoadableContext<MeasurementUnit[]>({
-  fetchUrl: "http://localhost:5000/measurement_units",
+  fetchUrl: "http://192.168.1.104:5000/api/measurement_units",
 });
 
 export { MeasurementUnitsProvider, useMeasurementUnits };

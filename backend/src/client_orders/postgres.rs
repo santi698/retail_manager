@@ -3,7 +3,6 @@ use super::{
     ClientOrderRepository, ClientOrderUpdateRequest,
 };
 use anyhow::Result;
-use async_trait::async_trait;
 use sqlx::{
     postgres::{PgPool, PgRow},
     Row,

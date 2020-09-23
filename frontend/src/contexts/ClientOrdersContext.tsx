@@ -5,7 +5,7 @@ const {
   Provider: ClientOrdersProvider,
   useData: useClientOrders,
 } = makeLoadableContext<ClientOrder[]>({
-  fetchUrl: "http://localhost:5000/client_orders",
+  fetchUrl: "http://192.168.1.104:5000/api/client_orders",
 });
 
 export { ClientOrdersProvider, useClientOrders };

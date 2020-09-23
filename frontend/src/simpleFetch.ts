@@ -9,29 +9,36 @@ export class HttpStatusCodeError extends Error {
   }
 }
 
-export type SimpleFetchOptions =
-  | {
-      method?: "GET" | "DELETE";
-      json?: undefined;
-      body?: undefined;
-      contentType?: undefined;
-    }
-  | {
-      method?: "POST" | "PUT";
-      body?: undefined;
-      json: object;
-      contentType?: undefined;
-    }
-  | {
-      method?: "POST" | "PUT";
-      json?: undefined;
-      body: string;
-      contentType: string;
-    };
+export type AdvancedOptions = Omit<
+  RequestInit,
+  "method" | "body" | "headers" | "signal"
+>;
+
+export type SimpleFetchOptions = AdvancedOptions &
+  (
+    | {
+        method?: "GET" | "DELETE";
+        json?: undefined;
+        body?: undefined;
+        contentType?: undefined;
+      }
+    | {
+        method?: "POST" | "PUT";
+        body?: undefined;
+        json: object;
+        contentType?: undefined;
+      }
+    | {
+        method?: "POST" | "PUT";
+        json?: undefined;
+        body: string;
+        contentType: string;
+      }
+  );
 
 export function simpleFetch(
   url: string,
-  { method = "GET", json, body, contentType }: SimpleFetchOptions = {
+  { method = "GET", json, body, contentType, ...rest }: SimpleFetchOptions = {
     method: "GET",
   }
 ) {
@@ -47,6 +54,7 @@ export function simpleFetch(
           "Content-Type": isJson ? "application/json" : (contentType as string),
         }
       : undefined,
+    ...rest,
   }).then((response) => {
     if (response.status >= 400) {
       throw new HttpStatusCodeError(response.status);

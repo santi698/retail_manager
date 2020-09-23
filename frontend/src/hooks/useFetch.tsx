@@ -23,7 +23,7 @@ export function useFetch<T>(url: string): UseFetchResult<T> {
           throw new Error(`Loading started on invalid state ${prev.state}`);
       }
     });
-    const { response, abort } = simpleFetch(url);
+    const { response, abort } = simpleFetch(url, { credentials: "include" });
     response
       .then((response) => response.json())
       .then((data) =>

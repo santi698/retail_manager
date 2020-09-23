@@ -1,6 +1,5 @@
 use super::{MeasurementUnit, MeasurementUnitRepository};
 use anyhow::Result;
-use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 fn measurement_unit_from_row(row: PgRow) -> MeasurementUnit {
