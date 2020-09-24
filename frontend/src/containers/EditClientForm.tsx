@@ -12,6 +12,7 @@ import {
   FormControl,
 } from "@chakra-ui/core";
 import { PhoneIcon, AtSignIcon } from "@chakra-ui/icons";
+import { Link } from "react-router-dom";
 import { useCities } from "../contexts/CitiesContext";
 import { useClient } from "../contexts/ClientsContext";
 import { Client } from "../model";
@@ -197,6 +198,14 @@ export function EditClientForm({ clientId, onSubmit }: EditClientFormProps) {
                 isLoading={isSubmitting}
               >
                 Guardar cliente
+              </Button>
+              <Button
+                as={Link}
+                colorScheme="purple"
+                variant="ghost"
+                to={`/clients/${clientId}`}
+              >
+                Cancelar y Volver
               </Button>
             </Stack>
           </Stack>

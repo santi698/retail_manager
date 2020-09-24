@@ -1,10 +1,9 @@
 import React from "react";
 import { useClient } from "../contexts/ClientsContext";
-import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
 import { useCities } from "../contexts/CitiesContext";
-import { useMatch } from "react-router-dom";
-import { Box, Heading, Text } from "@chakra-ui/core";
+import { Link, useMatch } from "react-router-dom";
+import { Box, Button, Heading, Stack, Text } from "@chakra-ui/core";
 import { useClientOrders } from "../contexts/ClientOrdersContext";
 import { Currency } from "../components/Currency";
 import { Table } from "../components/Table";
@@ -13,6 +12,7 @@ import { translatePaymentStatus } from "../translatePaymentStatus";
 import { StatusBadge } from "../components/StatusBadge";
 import { orderStatusToColorVariant } from "../orderStatusToColorVariant";
 import { paymentStatusToColorVariant } from "../paymentStatusToColorVariant";
+import { EditIcon } from "@chakra-ui/icons";
 
 export function ShowClientView() {
   const match = useMatch("/clients/:id");
@@ -35,11 +35,25 @@ export function ShowClientView() {
   );
   return (
     <ViewContainer>
-      <ViewTitle>Cliente</ViewTitle>
-      <Box border="1px solid" padding={2} borderColor="gray.500">
+      <Box
+        border="1px solid"
+        padding={2}
+        borderColor="gray.300"
+        borderRadius="9px"
+      >
         <Heading as="h2" fontSize="2xl" mb={2}>
           {client.data.first_name} {client.data.last_name}
         </Heading>
+        <Stack direction="row" marginY={2}>
+          <Button
+            as={Link}
+            leftIcon={<EditIcon />}
+            size="sm"
+            to={`/clients/${client.data.client_id}/edit`}
+          >
+            Editar
+          </Button>
+        </Stack>
         <Text fontSize="lg" lineHeight="1.5">
           <strong>Teléfono:</strong> {client.data.phone_number}
         </Text>
