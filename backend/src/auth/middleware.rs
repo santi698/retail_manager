@@ -50,9 +50,7 @@ where
 
     fn call(&mut self, req: ServiceRequest) -> Self::Future {
         let identity = RequestIdentity::get_identity(&req).unwrap_or("".into());
-        info!("Identity token is {}", identity);
         let jwt_claim = decode_jwt(&identity);
-        info!("JWT claim is {:?}", jwt_claim);
         let is_logged_in = jwt_claim.is_ok();
         let unauthorized = !is_logged_in;
 

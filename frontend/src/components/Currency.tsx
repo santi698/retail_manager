@@ -8,3 +8,7 @@ const currencyFormatter = new Intl.NumberFormat(navigator.language, {
 export function Currency({ children }: { children: number }) {
   return <>{currencyFormatter.format(children)}</>;
 }
+
+export function formatCurrency(number: number) {
+  return currencyFormatter.format(number);
+}

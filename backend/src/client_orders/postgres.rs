@@ -132,15 +132,13 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
     async fn update(&self, id: i32, request: ClientOrderUpdateRequest) -> Result<ClientOrder> {
         sqlx::query(
             r#"
-                   UPDATE client_orders (client_id, order_city_id)
-                      SET ordered_at = $1,
-                          order_city_id = $2,
-                          order_status = $3,
-                          payment_status = $4
-                    WHERE id = $5
+                   UPDATE client_orders
+                      SET order_city_id = $1,
+                          order_status = $2,
+                          payment_status = $3
+                    WHERE order_id = $4
             "#,
         )
-        .bind(request.ordered_at)
         .bind(request.order_city_id)
         .bind(request.order_status)
         .bind(request.payment_status)
@@ -196,12 +194,11 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
             INSERT INTO client_order_items (
                 product_id, client_order_id, quantity, selling_price
             )
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4)
             RETURNING client_order_item_id, product_id, client_order_id,
                       quantity, selling_price
         "#,
         )
-        .bind(chrono::Utc::now().naive_utc())
         .bind(request.product_id)
         .bind(order_id)
         .bind(request.quantity)

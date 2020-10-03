@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Currency } from "../components/Currency";
 import { ClientOrder, Client } from "../model";
 import { StatusBadge } from "../components/StatusBadge";
@@ -12,6 +13,8 @@ import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
 import { InvisibleButton } from "../components/InvisibleButton";
 import { orderStatusToColorVariant } from "../orderStatusToColorVariant";
 import { paymentStatusToColorVariant } from "../paymentStatusToColorVariant";
+import { Button, Stack } from "@chakra-ui/core";
+import { EditIcon } from "@chakra-ui/icons";
 
 export function OrderRow({
   order,
@@ -62,19 +65,29 @@ export function OrderRow({
         </td>
         <td className="currency">{<Currency>{order.total_price}</Currency>}</td>
         <td>
-          <InvisibleButton onClick={toggleExpanded} size="xs">
-            {expanded ? (
-              <BsCaretUpFill
-                size="1.25em"
-                style={{ verticalAlign: "middle" }}
-              />
-            ) : (
-              <BsCaretDownFill
-                size="1.25em"
-                style={{ verticalAlign: "middle" }}
-              />
-            )}
-          </InvisibleButton>
+          <Stack direction="row">
+            <Button
+              as={Link}
+              leftIcon={<EditIcon />}
+              size="xs"
+              to={`/orders/${order.order_id}/edit`}
+            >
+              Editar
+            </Button>
+            <InvisibleButton onClick={toggleExpanded} size="xs">
+              {expanded ? (
+                <BsCaretUpFill
+                  size="1.25em"
+                  style={{ verticalAlign: "middle" }}
+                />
+              ) : (
+                <BsCaretDownFill
+                  size="1.25em"
+                  style={{ verticalAlign: "middle" }}
+                />
+              )}
+            </InvisibleButton>
+          </Stack>
         </td>
       </tr>
       {loadingItems.state === "loaded" && (

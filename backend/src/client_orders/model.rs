@@ -9,7 +9,6 @@ pub struct ClientOrderCreateRequest {
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientOrderUpdateRequest {
-    pub ordered_at: chrono::NaiveDateTime,
     pub order_city_id: i32,
     pub order_status: String,
     pub payment_status: String,

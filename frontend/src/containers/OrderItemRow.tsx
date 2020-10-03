@@ -38,7 +38,7 @@ export function OrderItemRow({ item }: { item: ClientOrderItem }) {
       </td>
       <td className="currency">
         <Currency>{item.selling_price}</Currency>
-        {priceDifference > 0 && (
+        {priceDifference !== 0 && (
           <>
             {" "}
             /{" "}
@@ -49,9 +49,7 @@ export function OrderItemRow({ item }: { item: ClientOrderItem }) {
         )}
       </td>
       <td>
-        <Percentage>
-          {(normalPrice - item.selling_price) / normalPrice}
-        </Percentage>
+        <Percentage>{priceDifference / normalPrice}</Percentage>
       </td>
     </tr>
   );
