@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 pub struct ClientCreateRequest {
@@ -33,8 +32,8 @@ pub struct Client {
 
 #[async_trait]
 pub trait ClientRepository {
-    async fn find_all(&self) -> Result<Vec<Client>>;
-    async fn find_by_id(&self, client_id: i32) -> Result<Client>;
-    async fn create(&self, request: ClientCreateRequest) -> Result<Client>;
-    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> Result<Client>;
+    async fn find_all(&self) -> anyhow::Result<Vec<Client>>;
+    async fn find_by_id(&self, client_id: i32) -> anyhow::Result<Client>;
+    async fn create(&self, request: ClientCreateRequest) -> anyhow::Result<Client>;
+    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> anyhow::Result<Client>;
 }

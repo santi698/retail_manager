@@ -1,16 +1,13 @@
 extern crate pretty_env_logger;
 
-use retail_manager::run;
-
-use anyhow::Result;
 use dotenv::dotenv;
 
 #[actix_rt::main]
-async fn main() -> Result<()> {
+async fn main() -> anyhow::Result<()> {
     dotenv().ok();
     pretty_env_logger::init();
 
-    run().await?.await?;
+    retail_manager::run().await?.await?;
 
     Ok(())
 }

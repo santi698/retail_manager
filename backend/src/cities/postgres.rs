@@ -1,4 +1,3 @@
-use anyhow::Result;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 use super::{City, CityRepository};
@@ -25,7 +24,7 @@ impl PostgresCityRepository {
 
 #[async_trait]
 impl CityRepository for PostgresCityRepository {
-    async fn find_all(&self) -> Result<Vec<City>> {
+    async fn find_all(&self) -> anyhow::Result<Vec<City>> {
         let products = sqlx::query(
             r#"
                 SELECT *
@@ -40,7 +39,7 @@ impl CityRepository for PostgresCityRepository {
         Ok(products)
     }
 
-    async fn find_by_id(&self, id: i32) -> Result<City> {
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<City> {
         let product = sqlx::query(
             r#"
                 SELECT * FROM cities WHERE id = $1

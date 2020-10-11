@@ -23,6 +23,7 @@ pub struct Config {
     pub jwt_key: String,
     pub jwt_expiration_h: i64,
     pub cors_allowed_origin: String,
+    pub frontend_base_url: String,
 }
 
 // Throw the Config struct into a CONFIG lazy_static to avoid multiple processing
@@ -31,7 +32,7 @@ lazy_static! {
 }
 
 /// Use envy to inject dotenv and env vars into the Config struct
-pub fn get_config() -> Config {
+fn get_config() -> Config {
     dotenv().ok();
 
     match envy::from_env::<Config>() {

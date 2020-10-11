@@ -11,11 +11,11 @@ use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::{dev::Server, http, App, HttpServer};
 use actix_web::{middleware::Logger, web::scope};
-use anyhow::Result;
 use chrono::Duration;
 use cities::{CityRepository, PostgresCityRepository};
 use client_orders::{ClientOrderRepository, PostgresClientOrderRepository};
 use clients::{ClientRepository, PostgresClientRepository};
+use config::CONFIG;
 use identities::{EmailAndPasswordIdentityRepository, PostgresEmailAndPasswordIdentityRepository};
 use measurement_units::{MeasurementUnitRepository, PostgresMeasurementUnitRepository};
 use products::{PostgresProductRepository, ProductRepository};
@@ -69,20 +69,18 @@ impl Clone for AppContext {
     }
 }
 
-pub async fn run() -> Result<Server> {
-    let config = config::get_config();
-    let db_pool = PgPool::new(&config.database_url).await?;
+pub async fn run() -> anyhow::Result<Server> {
+    let db_pool = PgPool::new(&CONFIG.database_url).await?;
     info!(
         "Server listening on {}:{}",
-        config.http_host, config.http_port
+        CONFIG.http_host, CONFIG.http_port
     );
     let server = HttpServer::new(move || {
-        let config = config::get_config();
         App::new()
             .wrap(Logger::default())
             .wrap(
                 Cors::new()
-                    .allowed_origin(&config.cors_allowed_origin)
+                    .allowed_origin(&CONFIG.cors_allowed_origin)
                     .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
@@ -90,11 +88,11 @@ pub async fn run() -> Result<Server> {
                     .finish(),
             )
             .wrap(IdentityService::new(
-                CookieIdentityPolicy::new(&config.session_secret.into_bytes())
-                    .name(config.session_name)
-                    .secure(config.session_secure)
+                CookieIdentityPolicy::new(&CONFIG.session_secret.clone().into_bytes())
+                    .name(&CONFIG.session_name)
+                    .secure(CONFIG.session_secure)
                     .path("/")
-                    .max_age(Duration::hours(config.session_max_age_h).num_seconds()),
+                    .max_age(Duration::hours(CONFIG.session_max_age_h).num_seconds()),
             ))
             .data(AppContext::new(db_pool.clone()))
             .service(scope("/auth").configure(auth::init))
@@ -108,7 +106,7 @@ pub async fn run() -> Result<Server> {
                     .configure(measurement_units::init),
             )
     })
-    .bind(format!("{}:{}", config.http_host, config.http_port))?
+    .bind(format!("{}:{}", CONFIG.http_host, CONFIG.http_port))?
     .run();
 
     Ok(server)

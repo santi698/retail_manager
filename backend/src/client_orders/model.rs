@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -44,16 +43,20 @@ pub struct ClientOrderItem {
 
 #[async_trait]
 pub trait ClientOrderRepository {
-    async fn find_all(&self) -> Result<Vec<ClientOrder>>;
-    async fn find_by_id(&self, id: i32) -> Result<ClientOrder>;
-    async fn create(&self, request: ClientOrderCreateRequest) -> Result<ClientOrder>;
-    async fn update(&self, id: i32, request: ClientOrderUpdateRequest) -> Result<ClientOrder>;
-    async fn find_item(&self, order_id: i32, item_id: i32) -> Result<ClientOrderItem>;
-    async fn find_items(&self, order_id: i32) -> Result<Vec<ClientOrderItem>>;
+    async fn find_all(&self) -> anyhow::Result<Vec<ClientOrder>>;
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<ClientOrder>;
+    async fn create(&self, request: ClientOrderCreateRequest) -> anyhow::Result<ClientOrder>;
+    async fn update(
+        &self,
+        id: i32,
+        request: ClientOrderUpdateRequest,
+    ) -> anyhow::Result<ClientOrder>;
+    async fn find_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<ClientOrderItem>;
+    async fn find_items(&self, order_id: i32) -> anyhow::Result<Vec<ClientOrderItem>>;
     async fn add_item(
         &self,
         order_id: i32,
         request: ClientOrderAddItemRequest,
-    ) -> Result<ClientOrderItem>;
-    async fn remove_item(&self, order_id: i32, item_id: i32) -> Result<()>;
+    ) -> anyhow::Result<ClientOrderItem>;
+    async fn remove_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<()>;
 }

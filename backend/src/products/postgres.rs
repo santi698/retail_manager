@@ -1,4 +1,3 @@
-use anyhow::Result;
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
@@ -25,7 +24,7 @@ impl PostgresProductRepository {
 
 #[async_trait]
 impl ProductRepository for PostgresProductRepository {
-    async fn find_all(&self) -> Result<Vec<Product>> {
+    async fn find_all(&self) -> anyhow::Result<Vec<Product>> {
         let products = sqlx::query(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
@@ -42,7 +41,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(products)
     }
 
-    async fn find_by_code(&self, product_code: i32) -> Result<Product> {
+    async fn find_by_code(&self, product_code: i32) -> anyhow::Result<Product> {
         let product = sqlx::query(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
@@ -60,7 +59,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
-    async fn create(&self, request: ProductCreateRequest) -> Result<Product> {
+    async fn create(&self, request: ProductCreateRequest) -> anyhow::Result<Product> {
         let product_code = sqlx::query(
             r#"
                 INSERT INTO products (product_name, measurement_unit_id) VALUES ($1, $2)
@@ -78,7 +77,11 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
-    async fn update(&self, product_code: i32, request: ProductUpdateRequest) -> Result<Product> {
+    async fn update(
+        &self,
+        product_code: i32,
+        request: ProductUpdateRequest,
+    ) -> anyhow::Result<Product> {
         sqlx::query(
             r#"
                 UPDATE products SET product_name = $1
@@ -95,7 +98,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
-    async fn delete(&self, product_code: i32) -> Result<u64> {
+    async fn delete(&self, product_code: i32) -> anyhow::Result<u64> {
         let deleted = sqlx::query!("DELETE FROM products WHERE product_code = $1", product_code)
             .execute(&self.pool)
             .await?;

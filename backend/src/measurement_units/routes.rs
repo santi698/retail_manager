@@ -1,21 +1,11 @@
 use crate::AppContext;
 
-use super::MeasurementUnit;
-use actix_web::{get, web, Error, HttpRequest, HttpResponse, Responder};
-use futures::{future::ready, future::Ready};
+use actix_web::{get, web, HttpResponse, Responder};
 use log::error;
 
-impl Responder for MeasurementUnit {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-        // create response and set content type
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
+pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.service(find_all);
+    cfg.service(find_by_id);
 }
 
 #[get("/measurement_units")]
@@ -46,9 +36,4 @@ async fn find_by_id(id: web::Path<i32>, context: web::Data<AppContext>) -> impl 
             HttpResponse::BadRequest().body("MeasurementUnit not found")
         }
     }
-}
-
-pub fn init(cfg: &mut web::ServiceConfig) {
-    cfg.service(find_all);
-    cfg.service(find_by_id);
 }

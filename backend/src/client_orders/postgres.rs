@@ -2,7 +2,6 @@ use super::{
     ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderItem,
     ClientOrderRepository, ClientOrderUpdateRequest,
 };
-use anyhow::Result;
 use sqlx::{
     postgres::{PgPool, PgRow},
     Row,
@@ -69,7 +68,7 @@ fn client_order_item_from_row(row: PgRow) -> ClientOrderItem {
 
 #[async_trait]
 impl ClientOrderRepository for PostgresClientOrderRepository {
-    async fn find_all(&self) -> Result<Vec<ClientOrder>> {
+    async fn find_all(&self) -> anyhow::Result<Vec<ClientOrder>> {
         let orders = sqlx::query(
             r#"
                 SELECT client_orders.*,
@@ -90,7 +89,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(orders)
     }
 
-    async fn find_by_id(&self, id: i32) -> Result<ClientOrder> {
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<ClientOrder> {
         let order = sqlx::query(
             r#"
                 SELECT client_orders.*,
@@ -111,7 +110,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order)
     }
 
-    async fn create(&self, request: ClientOrderCreateRequest) -> Result<ClientOrder> {
+    async fn create(&self, request: ClientOrderCreateRequest) -> anyhow::Result<ClientOrder> {
         let id = sqlx::query(
             r#"
                 INSERT INTO client_orders (client_id, order_city_id)
@@ -129,7 +128,11 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(new_order)
     }
 
-    async fn update(&self, id: i32, request: ClientOrderUpdateRequest) -> Result<ClientOrder> {
+    async fn update(
+        &self,
+        id: i32,
+        request: ClientOrderUpdateRequest,
+    ) -> anyhow::Result<ClientOrder> {
         sqlx::query(
             r#"
                    UPDATE client_orders
@@ -151,7 +154,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order_after)
     }
 
-    async fn find_item(&self, order_id: i32, item_id: i32) -> Result<ClientOrderItem> {
+    async fn find_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<ClientOrderItem> {
         let item = sqlx::query(
             r#"
               SELECT *
@@ -168,7 +171,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(item)
     }
 
-    async fn find_items(&self, order_id: i32) -> Result<Vec<ClientOrderItem>> {
+    async fn find_items(&self, order_id: i32) -> anyhow::Result<Vec<ClientOrderItem>> {
         let items = sqlx::query(
             r#"
             SELECT *
@@ -188,7 +191,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         &self,
         order_id: i32,
         request: ClientOrderAddItemRequest,
-    ) -> Result<ClientOrderItem> {
+    ) -> anyhow::Result<ClientOrderItem> {
         let order_item = sqlx::query(
             r#"
             INSERT INTO client_order_items (
@@ -210,7 +213,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order_item)
     }
 
-    async fn remove_item(&self, order_id: i32, item_id: i32) -> Result<()> {
+    async fn remove_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<()> {
         sqlx::query(
             r#"
             DELETE FROM client_order_items

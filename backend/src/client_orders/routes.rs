@@ -1,23 +1,19 @@
 use crate::AppContext;
 
-use super::{
-    ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest,
-};
+use super::{ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use actix_web::{Error, HttpRequest};
-use futures::future::{ready, Ready};
 use log::error;
 use serde::Deserialize;
 
-impl Responder for ClientOrder {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
+pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.service(find_all);
+    cfg.service(find_by_id);
+    cfg.service(create);
+    cfg.service(update);
+    cfg.service(find_items);
+    cfg.service(find_item);
+    cfg.service(add_item);
+    cfg.service(remove_item);
 }
 
 #[get("/client_orders")]
@@ -172,15 +168,4 @@ async fn remove_item(
             HttpResponse::BadRequest().body("Error removing item from order")
         }
     }
-}
-
-pub fn init(cfg: &mut web::ServiceConfig) {
-    cfg.service(find_all);
-    cfg.service(find_by_id);
-    cfg.service(create);
-    cfg.service(update);
-    cfg.service(find_items);
-    cfg.service(find_item);
-    cfg.service(add_item);
-    cfg.service(remove_item);
 }

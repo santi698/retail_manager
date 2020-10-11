@@ -1,5 +1,4 @@
 use super::{MeasurementUnit, MeasurementUnitRepository};
-use anyhow::Result;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 fn measurement_unit_from_row(row: PgRow) -> MeasurementUnit {
@@ -22,7 +21,7 @@ impl PostgresMeasurementUnitRepository {
 
 #[async_trait]
 impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
-    async fn find_all(&self) -> Result<Vec<MeasurementUnit>> {
+    async fn find_all(&self) -> anyhow::Result<Vec<MeasurementUnit>> {
         let products = sqlx::query(
             r#"
                 SELECT *
@@ -37,7 +36,7 @@ impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
         Ok(products)
     }
 
-    async fn find_by_id(&self, id: i32) -> Result<MeasurementUnit> {
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<MeasurementUnit> {
         let product = sqlx::query(
             r#"
                 SELECT * FROM measurement_units WHERE id = $1

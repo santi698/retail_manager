@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -22,9 +21,13 @@ pub struct Product {
 
 #[async_trait]
 pub trait ProductRepository {
-    async fn find_all(&self) -> Result<Vec<Product>>;
-    async fn find_by_code(&self, product_code: i32) -> Result<Product>;
-    async fn create(&self, request: ProductCreateRequest) -> Result<Product>;
-    async fn update(&self, product_code: i32, request: ProductUpdateRequest) -> Result<Product>;
-    async fn delete(&self, product_code: i32) -> Result<u64>;
+    async fn find_all(&self) -> anyhow::Result<Vec<Product>>;
+    async fn find_by_code(&self, product_code: i32) -> anyhow::Result<Product>;
+    async fn create(&self, request: ProductCreateRequest) -> anyhow::Result<Product>;
+    async fn update(
+        &self,
+        product_code: i32,
+        request: ProductUpdateRequest,
+    ) -> anyhow::Result<Product>;
+    async fn delete(&self, product_code: i32) -> anyhow::Result<u64>;
 }

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 use super::{EmailAndPasswordIdentity, EmailAndPasswordIdentityRepository};
@@ -15,7 +14,7 @@ impl PostgresEmailAndPasswordIdentityRepository {
 
 #[async_trait]
 impl EmailAndPasswordIdentityRepository for PostgresEmailAndPasswordIdentityRepository {
-    async fn find_by_email(&self, email: &str) -> Result<EmailAndPasswordIdentity> {
+    async fn find_by_email(&self, email: &str) -> anyhow::Result<EmailAndPasswordIdentity> {
         let identity = sqlx::query(
             r#"
               SELECT * FROM email_and_password_identities WHERE email = $1

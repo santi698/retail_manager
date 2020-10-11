@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use crate::crypto::compare;
-use anyhow::Result;
 
 #[derive(Debug, Serialize)]
 pub struct EmailAndPasswordIdentity {
@@ -19,5 +18,5 @@ impl EmailAndPasswordIdentity {
 
 #[async_trait]
 pub trait EmailAndPasswordIdentityRepository {
-    async fn find_by_email(&self, email: &str) -> Result<EmailAndPasswordIdentity>;
+    async fn find_by_email(&self, email: &str) -> anyhow::Result<EmailAndPasswordIdentity>;
 }

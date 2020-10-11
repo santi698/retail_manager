@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -10,5 +9,5 @@ pub struct User {
 
 #[async_trait]
 pub trait UserRepository {
-    async fn find_by_id(&self, id: i32) -> Result<User>;
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<User>;
 }

@@ -1,4 +1,3 @@
-use anyhow::Result;
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
@@ -16,7 +15,7 @@ impl PostgresClientRepository {
 
 #[async_trait]
 impl ClientRepository for PostgresClientRepository {
-    async fn find_all(&self) -> Result<Vec<Client>> {
+    async fn find_all(&self) -> anyhow::Result<Vec<Client>> {
         let clients = sqlx::query(
             r#"
                 SELECT *
@@ -31,7 +30,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(clients)
     }
 
-    async fn find_by_id(&self, client_id: i32) -> Result<Client> {
+    async fn find_by_id(&self, client_id: i32) -> anyhow::Result<Client> {
         let client = sqlx::query_as!(
             Client,
             r#"
@@ -45,7 +44,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
-    async fn create(&self, request: ClientCreateRequest) -> Result<Client> {
+    async fn create(&self, request: ClientCreateRequest) -> anyhow::Result<Client> {
         let client = sqlx::query(
             r#"
                 INSERT INTO clients (
@@ -78,7 +77,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
-    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> Result<Client> {
+    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> anyhow::Result<Client> {
         let client = sqlx::query(
             r#"
                 UPDATE clients

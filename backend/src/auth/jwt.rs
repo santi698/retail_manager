@@ -1,5 +1,4 @@
 use crate::config::CONFIG;
-use anyhow::Result;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
@@ -21,12 +20,12 @@ impl JwtClaim {
     }
 }
 
-pub fn create_jwt(claim: JwtClaim) -> Result<String> {
+pub fn create_jwt(claim: JwtClaim) -> anyhow::Result<String> {
     let encoding_key = EncodingKey::from_secret(&CONFIG.jwt_key.as_ref());
     Ok(encode(&Header::default(), &claim, &encoding_key)?)
 }
 
-pub fn decode_jwt(token: &str) -> Result<JwtClaim> {
+pub fn decode_jwt(token: &str) -> anyhow::Result<JwtClaim> {
     let decoding_key = DecodingKey::from_secret(&CONFIG.jwt_key.as_ref());
     let claim =
         decode::<JwtClaim>(token, &decoding_key, &Validation::default()).map(|data| data.claims)?;

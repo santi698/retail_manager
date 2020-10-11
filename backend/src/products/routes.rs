@@ -1,24 +1,17 @@
 use crate::{
-    products::{Product, ProductCreateRequest, ProductUpdateRequest},
+    products::{ProductCreateRequest, ProductUpdateRequest},
     AppContext,
 };
 
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use actix_web::{Error, HttpRequest};
-use futures::future::{ready, Ready};
 use log::error;
 
-impl Responder for Product {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-        // create response and set content type
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
+pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.service(find_all);
+    cfg.service(find);
+    cfg.service(create);
+    cfg.service(update);
+    cfg.service(delete);
 }
 
 #[get("/products")]
@@ -92,13 +85,4 @@ async fn delete(product_code: web::Path<i32>, context: web::Data<AppContext>) ->
         }
         _ => HttpResponse::BadRequest().body("Product not found"),
     }
-}
-
-// function that will be called on new Application to configure routes for this module
-pub fn init(cfg: &mut web::ServiceConfig) {
-    cfg.service(find_all);
-    cfg.service(find);
-    cfg.service(create);
-    cfg.service(update);
-    cfg.service(delete);
 }

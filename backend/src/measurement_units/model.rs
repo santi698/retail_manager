@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -10,6 +9,6 @@ pub struct MeasurementUnit {
 
 #[async_trait]
 pub trait MeasurementUnitRepository {
-    async fn find_all(&self) -> Result<Vec<MeasurementUnit>>;
-    async fn find_by_id(&self, id: i32) -> Result<MeasurementUnit>;
+    async fn find_all(&self) -> anyhow::Result<Vec<MeasurementUnit>>;
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<MeasurementUnit>;
 }

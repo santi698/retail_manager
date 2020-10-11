@@ -1,25 +1,15 @@
-use crate::{
-    clients::{Client, ClientCreateRequest},
-    AppContext,
-};
+use crate::{clients::ClientCreateRequest, AppContext};
 
 use actix_web::{get, post, put, web, HttpResponse, Responder};
-use actix_web::{Error, HttpRequest};
-use anyhow::Result;
-use futures::future::{ready, Ready};
 use log::error;
 
 use super::ClientUpdateRequest;
 
-impl Responder for Client {
-    type Error = Error;
-    type Future = Ready<Result<HttpResponse, Error>>;
-    fn respond_to(self, _req: &HttpRequest) -> Self::Future {
-        let body = serde_json::to_string(&self).unwrap();
-        ready(Ok(HttpResponse::Ok()
-            .content_type("application/json")
-            .body(body)))
-    }
+pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.service(find_all);
+    cfg.service(find_by_id);
+    cfg.service(create);
+    cfg.service(update);
 }
 
 #[get("/clients")]
@@ -75,11 +65,4 @@ async fn update(
             HttpResponse::BadRequest().body("Error trying to update client")
         }
     }
-}
-
-pub fn init(cfg: &mut web::ServiceConfig) {
-    cfg.service(find_all);
-    cfg.service(find_by_id);
-    cfg.service(create);
-    cfg.service(update);
 }

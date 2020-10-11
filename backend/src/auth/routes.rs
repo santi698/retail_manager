@@ -8,8 +8,15 @@ use actix_web::{
 use serde::Deserialize;
 
 use crate::AppContext;
+use crate::CONFIG;
 
 use super::{create_jwt, decode_jwt, JwtClaim};
+
+pub fn init(cfg: &mut ServiceConfig) {
+    cfg.service(login);
+    cfg.service(me);
+    cfg.service(logout);
+}
 
 #[derive(Deserialize)]
 struct LoginRequest {
@@ -27,24 +34,23 @@ async fn login(
         .email_and_password_identity_repository
         .find_by_email(&request.email)
         .await;
-    match find_identity_result {
-        Ok(identity) => {
-            if identity.verify(&request.password) {
-                match create_jwt(JwtClaim::new(identity.user_id, identity.id)) {
-                    Ok(token) => {
-                        identity_cookie.remember(token);
-                        HttpResponse::Found()
-                            .set_header("Location", "http://192.168.1.104:3000")
-                            .finish()
-                    }
-                    Err(_) => HttpResponse::InternalServerError().finish(),
+    if let Ok(identity) = find_identity_result {
+        if identity.verify(&request.password) {
+            match create_jwt(JwtClaim::new(identity.user_id, identity.id)) {
+                Ok(token) => {
+                    identity_cookie.remember(token);
+                    return HttpResponse::Found()
+                        .set_header("Location", CONFIG.frontend_base_url.clone())
+                        .finish();
                 }
-            } else {
-                HttpResponse::Unauthorized().body("Incorrect email or password")
+                Err(error) => {
+                    error!("Unexpected error {}", error);
+                    return HttpResponse::InternalServerError().finish();
+                }
             }
         }
-        Err(_) => HttpResponse::Unauthorized().body("Incorrect email or password"),
     }
+    HttpResponse::Unauthorized().body("Incorrect email or password")
 }
 
 #[get("/me")]
@@ -63,10 +69,4 @@ async fn me(identity_cookie: Identity, context: Data<AppContext>) -> impl Respon
 async fn logout(identity_cookie: Identity) -> impl Responder {
     identity_cookie.forget();
     HttpResponse::Ok().body(Body::Empty)
-}
-
-pub fn init(cfg: &mut ServiceConfig) {
-    cfg.service(login);
-    cfg.service(me);
-    cfg.service(logout);
 }

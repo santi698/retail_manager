@@ -1,4 +1,3 @@
-use anyhow::Result;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
 use super::{User, UserRepository};
@@ -15,7 +14,7 @@ impl PostgresUserRepository {
 
 #[async_trait]
 impl UserRepository for PostgresUserRepository {
-    async fn find_by_id(&self, id: i32) -> Result<User> {
+    async fn find_by_id(&self, id: i32) -> anyhow::Result<User> {
         let user = sqlx::query(
             r#"
           SELECT * FROM users WHERE id = $1
