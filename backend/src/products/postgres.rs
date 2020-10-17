@@ -99,7 +99,8 @@ impl ProductRepository for PostgresProductRepository {
     }
 
     async fn delete(&self, product_code: i32) -> anyhow::Result<u64> {
-        let deleted = sqlx::query!("DELETE FROM products WHERE product_code = $1", product_code)
+        let deleted = sqlx::query("DELETE FROM products WHERE product_code = $1")
+            .bind(product_code)
             .execute(&self.pool)
             .await?;
 

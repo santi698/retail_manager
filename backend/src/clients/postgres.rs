@@ -31,13 +31,13 @@ impl ClientRepository for PostgresClientRepository {
     }
 
     async fn find_by_id(&self, client_id: i32) -> anyhow::Result<Client> {
-        let client = sqlx::query_as!(
-            Client,
+        let client = sqlx::query(
             r#"
                 SELECT * FROM clients WHERE client_id = $1
             "#,
-            client_id
         )
+        .bind(client_id)
+        .map(client_from_row)
         .fetch_one(&self.pool)
         .await?;
 
