@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    links:
+      - postgres
+    depends_on:
+      - postgres
+      - migrator
+    environment:
+      - DATABASE_URL=postgres://retail_manager:retail_manager@postgres:5432/retail_manager
+      - HTTP_HOST=0.0.0.0
+      - HTTP_PORT=5000
+      - RUST_LOG="debug,actix_web=trace"
+      - SESSION_SECRET=fdsakfljdsakliourqoewilkfldksaoidsaop
+      - SESSION_NAME=retail_manager_id
+      - SESSION_SECURE=false
+      - SESSION_MAX_AGE_H=24
+      - JWT_KEY=fsdalkorpqewipofdsafoiopureqwiod
+      - JWT_EXPIRATION_H=30
+      - CORS_ALLOWED_ORIGIN=http://192.168.1.104:3000
+      - FRONTEND_BASE_URL=http://192.168.1.104:3000
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+    depends_on:
+      - postgres
+    command: ["/bin/sh", "-c", "movine init && movine up"]
+    environment:
+      - DATABASE_URL=postgres://retail_manager:retail_manager@postgres:5432/retail_manager
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=retail_manager
+      - POSTGRES_PASSWORD=retail_manager
+      - POSTGRES_DB=retail_manager

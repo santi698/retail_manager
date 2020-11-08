@@ -1,0 +1,7 @@
+FROM rust:1.43
+
+RUN cargo install movine
+
+COPY migrations ./migrations
+
+CMD ["movine"]

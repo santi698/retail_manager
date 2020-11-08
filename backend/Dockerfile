@@ -1,14 +1,22 @@
+FROM rust:1.43 as planner
+WORKDIR /app
+RUN cargo install cargo-chef
+COPY . .
+RUN cargo chef prepare  --recipe-path recipe.json
+
+FROM rust:1.43 as cacher
+WORKDIR /app
+RUN cargo install cargo-chef
+COPY --from=planner /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
+
 FROM rust:1.43 as builder
-
-RUN USER=root cargo new --lib retail_manager
-WORKDIR /retail_manager
-COPY ./Cargo.toml ./Cargo.toml
-RUN cargo build --release \
-  && rm src/*.rs target/release/deps/retail_manager*
-
-ADD . ./
-
-RUN cargo build --release
+WORKDIR /app
+COPY . .
+# Copy over the cached dependencies
+COPY --from=cacher /app/target target
+COPY --from=cacher /usr/local/cargo /usr/local/cargo
+RUN cargo build --release --bin app
 
 FROM debian:buster-slim
 
@@ -27,7 +35,7 @@ RUN groupadd $APP_USER \
   && useradd -g $APP_USER $APP_USER \
   && mkdir -p ${APP}
 
-COPY --from=builder /retail_manager/target/release/retail_manager ${APP}/retail_manager
+COPY --from=builder /app/target/release/app ${APP}/retail_manager
 
 RUN chown -R $APP_USER:$APP_USER ${APP}
 
