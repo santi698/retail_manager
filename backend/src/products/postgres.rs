@@ -1,10 +1,13 @@
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
+use crate::types;
+
 use super::{Product, ProductCreateRequest, ProductRepository, ProductUpdateRequest};
 
 fn product_from_row(row: PgRow) -> Product {
     Product {
+        account_id: row.get("account_id"),
         product_code: row.get("product_code"),
         product_name: row.get("product_name"),
         measurement_unit_id: row.get("measurement_unit_id"),
@@ -24,16 +27,18 @@ impl PostgresProductRepository {
 
 #[async_trait]
 impl ProductRepository for PostgresProductRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<Product>> {
+    async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<Product>> {
         let products = sqlx::query(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
-                FROM products
-                JOIN current_product_prices
-                  ON products.product_code = current_product_prices.product_code
-                ORDER BY product_name
+                  FROM products
+                  JOIN current_product_prices
+                    ON products.product_code = current_product_prices.product_code
+                 WHERE account_id = $1
+                 ORDER BY product_name
             "#,
         )
+        .bind(account_id)
         .map(product_from_row)
         .fetch_all(&self.pool)
         .await?;
@@ -41,16 +46,22 @@ impl ProductRepository for PostgresProductRepository {
         Ok(products)
     }
 
-    async fn find_by_code(&self, product_code: i32) -> anyhow::Result<Product> {
+    async fn find_by_code(
+        &self,
+        account_id: i32,
+        product_code: i32,
+    ) -> types::RepositoryResult<Product> {
         let product = sqlx::query(
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                   FROM products
                   JOIN current_product_prices
                     ON products.product_code = current_product_prices.product_code
-                 WHERE products.product_code = $1
+                 WHERE account_id = $1
+                   AND products.product_code = $2
             "#,
         )
+        .bind(account_id)
         .bind(product_code)
         .map(product_from_row)
         .fetch_one(&self.pool)
@@ -59,50 +70,66 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
-    async fn create(&self, request: ProductCreateRequest) -> anyhow::Result<Product> {
+    async fn create(
+        &self,
+        account_id: i32,
+        request: ProductCreateRequest,
+    ) -> types::RepositoryResult<Product> {
         let product_code = sqlx::query(
             r#"
-                INSERT INTO products (product_name, measurement_unit_id) VALUES ($1, $2)
+                   INSERT INTO products (account_id, product_name, measurement_unit_id)
+                   VALUES ($1, $2, $3)
                 RETURNING product_code
             "#,
         )
+        .bind(account_id)
         .bind(&request.product_name)
         .bind(&request.measurement_unit_id)
         .map(|row: PgRow| row.get(0))
         .fetch_one(&self.pool)
         .await?;
 
-        let product = self.find_by_code(product_code).await?;
+        let product = self.find_by_code(account_id, product_code).await?;
 
         Ok(product)
     }
 
     async fn update(
         &self,
+        account_id: i32,
         product_code: i32,
         request: ProductUpdateRequest,
-    ) -> anyhow::Result<Product> {
+    ) -> types::RepositoryResult<Product> {
         sqlx::query(
             r#"
                 UPDATE products SET product_name = $1
-                WHERE product_code = $2
+                 WHERE account_id = $2
+                   AND product_code = $3
             "#,
         )
         .bind(&request.product_name)
+        .bind(account_id)
         .bind(product_code)
         .execute(&self.pool)
         .await?;
 
-        let product = self.find_by_code(product_code).await?;
+        let product = self.find_by_code(account_id, product_code).await?;
 
         Ok(product)
     }
 
-    async fn delete(&self, product_code: i32) -> anyhow::Result<u64> {
-        let deleted = sqlx::query("DELETE FROM products WHERE product_code = $1")
-            .bind(product_code)
-            .execute(&self.pool)
-            .await?;
+    async fn delete(&self, account_id: i32, product_code: i32) -> types::RepositoryResult<u64> {
+        let deleted = sqlx::query(
+            r#"
+                DELETE FROM products
+                 WHERE   account_id = $1
+                   AND product_code = $2
+           "#,
+        )
+        .bind(account_id)
+        .bind(product_code)
+        .execute(&self.pool)
+        .await?;
 
         Ok(deleted)
     }

@@ -1,5 +1,6 @@
 use crate::{
     products::{ProductCreateRequest, ProductUpdateRequest},
+    users::User,
     AppContext,
 };
 
@@ -15,8 +16,8 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/products")]
-async fn find_all(context: web::Data<AppContext>) -> impl Responder {
-    let result = context.product_repository.find_all().await;
+async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder {
+    let result = context.product_repository.find_all(user.account_id).await;
     match result {
         Ok(products) => HttpResponse::Ok().json(products),
         Err(e) => {
@@ -27,10 +28,14 @@ async fn find_all(context: web::Data<AppContext>) -> impl Responder {
 }
 
 #[get("/products/{product_code}")]
-async fn find(product_code: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+async fn find(
+    product_code: web::Path<i32>,
+    context: web::Data<AppContext>,
+    user: User,
+) -> impl Responder {
     let result = context
         .product_repository
-        .find_by_code(product_code.into_inner())
+        .find_by_code(user.account_id, product_code.into_inner())
         .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
@@ -42,10 +47,11 @@ async fn find(product_code: web::Path<i32>, context: web::Data<AppContext>) -> i
 async fn create(
     product: web::Json<ProductCreateRequest>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .product_repository
-        .create(product.into_inner())
+        .create(user.account_id, product.into_inner())
         .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
@@ -58,10 +64,15 @@ async fn update(
     product_code: web::Path<i32>,
     product: web::Json<ProductUpdateRequest>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .product_repository
-        .update(product_code.into_inner(), product.into_inner())
+        .update(
+            user.account_id,
+            product_code.into_inner(),
+            product.into_inner(),
+        )
         .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
@@ -70,10 +81,14 @@ async fn update(
 }
 
 #[delete("/products/{product_code}")]
-async fn delete(product_code: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+async fn delete(
+    product_code: web::Path<i32>,
+    context: web::Data<AppContext>,
+    user: User,
+) -> impl Responder {
     let result = context
         .product_repository
-        .delete(product_code.into_inner())
+        .delete(user.account_id, product_code.into_inner())
         .await;
     match result {
         Ok(rows) => {

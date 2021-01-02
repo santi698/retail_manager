@@ -1,3 +1,5 @@
+use crate::types;
+
 use super::{
     ClientOrder, ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderItem,
     ClientOrderRepository, ClientOrderUpdateRequest,
@@ -22,6 +24,9 @@ fn client_order_from_row(row: PgRow) -> ClientOrder {
         order_id: row
             .try_get("order_id")
             .expect("Error trying to get order_id from row"),
+        account_id: row
+            .try_get("account_id")
+            .expect("Error trying to get account_id from row"),
         ordered_at: row
             .try_get("ordered_at")
             .expect("Error trying to get ordered_at from row"),
@@ -51,6 +56,9 @@ fn client_order_item_from_row(row: PgRow) -> ClientOrderItem {
         client_order_item_id: row
             .try_get("client_order_item_id")
             .expect("Error trying to get client_order_item_id from row"),
+        account_id: row
+            .try_get("account_id")
+            .expect("Error trying to get account_id from row"),
         product_id: row
             .try_get("product_id")
             .expect("Error trying to get product_id from row"),
@@ -68,20 +76,22 @@ fn client_order_item_from_row(row: PgRow) -> ClientOrderItem {
 
 #[async_trait]
 impl ClientOrderRepository for PostgresClientOrderRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<ClientOrder>> {
+    async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<ClientOrder>> {
         let orders = sqlx::query(
             r#"
                 SELECT client_orders.*,
                        (
                            SELECT COALESCE(SUM(selling_price), 0)
                              FROM client_order_items
-                            WHERE client_order_items.client_order_id =
-                                    client_orders.order_id
+                            WHERE account_id = $1
+                              AND client_order_items.client_order_id = client_orders.order_id
                        ) AS total_price
                   FROM client_orders
+                  WHERE account_id = $1
                  ORDER BY order_id;
             "#,
         )
+        .bind(account_id)
         .map(client_order_from_row)
         .fetch_all(&self.pool)
         .await?;
@@ -89,20 +99,22 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(orders)
     }
 
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<ClientOrder> {
+    async fn find_by_id(&self, account_id: i32, id: i32) -> types::RepositoryResult<ClientOrder> {
         let order = sqlx::query(
             r#"
                 SELECT client_orders.*,
                        (
                            SELECT COALESCE(SUM(selling_price), 0)
                              FROM client_order_items
-                            WHERE client_order_items.client_order_id =
-                                    client_orders.order_id
+                            WHERE account_id = $1
+                              AND client_order_items.client_order_id = client_orders.order_id
                        ) AS total_price
                   FROM client_orders
-                 WHERE order_id = $1
+                  WHERE account_id = $1
+                    AND   order_id = $2
             "#,
         )
+        .bind(account_id)
         .bind(id)
         .map(client_order_from_row)
         .fetch_one(&self.pool)
@@ -110,58 +122,74 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order)
     }
 
-    async fn create(&self, request: ClientOrderCreateRequest) -> anyhow::Result<ClientOrder> {
+    async fn create(
+        &self,
+        account_id: i32,
+        request: ClientOrderCreateRequest,
+    ) -> types::RepositoryResult<ClientOrder> {
         let id = sqlx::query(
             r#"
-                INSERT INTO client_orders (client_id, order_city_id)
-                VALUES ($1, $2)
+                INSERT INTO client_orders (account_id, client_id, order_city_id)
+                VALUES ($1, $2, $3)
                 RETURNING order_id
             "#,
         )
+        .bind(account_id)
         .bind(request.client_id)
         .bind(request.order_city_id)
         .map(|row: PgRow| row.get(0))
         .fetch_one(&self.pool)
         .await?;
 
-        let new_order = self.find_by_id(id).await?;
+        let new_order = self.find_by_id(account_id, id).await?;
         Ok(new_order)
     }
 
     async fn update(
         &self,
+        account_id: i32,
         id: i32,
         request: ClientOrderUpdateRequest,
-    ) -> anyhow::Result<ClientOrder> {
+    ) -> types::RepositoryResult<ClientOrder> {
         sqlx::query(
             r#"
                    UPDATE client_orders
                       SET order_city_id = $1,
                           order_status = $2,
                           payment_status = $3
-                    WHERE order_id = $4
+                    WHERE account_id = $4
+                      AND order_id = $5
             "#,
         )
         .bind(request.order_city_id)
         .bind(request.order_status)
         .bind(request.payment_status)
+        .bind(account_id)
         .bind(id)
         .execute(&self.pool)
         .await?;
 
-        let order_after = self.find_by_id(id).await?;
+        let order_after = self.find_by_id(account_id, id).await?;
 
         Ok(order_after)
     }
 
-    async fn find_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<ClientOrderItem> {
+    async fn find_item(
+        &self,
+        account_id: i32,
+        order_id: i32,
+        item_id: i32,
+    ) -> types::RepositoryResult<ClientOrderItem> {
         let item = sqlx::query(
             r#"
               SELECT *
                 FROM client_order_items
-               WHERE client_order_id = $1 AND client_order_item_id = $2
+               WHERE account_id = $1
+                 AND client_order_id = $2
+                 AND client_order_item_id = $3
             "#,
         )
+        .bind(account_id)
         .bind(order_id)
         .bind(item_id)
         .map(client_order_item_from_row)
@@ -171,14 +199,20 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(item)
     }
 
-    async fn find_items(&self, order_id: i32) -> anyhow::Result<Vec<ClientOrderItem>> {
+    async fn find_items(
+        &self,
+        account_id: i32,
+        order_id: i32,
+    ) -> types::RepositoryResult<Vec<ClientOrderItem>> {
         let items = sqlx::query(
             r#"
             SELECT *
               FROM client_order_items
-             WHERE client_order_id = $1
+             WHERE account_id = $1
+               AND client_order_id = $2
         "#,
         )
+        .bind(account_id)
         .bind(order_id)
         .map(client_order_item_from_row)
         .fetch_all(&self.pool)
@@ -189,19 +223,21 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
 
     async fn add_item(
         &self,
+        account_id: i32,
         order_id: i32,
         request: ClientOrderAddItemRequest,
-    ) -> anyhow::Result<ClientOrderItem> {
+    ) -> types::RepositoryResult<ClientOrderItem> {
         let order_item = sqlx::query(
             r#"
             INSERT INTO client_order_items (
-                product_id, client_order_id, quantity, selling_price
+                account_id, product_id, client_order_id, quantity, selling_price
             )
-            VALUES ($1, $2, $3, $4)
-            RETURNING client_order_item_id, product_id, client_order_id,
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING account_id, client_order_item_id, product_id, client_order_id,
                       quantity, selling_price
         "#,
         )
+        .bind(account_id)
         .bind(request.product_id)
         .bind(order_id)
         .bind(request.quantity)
@@ -213,14 +249,21 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order_item)
     }
 
-    async fn remove_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<()> {
+    async fn remove_item(
+        &self,
+        account_id: i32,
+        order_id: i32,
+        item_id: i32,
+    ) -> types::RepositoryResult<()> {
         sqlx::query(
             r#"
             DELETE FROM client_order_items
-             WHERE client_order_item_id = $1
-               AND client_order_id = $2
+             WHERE account_id = $1
+               AND client_order_item_id = $2
+               AND client_order_id = $3
             "#,
         )
+        .bind(account_id)
         .bind(item_id)
         .bind(order_id)
         .execute(&self.pool)

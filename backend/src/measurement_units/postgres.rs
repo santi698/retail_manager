@@ -1,3 +1,5 @@
+use crate::types;
+
 use super::{MeasurementUnit, MeasurementUnitRepository};
 use sqlx::{postgres::PgRow, PgPool, Row};
 
@@ -21,7 +23,7 @@ impl PostgresMeasurementUnitRepository {
 
 #[async_trait]
 impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<MeasurementUnit>> {
+    async fn find_all(&self) -> types::RepositoryResult<Vec<MeasurementUnit>> {
         let products = sqlx::query(
             r#"
                 SELECT *
@@ -36,7 +38,7 @@ impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
         Ok(products)
     }
 
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<MeasurementUnit> {
+    async fn find_by_id(&self, id: i32) -> types::RepositoryResult<MeasurementUnit> {
         let product = sqlx::query(
             r#"
                 SELECT * FROM measurement_units WHERE id = $1

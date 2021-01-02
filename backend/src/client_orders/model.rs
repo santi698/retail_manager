@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::types;
+
 #[derive(Serialize, Deserialize)]
 pub struct ClientOrderCreateRequest {
     pub client_id: i32,
@@ -22,6 +24,7 @@ pub struct ClientOrderAddItemRequest {
 
 #[derive(Serialize)]
 pub struct ClientOrder {
+    pub account_id: i32,
     pub order_id: i32,
     pub ordered_at: chrono::NaiveDateTime,
     pub client_id: i32,
@@ -34,6 +37,7 @@ pub struct ClientOrder {
 
 #[derive(Serialize)]
 pub struct ClientOrderItem {
+    pub account_id: i32,
     pub client_order_item_id: i32,
     pub product_id: i32,
     pub client_order_id: i32,
@@ -43,20 +47,40 @@ pub struct ClientOrderItem {
 
 #[async_trait]
 pub trait ClientOrderRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<ClientOrder>>;
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<ClientOrder>;
-    async fn create(&self, request: ClientOrderCreateRequest) -> anyhow::Result<ClientOrder>;
+    async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<ClientOrder>>;
+    async fn find_by_id(&self, account_id: i32, id: i32) -> types::RepositoryResult<ClientOrder>;
+    async fn create(
+        &self,
+        account_id: i32,
+        request: ClientOrderCreateRequest,
+    ) -> types::RepositoryResult<ClientOrder>;
     async fn update(
         &self,
+        account_id: i32,
         id: i32,
         request: ClientOrderUpdateRequest,
-    ) -> anyhow::Result<ClientOrder>;
-    async fn find_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<ClientOrderItem>;
-    async fn find_items(&self, order_id: i32) -> anyhow::Result<Vec<ClientOrderItem>>;
+    ) -> types::RepositoryResult<ClientOrder>;
+    async fn find_item(
+        &self,
+        account_id: i32,
+        order_id: i32,
+        item_id: i32,
+    ) -> types::RepositoryResult<ClientOrderItem>;
+    async fn find_items(
+        &self,
+        account_id: i32,
+        order_id: i32,
+    ) -> types::RepositoryResult<Vec<ClientOrderItem>>;
     async fn add_item(
         &self,
+        account_id: i32,
         order_id: i32,
         request: ClientOrderAddItemRequest,
-    ) -> anyhow::Result<ClientOrderItem>;
-    async fn remove_item(&self, order_id: i32, item_id: i32) -> anyhow::Result<()>;
+    ) -> types::RepositoryResult<ClientOrderItem>;
+    async fn remove_item(
+        &self,
+        account_id: i32,
+        order_id: i32,
+        item_id: i32,
+    ) -> types::RepositoryResult<()>;
 }

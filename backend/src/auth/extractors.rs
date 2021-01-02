@@ -1,8 +1,13 @@
-use std::fmt::Display;
+use std::{fmt::Display, pin::Pin};
 
 use actix_identity::RequestIdentity;
-use actix_web::{dev::Payload, FromRequest, HttpRequest, ResponseError};
-use futures::future::{ready, Ready};
+use actix_web::{dev::Payload, web::Data, FromRequest, HttpRequest, ResponseError};
+use futures::{
+    future::{ready, Ready},
+    Future,
+};
+
+use crate::{users::User, AppContext};
 
 use super::{decode_jwt, JwtClaim};
 #[derive(Clone, Debug)]
@@ -14,7 +19,11 @@ impl Display for ExtractAuthenticationInfoError {
     }
 }
 
-impl ResponseError for ExtractAuthenticationInfoError {}
+impl ResponseError for ExtractAuthenticationInfoError {
+    fn status_code(&self) -> actix_web::http::StatusCode {
+        actix_web::http::StatusCode::UNAUTHORIZED
+    }
+}
 
 type Result<T> = std::result::Result<T, ExtractAuthenticationInfoError>;
 
@@ -35,5 +44,29 @@ impl FromRequest for JwtClaim {
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         ready(jwt_claims_from_request(req))
+    }
+}
+
+impl FromRequest for User {
+    type Error = ExtractAuthenticationInfoError;
+
+    type Future = Pin<Box<dyn Future<Output = std::result::Result<Self, Self::Error>>>>;
+
+    type Config = ();
+
+    fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        let claims = jwt_claims_from_request(req);
+        let data = req
+            .app_data::<Data<AppContext>>()
+            .expect("App context expected to exist")
+            .clone();
+        Box::pin(async move {
+            if let Ok(claims) = claims {
+                if let Ok(user) = data.user_repository.find_by_id(claims.user_id).await {
+                    return Ok(user);
+                }
+            }
+            Err(Self::Error {})
+        })
     }
 }

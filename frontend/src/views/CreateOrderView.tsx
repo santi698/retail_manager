@@ -34,7 +34,7 @@ function CreateOrderForm() {
   return (
     <CreateClientOrderForm
       onSubmit={(clientOrder) => {
-        simpleFetch("http://192.168.1.104:5000/api/client_orders", {
+        simpleFetch("http://192.168.0.110:5000/api/client_orders", {
           method: "POST",
           json: {
             client_id: parseInt(clientOrder.client_id),

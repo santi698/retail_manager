@@ -8,7 +8,7 @@ import { Client } from "../model";
 import { useRefetchClients } from "../contexts/ClientsContext";
 
 async function createClient(client: Omit<Client, "client_id">) {
-  simpleFetch("http://192.168.1.104:5000/clients", {
+  simpleFetch("http://192.168.0.110:5000/clients", {
     method: "POST",
     json: client,
     credentials: "include",

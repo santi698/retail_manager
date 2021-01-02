@@ -31,6 +31,7 @@ mod crypto;
 mod identities;
 mod measurement_units;
 mod products;
+mod types;
 mod users;
 
 struct AppContext {

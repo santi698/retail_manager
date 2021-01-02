@@ -16,7 +16,7 @@ export function createClientOrderItem({
   ...rest
 }: CreateClientOrderItemRequest) {
   return simpleFetch(
-    `http://192.168.1.104:5000/api/client_orders/${client_order_id}/items`,
+    `http://192.168.0.110:5000/api/client_orders/${client_order_id}/items`,
     { method: "POST", json: rest, credentials: "include" }
   ).response;
 }
@@ -26,7 +26,7 @@ export function deleteClientOrderItem({
   client_order_item_id,
 }: DeleteClientOrderItemRequest) {
   return simpleFetch(
-    `http://192.168.1.104:5000/api/client_orders/${client_order_id}/items/${client_order_item_id}`,
+    `http://192.168.0.110:5000/api/client_orders/${client_order_id}/items/${client_order_item_id}`,
     { method: "DELETE", credentials: "include" }
   ).response;
 }

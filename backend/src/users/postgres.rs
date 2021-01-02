@@ -1,5 +1,7 @@
 use sqlx::{postgres::PgRow, PgPool, Row};
 
+use crate::types;
+
 use super::{User, UserRepository};
 
 pub struct PostgresUserRepository {
@@ -14,7 +16,7 @@ impl PostgresUserRepository {
 
 #[async_trait]
 impl UserRepository for PostgresUserRepository {
-    async fn find_by_id(&self, id: i32) -> anyhow::Result<User> {
+    async fn find_by_id(&self, id: i32) -> types::RepositoryResult<User> {
         let user = sqlx::query(
             r#"
           SELECT * FROM users WHERE id = $1
@@ -23,6 +25,7 @@ impl UserRepository for PostgresUserRepository {
         .bind(id)
         .map(|row: PgRow| User {
             id: row.get("id"),
+            account_id: row.get("account_id"),
             first_name: row.get("first_name"),
             last_name: row.get("last_name"),
         })

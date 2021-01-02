@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::types;
+
 #[derive(Serialize, Deserialize)]
 pub struct ProductUpdateRequest {
     pub product_name: String,
@@ -13,6 +15,7 @@ pub struct ProductCreateRequest {
 
 #[derive(Serialize)]
 pub struct Product {
+    pub account_id: i32,
     pub product_code: i32,
     pub product_name: String,
     pub measurement_unit_id: i32,
@@ -21,13 +24,22 @@ pub struct Product {
 
 #[async_trait]
 pub trait ProductRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<Product>>;
-    async fn find_by_code(&self, product_code: i32) -> anyhow::Result<Product>;
-    async fn create(&self, request: ProductCreateRequest) -> anyhow::Result<Product>;
+    async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<Product>>;
+    async fn find_by_code(
+        &self,
+        account_id: i32,
+        product_code: i32,
+    ) -> types::RepositoryResult<Product>;
+    async fn create(
+        &self,
+        account_id: i32,
+        request: ProductCreateRequest,
+    ) -> types::RepositoryResult<Product>;
     async fn update(
         &self,
+        account_id: i32,
         product_code: i32,
         request: ProductUpdateRequest,
-    ) -> anyhow::Result<Product>;
-    async fn delete(&self, product_code: i32) -> anyhow::Result<u64>;
+    ) -> types::RepositoryResult<Product>;
+    async fn delete(&self, account_id: i32, product_code: i32) -> types::RepositoryResult<u64>;
 }

@@ -1,4 +1,4 @@
-use crate::AppContext;
+use crate::{users::User, AppContext};
 
 use super::{ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
@@ -17,8 +17,11 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/client_orders")]
-async fn find_all(context: web::Data<AppContext>) -> impl Responder {
-    let result = context.client_order_repository.find_all().await;
+async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder {
+    let result = context
+        .client_order_repository
+        .find_all(user.account_id)
+        .await;
 
     match result {
         Ok(orders) => HttpResponse::Ok().json(orders),
@@ -30,10 +33,14 @@ async fn find_all(context: web::Data<AppContext>) -> impl Responder {
 }
 
 #[get("/client_orders/{order_id}")]
-async fn find_by_id(order_id: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+async fn find_by_id(
+    order_id: web::Path<i32>,
+    context: web::Data<AppContext>,
+    user: User,
+) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_by_id(order_id.into_inner())
+        .find_by_id(user.account_id, order_id.into_inner())
         .await;
 
     match result {
@@ -50,10 +57,11 @@ async fn update(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderUpdateRequest>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .update(order_id.into_inner(), request.into_inner())
+        .update(user.account_id, order_id.into_inner(), request.into_inner())
         .await;
 
     match result {
@@ -69,10 +77,11 @@ async fn update(
 async fn create(
     request: web::Json<ClientOrderCreateRequest>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .create(request.into_inner())
+        .create(user.account_id, request.into_inner())
         .await;
 
     match result {
@@ -94,10 +103,11 @@ struct FindItemPathParams {
 async fn find_item(
     params: web::Path<FindItemPathParams>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_item(params.order_id, params.item_id)
+        .find_item(user.account_id, params.order_id, params.item_id)
         .await;
 
     match result {
@@ -110,10 +120,14 @@ async fn find_item(
 }
 
 #[get("/client_orders/{order_id}/items")]
-async fn find_items(order_id: web::Path<i32>, context: web::Data<AppContext>) -> impl Responder {
+async fn find_items(
+    order_id: web::Path<i32>,
+    context: web::Data<AppContext>,
+    user: User,
+) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_items(order_id.into_inner())
+        .find_items(user.account_id, order_id.into_inner())
         .await;
 
     match result {
@@ -130,10 +144,11 @@ async fn add_item(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderAddItemRequest>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .add_item(order_id.into_inner(), request.into_inner())
+        .add_item(user.account_id, order_id.into_inner(), request.into_inner())
         .await;
 
     match result {
@@ -155,10 +170,11 @@ struct RemoveItemPathParams {
 async fn remove_item(
     params: web::Path<RemoveItemPathParams>,
     context: web::Data<AppContext>,
+    user: User,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .remove_item(params.order_id, params.item_id)
+        .remove_item(user.account_id, params.order_id, params.item_id)
         .await;
 
     match result {

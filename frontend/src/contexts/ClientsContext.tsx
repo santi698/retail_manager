@@ -7,7 +7,7 @@ const {
   useData: useClients,
   useRefetch: useRefetchClients,
 } = makeLoadableContext<Client[]>({
-  fetchUrl: "http://192.168.1.104:5000/api/clients",
+  fetchUrl: "http://192.168.0.110:5000/api/clients",
 });
 
 export { ClientsProvider, useClients, useRefetchClients };

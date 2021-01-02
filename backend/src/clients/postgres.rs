@@ -1,6 +1,8 @@
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
+use crate::types::{self, Email, PhoneNumber};
+
 use super::{Client, ClientCreateRequest, ClientRepository, ClientUpdateRequest};
 
 pub struct PostgresClientRepository {
@@ -15,14 +17,16 @@ impl PostgresClientRepository {
 
 #[async_trait]
 impl ClientRepository for PostgresClientRepository {
-    async fn find_all(&self) -> anyhow::Result<Vec<Client>> {
+    async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<Client>> {
         let clients = sqlx::query(
             r#"
                 SELECT *
                 FROM clients
+                WHERE account_id = $1
                 ORDER BY client_id;
             "#,
         )
+        .bind(account_id)
         .map(client_from_row)
         .fetch_all(&self.pool)
         .await?;
@@ -30,12 +34,16 @@ impl ClientRepository for PostgresClientRepository {
         Ok(clients)
     }
 
-    async fn find_by_id(&self, client_id: i32) -> anyhow::Result<Client> {
+    async fn find_by_id(&self, account_id: i32, client_id: i32) -> types::RepositoryResult<Client> {
         let client = sqlx::query(
             r#"
-                SELECT * FROM clients WHERE client_id = $1
+                SELECT *
+                FROM clients
+                WHERE account_id = $1
+                  AND  client_id = $2
             "#,
         )
+        .bind(account_id)
         .bind(client_id)
         .map(client_from_row)
         .fetch_one(&self.pool)
@@ -44,17 +52,22 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
-    async fn create(&self, request: ClientCreateRequest) -> anyhow::Result<Client> {
+    async fn create(
+        &self,
+        account_id: i32,
+        request: ClientCreateRequest,
+    ) -> types::RepositoryResult<Client> {
         let client = sqlx::query(
             r#"
                 INSERT INTO clients (
+                    account_id,
                     first_name,
                     last_name,
                     email,
                     phone_number,
                     residence_city_id
                 )
-                VALUES ($1, $2, $3, $4, $5, $6)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING client_id,
                           first_name,
                           last_name,
@@ -64,10 +77,11 @@ impl ClientRepository for PostgresClientRepository {
                           address
             "#,
         )
+        .bind(account_id)
         .bind(&request.first_name)
         .bind(&request.last_name)
-        .bind(&request.email)
-        .bind(&request.phone_number)
+        .bind(&request.email.as_deref())
+        .bind(&request.phone_number.as_deref())
         .bind(&request.residence_city_id)
         .bind(&request.address)
         .map(client_from_row)
@@ -77,7 +91,12 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
-    async fn update(&self, client_id: i32, request: ClientUpdateRequest) -> anyhow::Result<Client> {
+    async fn update(
+        &self,
+        account_id: i32,
+        client_id: i32,
+        request: ClientUpdateRequest,
+    ) -> types::RepositoryResult<Client> {
         let client = sqlx::query(
             r#"
                 UPDATE clients
@@ -87,7 +106,8 @@ impl ClientRepository for PostgresClientRepository {
                     phone_number = $4,
                     residence_city_id = $5,
                     address = $6
-                WHERE client_id = $7
+                WHERE account_id = $7
+                  AND  client_id = $8
                 RETURNING client_id,
                           first_name,
                           last_name,
@@ -99,10 +119,11 @@ impl ClientRepository for PostgresClientRepository {
         )
         .bind(&request.first_name)
         .bind(&request.last_name)
-        .bind(&request.email)
-        .bind(&request.phone_number)
+        .bind(&request.email.as_deref())
+        .bind(&request.phone_number.as_deref())
         .bind(&request.residence_city_id)
         .bind(&request.address)
+        .bind(account_id)
         .bind(client_id)
         .map(client_from_row)
         .fetch_one(&self.pool)
@@ -113,12 +134,18 @@ impl ClientRepository for PostgresClientRepository {
 }
 
 fn client_from_row(row: PgRow) -> Client {
+    let email_str: Option<String> = row.get("email");
+    let email: Option<Email> = email_str.map(|s| s.parse().expect("Invalid email"));
+    let phone_number_str: Option<String> = row.get("phone_number");
+    let phone_number: Option<PhoneNumber> =
+        phone_number_str.map(|n| n.parse().expect("Invalid phone number"));
     Client {
+        account_id: row.get("account_id"),
         client_id: row.get("client_id"),
         first_name: row.get("first_name"),
         last_name: row.get("last_name"),
-        email: row.get("email"),
-        phone_number: row.get("phone_number"),
+        email,
+        phone_number,
         residence_city_id: row.get("residence_city_id"),
         address: row.get("address"),
     }

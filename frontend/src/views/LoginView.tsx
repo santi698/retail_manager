@@ -18,7 +18,7 @@ export function LoginView() {
       width="100vw"
     >
       <Stack
-        action="http://192.168.1.104:5000/auth/login"
+        action="http://192.168.0.110:5000/auth/login"
         as="form"
         bg="white"
         method="post"

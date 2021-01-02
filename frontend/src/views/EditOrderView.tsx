@@ -15,7 +15,7 @@ async function editOrder(
   id: number,
   order: Omit<ClientOrder, "order_id" | "ordered_at">
 ) {
-  simpleFetch(`http://192.168.1.104:5000/api/client_orders/${id}`, {
+  simpleFetch(`http://192.168.0.110:5000/api/client_orders/${id}`, {
     method: "PUT",
     json: order,
     credentials: "include",

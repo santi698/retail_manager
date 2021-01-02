@@ -1,5 +1,7 @@
 use sqlx::{postgres::PgRow, PgPool, Row};
 
+use crate::types;
+
 use super::{EmailAndPasswordIdentity, EmailAndPasswordIdentityRepository};
 
 pub struct PostgresEmailAndPasswordIdentityRepository {
@@ -14,7 +16,10 @@ impl PostgresEmailAndPasswordIdentityRepository {
 
 #[async_trait]
 impl EmailAndPasswordIdentityRepository for PostgresEmailAndPasswordIdentityRepository {
-    async fn find_by_email(&self, email: &str) -> anyhow::Result<EmailAndPasswordIdentity> {
+    async fn find_by_email(
+        &self,
+        email: &str,
+    ) -> types::RepositoryResult<EmailAndPasswordIdentity> {
         let identity = sqlx::query(
             r#"
               SELECT * FROM email_and_password_identities WHERE email = $1
