@@ -1,7 +1,6 @@
 use crate::AppContext;
 
 use actix_web::{get, web, HttpResponse, Responder};
-use log::error;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);
@@ -15,7 +14,7 @@ async fn find_all(context: web::Data<AppContext>) -> impl Responder {
     match result {
         Ok(measurement_units) => HttpResponse::Ok().json(measurement_units),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest()
                 .body("Error trying to read all measurement units from the database")
         }
@@ -32,7 +31,7 @@ async fn find_by_id(id: web::Path<i32>, context: web::Data<AppContext>) -> impl 
     match result {
         Ok(measurement_unit) => HttpResponse::Ok().json(measurement_unit),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("MeasurementUnit not found")
         }
     }

@@ -5,6 +5,7 @@ use crate::types::{self, Email, PhoneNumber};
 
 use super::{Client, ClientCreateRequest, ClientRepository, ClientUpdateRequest};
 
+#[derive(Debug)]
 pub struct PostgresClientRepository {
     pool: PgPool,
 }
@@ -17,6 +18,7 @@ impl PostgresClientRepository {
 
 #[async_trait]
 impl ClientRepository for PostgresClientRepository {
+    #[tracing::instrument(name = "client_repository.find_all", skip(self))]
     async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<Client>> {
         let clients = sqlx::query(
             r#"
@@ -34,6 +36,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(clients)
     }
 
+    #[tracing::instrument(name = "client_repository.find_by_id", skip(self))]
     async fn find_by_id(&self, account_id: i32, client_id: i32) -> types::RepositoryResult<Client> {
         let client = sqlx::query(
             r#"
@@ -52,6 +55,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
+    #[tracing::instrument(name = "client_repository.create", skip(self))]
     async fn create(
         &self,
         account_id: i32,
@@ -91,6 +95,7 @@ impl ClientRepository for PostgresClientRepository {
         Ok(client)
     }
 
+    #[tracing::instrument(name = "client_repository.update", skip(self))]
     async fn update(
         &self,
         account_id: i32,

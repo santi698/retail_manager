@@ -11,6 +11,7 @@ fn measurement_unit_from_row(row: PgRow) -> MeasurementUnit {
     }
 }
 
+#[derive(Debug)]
 pub struct PostgresMeasurementUnitRepository {
     pool: PgPool,
 }
@@ -23,6 +24,7 @@ impl PostgresMeasurementUnitRepository {
 
 #[async_trait]
 impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
+    #[tracing::instrument(name = "measurement_unit_repository.find_by_id", skip(self))]
     async fn find_all(&self) -> types::RepositoryResult<Vec<MeasurementUnit>> {
         let products = sqlx::query(
             r#"
@@ -38,6 +40,7 @@ impl MeasurementUnitRepository for PostgresMeasurementUnitRepository {
         Ok(products)
     }
 
+    #[tracing::instrument(name = "measurement_unit_repository.find_all", skip(self))]
     async fn find_by_id(&self, id: i32) -> types::RepositoryResult<MeasurementUnit> {
         let product = sqlx::query(
             r#"

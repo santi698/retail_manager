@@ -15,6 +15,7 @@ fn product_from_row(row: PgRow) -> Product {
     }
 }
 
+#[derive(Debug)]
 pub struct PostgresProductRepository {
     pool: PgPool,
 }
@@ -27,6 +28,7 @@ impl PostgresProductRepository {
 
 #[async_trait]
 impl ProductRepository for PostgresProductRepository {
+    #[tracing::instrument(name = "product_repository.find_all", skip(self))]
     async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<Product>> {
         let products = sqlx::query(
             r#"
@@ -34,7 +36,7 @@ impl ProductRepository for PostgresProductRepository {
                   FROM products
                   JOIN current_product_prices
                     ON products.product_code = current_product_prices.product_code
-                 WHERE account_id = $1
+                 WHERE products.account_id = $1
                  ORDER BY product_name
             "#,
         )
@@ -46,6 +48,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(products)
     }
 
+    #[tracing::instrument(name = "product_repository.find_by_code", skip(self))]
     async fn find_by_code(
         &self,
         account_id: i32,
@@ -57,7 +60,7 @@ impl ProductRepository for PostgresProductRepository {
                   FROM products
                   JOIN current_product_prices
                     ON products.product_code = current_product_prices.product_code
-                 WHERE account_id = $1
+                 WHERE products.account_id = $1
                    AND products.product_code = $2
             "#,
         )
@@ -70,6 +73,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
+    #[tracing::instrument(name = "product_repository.create", skip(self))]
     async fn create(
         &self,
         account_id: i32,
@@ -94,6 +98,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
+    #[tracing::instrument(name = "product_repository.update", skip(self))]
     async fn update(
         &self,
         account_id: i32,
@@ -118,6 +123,7 @@ impl ProductRepository for PostgresProductRepository {
         Ok(product)
     }
 
+    #[tracing::instrument(name = "product_repository.delete", skip(self))]
     async fn delete(&self, account_id: i32, product_code: i32) -> types::RepositoryResult<u64> {
         let deleted = sqlx::query(
             r#"

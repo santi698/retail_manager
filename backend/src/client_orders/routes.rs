@@ -1,8 +1,7 @@
-use crate::{users::User, AppContext};
+use crate::{auth::JwtClaim, AppContext};
 
 use super::{ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use log::error;
 use serde::Deserialize;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -17,16 +16,16 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/client_orders")]
-async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder {
+async fn find_all(context: web::Data<AppContext>, claims: JwtClaim) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_all(user.account_id)
+        .find_all(claims.user_account_id)
         .await;
 
     match result {
         Ok(orders) => HttpResponse::Ok().json(orders),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error trying to read all orders from the database")
         }
     }
@@ -36,17 +35,17 @@ async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder 
 async fn find_by_id(
     order_id: web::Path<i32>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_by_id(user.account_id, order_id.into_inner())
+        .find_by_id(claims.user_account_id, order_id.into_inner())
         .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("ClientOrder not found")
         }
     }
@@ -57,17 +56,21 @@ async fn update(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderUpdateRequest>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .update(user.account_id, order_id.into_inner(), request.into_inner())
+        .update(
+            claims.user_account_id,
+            order_id.into_inner(),
+            request.into_inner(),
+        )
         .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("ClientOrder not found")
         }
     }
@@ -77,17 +80,17 @@ async fn update(
 async fn create(
     request: web::Json<ClientOrderCreateRequest>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .create(user.account_id, request.into_inner())
+        .create(claims.user_account_id, request.into_inner())
         .await;
 
     match result {
         Ok(order) => HttpResponse::Ok().json(order),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error creating order")
         }
     }
@@ -103,17 +106,17 @@ struct FindItemPathParams {
 async fn find_item(
     params: web::Path<FindItemPathParams>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_item(user.account_id, params.order_id, params.item_id)
+        .find_item(claims.user_account_id, params.order_id, params.item_id)
         .await;
 
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error fetching order items")
         }
     }
@@ -123,17 +126,17 @@ async fn find_item(
 async fn find_items(
     order_id: web::Path<i32>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .find_items(user.account_id, order_id.into_inner())
+        .find_items(claims.user_account_id, order_id.into_inner())
         .await;
 
     match result {
         Ok(items) => HttpResponse::Ok().json(items),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error fetching order items")
         }
     }
@@ -144,17 +147,21 @@ async fn add_item(
     order_id: web::Path<i32>,
     request: web::Json<ClientOrderAddItemRequest>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .add_item(user.account_id, order_id.into_inner(), request.into_inner())
+        .add_item(
+            claims.user_account_id,
+            order_id.into_inner(),
+            request.into_inner(),
+        )
         .await;
 
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error adding item to order")
         }
     }
@@ -170,17 +177,17 @@ struct RemoveItemPathParams {
 async fn remove_item(
     params: web::Path<RemoveItemPathParams>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_order_repository
-        .remove_item(user.account_id, params.order_id, params.item_id)
+        .remove_item(claims.user_account_id, params.order_id, params.item_id)
         .await;
 
     match result {
         Ok(_) => HttpResponse::NoContent().finish(),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error removing item from order")
         }
     }

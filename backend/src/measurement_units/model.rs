@@ -2,7 +2,7 @@ use serde::Serialize;
 
 use crate::types;
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct MeasurementUnit {
     pub id: i32,
     pub unit_name: String,

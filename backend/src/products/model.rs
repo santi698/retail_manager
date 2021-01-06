@@ -2,18 +2,18 @@ use serde::{Deserialize, Serialize};
 
 use crate::types;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ProductUpdateRequest {
     pub product_name: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ProductCreateRequest {
     pub product_name: String,
     pub measurement_unit_id: i32,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Product {
     pub account_id: i32,
     pub product_code: i32,

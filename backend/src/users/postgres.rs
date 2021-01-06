@@ -4,6 +4,7 @@ use crate::types;
 
 use super::{User, UserRepository};
 
+#[derive(Debug)]
 pub struct PostgresUserRepository {
     pool: PgPool,
 }
@@ -16,6 +17,7 @@ impl PostgresUserRepository {
 
 #[async_trait]
 impl UserRepository for PostgresUserRepository {
+    #[tracing::instrument(name = "user_repository.find_by_id", skip(self))]
     async fn find_by_id(&self, id: i32) -> types::RepositoryResult<User> {
         let user = sqlx::query(
             r#"

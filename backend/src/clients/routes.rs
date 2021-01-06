@@ -1,7 +1,6 @@
-use crate::{clients::ClientCreateRequest, users::User, AppContext};
+use crate::{auth::JwtClaim, clients::ClientCreateRequest, AppContext};
 
 use actix_web::{get, post, put, web, HttpResponse, Responder};
-use log::error;
 
 use super::ClientUpdateRequest;
 
@@ -13,8 +12,11 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/clients")]
-async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder {
-    let result = context.client_repository.find_all(user.account_id).await;
+async fn find_all(context: web::Data<AppContext>, claims: JwtClaim) -> impl Responder {
+    let result = context
+        .client_repository
+        .find_all(claims.user_account_id)
+        .await;
     match result {
         Ok(clients) => HttpResponse::Ok().json(clients),
         _ => HttpResponse::BadRequest().body("Error trying to read all clients from database"),
@@ -25,11 +27,11 @@ async fn find_all(context: web::Data<AppContext>, user: User) -> impl Responder 
 async fn find_by_id(
     client_id: web::Path<i32>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_repository
-        .find_by_id(user.account_id, client_id.into_inner())
+        .find_by_id(claims.user_account_id, client_id.into_inner())
         .await;
     match result {
         Ok(client) => HttpResponse::Ok().json(client),
@@ -41,16 +43,16 @@ async fn find_by_id(
 async fn create(
     request: web::Json<ClientCreateRequest>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_repository
-        .create(user.account_id, request.into_inner())
+        .create(claims.user_account_id, request.into_inner())
         .await;
     match result {
         Ok(clients) => HttpResponse::Ok().json(clients),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error trying create a new client")
         }
     }
@@ -61,12 +63,12 @@ async fn update(
     client_id: web::Path<i32>,
     request: web::Json<ClientUpdateRequest>,
     context: web::Data<AppContext>,
-    user: User,
+    claims: JwtClaim,
 ) -> impl Responder {
     let result = context
         .client_repository
         .update(
-            user.account_id,
+            claims.user_account_id,
             client_id.into_inner(),
             request.into_inner(),
         )
@@ -74,7 +76,7 @@ async fn update(
     match result {
         Ok(client) => HttpResponse::Ok().json(client),
         Err(e) => {
-            error!("{}", e);
+            tracing::error!("{}", e);
             HttpResponse::BadRequest().body("Error trying to update client")
         }
     }

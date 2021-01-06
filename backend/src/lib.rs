@@ -1,7 +1,4 @@
 #[macro_use]
-extern crate log;
-
-#[macro_use]
 extern crate lazy_static;
 
 #[macro_use]
@@ -9,8 +6,8 @@ extern crate async_trait;
 
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
+use actix_web::web::scope;
 use actix_web::{dev::Server, http, App, HttpServer};
-use actix_web::{middleware::Logger, web::scope};
 use chrono::Duration;
 use cities::{CityRepository, PostgresCityRepository};
 use client_orders::{ClientOrderRepository, PostgresClientOrderRepository};
@@ -20,6 +17,7 @@ use identities::{EmailAndPasswordIdentityRepository, PostgresEmailAndPasswordIde
 use measurement_units::{MeasurementUnitRepository, PostgresMeasurementUnitRepository};
 use products::{PostgresProductRepository, ProductRepository};
 use sqlx::PgPool;
+use tracing_actix_web::TracingLogger;
 use users::{PostgresUserRepository, UserRepository};
 
 mod auth;
@@ -31,6 +29,7 @@ mod crypto;
 mod identities;
 mod measurement_units;
 mod products;
+pub mod telemetry;
 mod types;
 mod users;
 
@@ -72,21 +71,21 @@ impl Clone for AppContext {
 
 pub async fn run() -> anyhow::Result<Server> {
     let db_pool = PgPool::new(&CONFIG.database_url).await?;
-    info!(
+    tracing::info!(
         "Server listening on {}:{}",
-        CONFIG.http_host, CONFIG.http_port
+        CONFIG.http_host,
+        CONFIG.http_port
     );
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Logger::default())
+            .wrap(TracingLogger)
             .wrap(
-                Cors::new()
+                Cors::default()
                     .allowed_origin(&CONFIG.cors_allowed_origin)
                     .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
-                    .supports_credentials()
-                    .finish(),
+                    .supports_credentials(),
             )
             .wrap(IdentityService::new(
                 CookieIdentityPolicy::new(&CONFIG.session_secret.clone().into_bytes())

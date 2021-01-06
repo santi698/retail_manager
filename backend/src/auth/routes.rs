@@ -36,7 +36,12 @@ async fn login(
         .await;
     if let Ok(identity) = find_identity_result {
         if identity.verify(&request.password) {
-            match create_jwt(JwtClaim::new(identity.user_id, identity.id)) {
+            let user = context
+                .user_repository
+                .find_by_id(identity.user_id)
+                .await
+                .unwrap();
+            match create_jwt(JwtClaim::new(user.id, user.account_id, identity.id)) {
                 Ok(token) => {
                     identity_cookie.remember(token);
                     return HttpResponse::Found()
@@ -44,7 +49,7 @@ async fn login(
                         .finish();
                 }
                 Err(error) => {
-                    error!("Unexpected error {}", error);
+                    tracing::error!("Unexpected error {}", error);
                     return HttpResponse::InternalServerError().finish();
                 }
             }

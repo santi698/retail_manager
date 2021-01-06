@@ -1,6 +1,6 @@
 use crate::types;
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ClientCreateRequest {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
@@ -10,7 +10,7 @@ pub struct ClientCreateRequest {
     pub address: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ClientUpdateRequest {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
@@ -20,7 +20,7 @@ pub struct ClientUpdateRequest {
     pub address: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Client {
     pub client_id: i32,
     pub account_id: i32,

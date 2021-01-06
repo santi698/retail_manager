@@ -4,6 +4,7 @@ use crate::types;
 
 use super::{EmailAndPasswordIdentity, EmailAndPasswordIdentityRepository};
 
+#[derive(Debug)]
 pub struct PostgresEmailAndPasswordIdentityRepository {
     pool: PgPool,
 }
@@ -16,6 +17,7 @@ impl PostgresEmailAndPasswordIdentityRepository {
 
 #[async_trait]
 impl EmailAndPasswordIdentityRepository for PostgresEmailAndPasswordIdentityRepository {
+    #[tracing::instrument(name = "identity_repository.find_by_email", skip(self))]
     async fn find_by_email(
         &self,
         email: &str,

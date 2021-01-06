@@ -16,7 +16,7 @@ fn city_from_row(row: PgRow) -> City {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PostgresCityRepository {
     pool: PgPool,
 }
@@ -29,6 +29,7 @@ impl PostgresCityRepository {
 
 #[async_trait]
 impl CityRepository for PostgresCityRepository {
+    #[tracing::instrument(name = "city_repository.find_all", skip(self))]
     async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<City>> {
         let products = sqlx::query(
             r#"
@@ -46,6 +47,7 @@ impl CityRepository for PostgresCityRepository {
         Ok(products)
     }
 
+    #[tracing::instrument(name = "city_repository.find_by_id", skip(self))]
     async fn find_by_id(&self, account_id: i32, id: i32) -> types::RepositoryResult<City> {
         let product = sqlx::query(
             r#"

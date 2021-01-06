@@ -2,27 +2,27 @@ use serde::{Deserialize, Serialize};
 
 use crate::types;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ClientOrderCreateRequest {
     pub client_id: i32,
     pub order_city_id: i32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ClientOrderUpdateRequest {
     pub order_city_id: i32,
     pub order_status: String,
     pub payment_status: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ClientOrderAddItemRequest {
     pub product_id: i32,
     pub quantity: f64,
     pub selling_price: f64,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ClientOrder {
     pub account_id: i32,
     pub order_id: i32,
@@ -35,7 +35,7 @@ pub struct ClientOrder {
     pub address: Option<String>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct ClientOrderItem {
     pub account_id: i32,
     pub client_order_item_id: i32,

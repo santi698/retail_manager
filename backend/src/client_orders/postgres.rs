@@ -9,6 +9,7 @@ use sqlx::{
     Row,
 };
 
+#[derive(Debug)]
 pub struct PostgresClientOrderRepository {
     pool: PgPool,
 }
@@ -76,6 +77,7 @@ fn client_order_item_from_row(row: PgRow) -> ClientOrderItem {
 
 #[async_trait]
 impl ClientOrderRepository for PostgresClientOrderRepository {
+    #[tracing::instrument(name = "client_order_repository.find_all", skip(self))]
     async fn find_all(&self, account_id: i32) -> types::RepositoryResult<Vec<ClientOrder>> {
         let orders = sqlx::query(
             r#"
@@ -99,6 +101,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(orders)
     }
 
+    #[tracing::instrument(name = "client_order_repository.find_by_id", skip(self))]
     async fn find_by_id(&self, account_id: i32, id: i32) -> types::RepositoryResult<ClientOrder> {
         let order = sqlx::query(
             r#"
@@ -122,6 +125,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order)
     }
 
+    #[tracing::instrument(name = "client_order_repository.create", skip(self))]
     async fn create(
         &self,
         account_id: i32,
@@ -145,6 +149,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(new_order)
     }
 
+    #[tracing::instrument(name = "client_order_repository.update", skip(self))]
     async fn update(
         &self,
         account_id: i32,
@@ -174,6 +179,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order_after)
     }
 
+    #[tracing::instrument(name = "client_order_repository.find_item", skip(self))]
     async fn find_item(
         &self,
         account_id: i32,
@@ -199,6 +205,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(item)
     }
 
+    #[tracing::instrument(name = "client_order_repository.find_items", skip(self))]
     async fn find_items(
         &self,
         account_id: i32,
@@ -221,6 +228,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(items)
     }
 
+    #[tracing::instrument(name = "client_order_repository.add_item", skip(self))]
     async fn add_item(
         &self,
         account_id: i32,
@@ -249,6 +257,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
         Ok(order_item)
     }
 
+    #[tracing::instrument(name = "client_order_repository.remove_item", skip(self))]
     async fn remove_item(
         &self,
         account_id: i32,

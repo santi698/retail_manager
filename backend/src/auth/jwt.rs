@@ -6,14 +6,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct JwtClaim {
     pub user_id: i32,
+    pub user_account_id: i32,
     pub identity_id: i32,
     exp: i64,
 }
 
 impl JwtClaim {
-    pub fn new(user_id: i32, identity_id: i32) -> Self {
+    pub fn new(user_id: i32, user_account_id: i32, identity_id: i32) -> Self {
         Self {
             user_id,
+            user_account_id,
             identity_id,
             exp: (Utc::now() + Duration::hours(CONFIG.jwt_expiration_h)).timestamp(),
         }
