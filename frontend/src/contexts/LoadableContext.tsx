@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useContext, useMemo } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { Loadable, Idle } from "../Loadable";
 
-export interface MakeLoadableContextProps<T> {
+export interface MakeLoadableContextProps {
   fetchUrl: string;
 }
 
@@ -11,9 +11,7 @@ export interface LoadableProviderProps {
   refetchInterval?: number;
 }
 
-export function makeLoadableContext<T>({
-  fetchUrl,
-}: MakeLoadableContextProps<T>) {
+export function makeLoadableContext<T>({ fetchUrl }: MakeLoadableContextProps) {
   const Context = createContext<{ data: Loadable<T>; refetch: () => void }>({
     data: new Idle<T>(),
     refetch: () => {},

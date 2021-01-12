@@ -7,7 +7,7 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 
 export function StatsView() {
   return (

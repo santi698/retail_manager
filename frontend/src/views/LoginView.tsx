@@ -5,7 +5,7 @@ import {
   FormLabel,
   Input,
   Stack,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import React from "react";
 import { API_URL } from "../config";
 

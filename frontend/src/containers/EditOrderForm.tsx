@@ -16,7 +16,7 @@ import {
   ModalBody,
   IconButton,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useCities } from "../contexts/CitiesContext";
 import { ClientOrder } from "../model";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ViewTitle } from "../components/ViewTitle";
-import { Stack } from "@chakra-ui/core";
+import { Stack } from "@chakra-ui/react";
 import { CardButton } from "../components/CardButton";
 import { useCities } from "../contexts/CitiesContext";
 import { useClients } from "../contexts/ClientsContext";

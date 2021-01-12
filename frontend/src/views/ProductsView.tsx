@@ -4,7 +4,7 @@ import { Table } from "../components/Table";
 import { Currency } from "../components/Currency";
 import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
-import { Flex, Box } from "@chakra-ui/core";
+import { Flex, Box } from "@chakra-ui/react";
 import { BsPlus } from "react-icons/bs";
 import { InvisibleButton } from "../components/InvisibleButton";
 import { Link } from "react-router-dom";

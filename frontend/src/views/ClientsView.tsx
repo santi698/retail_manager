@@ -4,7 +4,7 @@ import { useClients } from "../contexts/ClientsContext";
 import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
 import { useCities } from "../contexts/CitiesContext";
-import { Button, Stack, Flex, Box } from "@chakra-ui/core";
+import { Button, Stack, Flex, Box } from "@chakra-ui/react";
 import { EditIcon, ViewIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { InvisibleButton } from "../components/InvisibleButton";

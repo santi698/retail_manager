@@ -1,5 +1,5 @@
 import React from "react";
-import { Tag } from "@chakra-ui/core";
+import { Tag } from "@chakra-ui/react";
 
 export enum ColorVariant {
   Purple,

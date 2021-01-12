@@ -1,5 +1,6 @@
-import { theme } from "@chakra-ui/core";
-export default {
+import { theme } from "@chakra-ui/react";
+
+const customTheme = {
   ...theme,
   fonts: {
     body:
@@ -9,3 +10,5 @@ export default {
     mono: "source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace",
   },
 };
+
+export default customTheme;

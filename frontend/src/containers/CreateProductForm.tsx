@@ -8,7 +8,7 @@ import {
   Button,
   Select,
   FormControl,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useMeasurementUnits } from "../contexts/MeasurementUnitsContext";
 
 export interface CreateProductRequest {

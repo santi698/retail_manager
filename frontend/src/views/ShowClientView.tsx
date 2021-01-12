@@ -3,7 +3,7 @@ import { useClient } from "../contexts/ClientsContext";
 import { ViewContainer } from "../components/ViewContainer";
 import { useCities } from "../contexts/CitiesContext";
 import { Link, useMatch } from "react-router-dom";
-import { Box, Button, Heading, Stack, Text } from "@chakra-ui/core";
+import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react";
 import { useClientOrders } from "../contexts/ClientOrdersContext";
 import { Currency } from "../components/Currency";
 import { Table } from "../components/Table";

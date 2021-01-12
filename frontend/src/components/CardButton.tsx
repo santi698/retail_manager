@@ -1,10 +1,7 @@
-import React, { ButtonHTMLAttributes } from "react";
-import { Box } from "@chakra-ui/core";
+import React from "react";
+import { Box } from "@chakra-ui/react";
 
-export function CardButton({
-  children,
-  ...rest
-}: React.PropsWithChildren<ButtonHTMLAttributes<HTMLButtonElement>>) {
+export function CardButton({ children, ...rest }: typeof Box.arguments) {
   return (
     <Box
       {...rest}

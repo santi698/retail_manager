@@ -19,7 +19,7 @@ import {
   StatNumber,
   StatHelpText,
   Container,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import theme from "./theme";
 import { CreateOrderView } from "./views/CreateOrderView";
 import { CreateClientView } from "./views/CreateClientView";

@@ -7,7 +7,7 @@ import {
   InputProps,
   Select,
   Stack,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { Formik, useField, useFormikContext } from "formik";
 import React, { useEffect } from "react";

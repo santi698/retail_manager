@@ -7,7 +7,7 @@ import {
   Button,
   Select,
   FormControl,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { useCities } from "../contexts/CitiesContext";
 import { useClients } from "../contexts/ClientsContext";
 

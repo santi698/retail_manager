@@ -10,7 +10,7 @@ import {
   Button,
   Select,
   FormControl,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import { PhoneIcon, AtSignIcon } from "@chakra-ui/icons";
 import { useCities } from "../contexts/CitiesContext";
 

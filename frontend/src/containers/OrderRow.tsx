@@ -13,7 +13,7 @@ import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
 import { InvisibleButton } from "../components/InvisibleButton";
 import { orderStatusToColorVariant } from "../orderStatusToColorVariant";
 import { paymentStatusToColorVariant } from "../paymentStatusToColorVariant";
-import { Button, Stack } from "@chakra-ui/core";
+import { Button, Stack } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 
 export function OrderRow({

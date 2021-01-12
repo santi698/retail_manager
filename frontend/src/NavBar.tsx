@@ -7,7 +7,7 @@ import {
 } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { IconButton } from "@chakra-ui/core";
+import { IconButton } from "@chakra-ui/react";
 
 const Wrapper = styled.ul`
   height: 100%;
