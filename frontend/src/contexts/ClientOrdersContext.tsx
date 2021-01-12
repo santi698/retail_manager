@@ -1,13 +1,14 @@
 import { makeLoadableContext } from "./LoadableContext";
 import { ClientOrder } from "../model";
 import { Loadable, Loading } from "../Loadable";
+import { API_URL } from "../config";
 
 const {
   Provider: ClientOrdersProvider,
   useData: useClientOrders,
   useRefetch: useRefetchClientOrders,
 } = makeLoadableContext<ClientOrder[]>({
-  fetchUrl: "http://192.168.0.110:5000/api/client_orders",
+  fetchUrl: `${API_URL}/api/client_orders`,
 });
 
 export { ClientOrdersProvider, useClientOrders, useRefetchClientOrders };

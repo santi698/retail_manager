@@ -7,6 +7,7 @@ import {
   Stack,
 } from "@chakra-ui/core";
 import React from "react";
+import { API_URL } from "../config";
 
 export function LoginView() {
   return (
@@ -18,7 +19,7 @@ export function LoginView() {
       width="100vw"
     >
       <Stack
-        action="http://192.168.0.110:5000/auth/login"
+        action={`${API_URL}/auth/login`}
         as="form"
         bg="white"
         method="post"

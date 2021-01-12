@@ -34,7 +34,7 @@ impl ProductRepository for PostgresProductRepository {
             r#"
                 SELECT products.*, current_product_prices.price::FLOAT AS list_unit_price
                   FROM products
-                  JOIN current_product_prices
+                  LEFT JOIN current_product_prices
                     ON products.product_code = current_product_prices.product_code
                  WHERE products.account_id = $1
                  ORDER BY product_name
@@ -91,6 +91,18 @@ impl ProductRepository for PostgresProductRepository {
         .bind(&request.measurement_unit_id)
         .map(|row: PgRow| row.get(0))
         .fetch_one(&self.pool)
+        .await?;
+
+        sqlx::query(
+            r#"
+                INSERT INTO product_prices (account_id, product_code, price, valid_since)
+                VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+            "#,
+        )
+        .bind(account_id)
+        .bind(product_code)
+        .bind(request.list_unit_price)
+        .execute(&self.pool)
         .await?;
 
         let product = self.find_by_code(account_id, product_code).await?;

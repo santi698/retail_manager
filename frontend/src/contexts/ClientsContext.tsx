@@ -1,13 +1,14 @@
 import { makeLoadableContext } from "./LoadableContext";
 import { Client } from "../model";
 import { Loadable, Loading } from "../Loadable";
+import { API_URL } from "../config";
 
 const {
   Provider: ClientsProvider,
   useData: useClients,
   useRefetch: useRefetchClients,
 } = makeLoadableContext<Client[]>({
-  fetchUrl: "http://192.168.0.110:5000/api/clients",
+  fetchUrl: `${API_URL}/api/clients`,
 });
 
 export { ClientsProvider, useClients, useRefetchClients };

@@ -69,7 +69,8 @@ impl ClientRepository for PostgresClientRepository {
                     last_name,
                     email,
                     phone_number,
-                    residence_city_id
+                    residence_city_id,
+                    address
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING client_id,

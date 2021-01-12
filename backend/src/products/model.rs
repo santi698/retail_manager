@@ -11,6 +11,7 @@ pub struct ProductUpdateRequest {
 pub struct ProductCreateRequest {
     pub product_name: String,
     pub measurement_unit_id: i32,
+    pub list_unit_price: f64,
 }
 
 #[derive(Debug, Serialize)]

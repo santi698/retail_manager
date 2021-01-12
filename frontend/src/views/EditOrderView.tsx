@@ -10,12 +10,13 @@ import {
 } from "../model";
 import { EditOrderForm } from "../containers/EditOrderForm";
 import { useRefetchClientOrders } from "../contexts/ClientOrdersContext";
+import { API_URL } from "../config";
 
 async function editOrder(
   id: number,
   order: Omit<ClientOrder, "order_id" | "ordered_at">
 ) {
-  simpleFetch(`http://192.168.0.110:5000/api/client_orders/${id}`, {
+  simpleFetch(`${API_URL}/api/client_orders/${id}`, {
     method: "PUT",
     json: order,
     credentials: "include",

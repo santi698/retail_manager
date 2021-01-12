@@ -6,9 +6,10 @@ import { CreateClientForm } from "../containers/CreateClientForm";
 import { simpleFetch } from "../simpleFetch";
 import { Client } from "../model";
 import { useRefetchClients } from "../contexts/ClientsContext";
+import { API_URL } from "../config";
 
 async function createClient(client: Omit<Client, "client_id">) {
-  simpleFetch("http://192.168.0.110:5000/clients", {
+  simpleFetch(`${API_URL}/api/clients`, {
     method: "POST",
     json: client,
     credentials: "include",

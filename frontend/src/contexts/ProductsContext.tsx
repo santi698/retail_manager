@@ -1,15 +1,17 @@
 import { makeLoadableContext } from "./LoadableContext";
 import { ProductWithPrice } from "../model";
 import { Loadable } from "../Loadable";
+import { API_URL } from "../config";
 
 const {
   Provider: ProductsProvider,
   useData: useProducts,
+  useRefetch: useRefetchProducts,
 } = makeLoadableContext<ProductWithPrice[]>({
-  fetchUrl: "http://192.168.0.110:5000/api/products",
+  fetchUrl: `${API_URL}/api/products`,
 });
 
-export { ProductsProvider, useProducts };
+export { ProductsProvider, useProducts, useRefetchProducts };
 
 export function useProduct(product_code: number): Loadable<ProductWithPrice> {
   const loadable = useProducts();

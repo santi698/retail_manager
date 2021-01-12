@@ -6,9 +6,10 @@ import { simpleFetch } from "../simpleFetch";
 import { Client } from "../model";
 import { useRefetchClients } from "../contexts/ClientsContext";
 import { EditClientForm } from "../containers/EditClientForm";
+import { API_URL } from "../config";
 
 async function editClient(id: number, client: Omit<Client, "client_id">) {
-  simpleFetch(`http://192.168.0.110:5000/api/clients/${id}`, {
+  simpleFetch(`${API_URL}/api/clients/${id}`, {
     method: "PUT",
     json: client,
     credentials: "include",

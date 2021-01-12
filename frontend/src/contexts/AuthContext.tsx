@@ -3,12 +3,13 @@ import { makeLoadableContext } from "./LoadableContext";
 import { City } from "../model";
 import { Route, Routes } from "react-router-dom";
 import { LoginView } from "../views/LoginView";
+import { API_URL, APP_DOMAIN } from "../config";
 
 const {
   Provider: CurrentUserProvider,
   useData: useCurrentUser,
 } = makeLoadableContext<City[]>({
-  fetchUrl: "http://192.168.0.110:5000/auth/me",
+  fetchUrl: `${API_URL}/auth/me`,
 });
 
 export { useCurrentUser };
@@ -21,7 +22,7 @@ function RequireAuth({ children }: RequireAuthProps) {
   const user = useCurrentUser();
 
   if (user.state === "error") {
-    window.location.href = "http://192.168.0.110:3000/login";
+    window.location.href = `${APP_DOMAIN}/login`;
     return null;
   }
 
