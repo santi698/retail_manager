@@ -28,6 +28,8 @@ import { ShowClientView } from "./views/ShowClientView";
 import { AuthProvider } from "./contexts/AuthContext";
 import { EditOrderView } from "./views/EditOrderView";
 import { CreateProductView } from "./views/CreateProductView";
+import { EditProductView } from "./views/EditProductView";
+import { ShowProductView } from "./views/ShowProductView";
 
 const Layout = styled.div`
   display: grid;
@@ -80,6 +82,14 @@ function App() {
               <Route path="/clients/:id" element={<ShowClientView />} />
               <Route path="/products" element={<ProductsView />} />
               <Route path="/products/create" element={<CreateProductView />} />
+              <Route
+                path="/products/:product_code"
+                element={<ShowProductView />}
+              />
+              <Route
+                path="/products/:product_code/edit"
+                element={<EditProductView />}
+              />
             </Routes>
           </div>
           <Container background="#f9f8ff" centerContent>
