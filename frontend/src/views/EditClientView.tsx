@@ -2,19 +2,9 @@ import React from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
-import { simpleFetch } from "../simpleFetch";
-import { Client } from "../model";
 import { useRefetchClients } from "../contexts/ClientsContext";
 import { EditClientForm } from "../containers/EditClientForm";
-import { API_URL } from "../config";
-
-async function editClient(id: number, client: Omit<Client, "client_id">) {
-  simpleFetch(`${API_URL}/api/clients/${id}`, {
-    method: "PUT",
-    json: client,
-    credentials: "include",
-  });
-}
+import { editClient } from "../services/ClientsService";
 
 export function EditClientView() {
   const match = useMatch("/clients/:id/edit");

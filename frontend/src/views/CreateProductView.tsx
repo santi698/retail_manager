@@ -3,18 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
 import { CreateProductForm } from "../containers/CreateProductForm";
-import { simpleFetch } from "../simpleFetch";
-import { API_URL } from "../config";
 import { useRefetchProducts } from "../contexts/ProductsContext";
-import { ProductWithPrice } from "../model";
-
-async function createProduct(product: Omit<ProductWithPrice, "product_code">) {
-  simpleFetch(`${API_URL}/api/products`, {
-    method: "POST",
-    json: product,
-    credentials: "include",
-  });
-}
+import { createProduct } from "../services/ProductsService";
 
 export function CreateProductView() {
   const navigate = useNavigate();

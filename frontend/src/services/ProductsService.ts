@@ -1,34 +1,19 @@
 import { API_URL } from "../config";
-import { ClientOrderItem } from "../model";
-import { simpleFetch } from "../simpleFetch";
+import { Product, ProductWithPrice } from "../model";
+import { RetailManagerApi } from "./RetailManagerApi";
 
-export type CreateClientOrderItemRequest = Omit<
-  ClientOrderItem,
-  "client_order_item_id"
->;
-
-export type DeleteClientOrderItemRequest = Pick<
-  ClientOrderItem,
-  "client_order_item_id" | "client_order_id"
->;
-
-export function createClientOrderItem({
-  client_order_id,
-  ...rest
-}: CreateClientOrderItemRequest) {
-  return simpleFetch(`${API_URL}/api/client_orders/${client_order_id}/items`, {
-    method: "POST",
-    json: rest,
-    credentials: "include",
-  }).response;
+export async function createProduct(
+  product: Omit<ProductWithPrice, "product_code">
+) {
+  return RetailManagerApi.post(`${API_URL}/api/products`, product);
 }
 
-export function deleteClientOrderItem({
-  client_order_id,
-  client_order_item_id,
-}: DeleteClientOrderItemRequest) {
-  return simpleFetch(
-    `${API_URL}/api/client_orders/${client_order_id}/items/${client_order_item_id}`,
-    { method: "DELETE", credentials: "include" }
-  ).response;
+export async function editProduct(
+  product_code: number,
+  product: Omit<Product, "product_code">
+) {
+  return RetailManagerApi.put(
+    `${API_URL}/api/products/${product_code}`,
+    product
+  );
 }

@@ -2,26 +2,10 @@ import React from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { ViewTitle } from "../components/ViewTitle";
 import { ViewContainer } from "../components/ViewContainer";
-import { simpleFetch } from "../simpleFetch";
-import {
-  ClientOrder,
-  ClientOrderPaymentStatus,
-  ClientOrderStatus,
-} from "../model";
+import { ClientOrderPaymentStatus, ClientOrderStatus } from "../model";
 import { EditOrderForm } from "../containers/EditOrderForm";
 import { useRefetchClientOrders } from "../contexts/ClientOrdersContext";
-import { API_URL } from "../config";
-
-async function editOrder(
-  id: number,
-  order: Omit<ClientOrder, "order_id" | "ordered_at">
-) {
-  simpleFetch(`${API_URL}/api/client_orders/${id}`, {
-    method: "PUT",
-    json: order,
-    credentials: "include",
-  });
-}
+import { editClientOrder } from "../services/ClientOrdersService";
 
 export function EditOrderView() {
   const match = useMatch("/orders/:id/edit");
@@ -42,7 +26,7 @@ export function EditOrderView() {
           payment_status,
           total_price,
         }) => {
-          editOrder(clientOrderId, {
+          editClientOrder(clientOrderId, {
             address,
             client_id: parseInt(client_id),
             order_city_id: parseInt(order_city_id),
