@@ -1,4 +1,6 @@
-use crate::{auth::JwtClaim, AppContext};
+use std::convert::TryFrom;
+
+use crate::{auth::JwtClaim, types::ErrorJson, AppContext};
 
 use super::{ClientOrderAddItemRequest, ClientOrderCreateRequest, ClientOrderUpdateRequest};
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
@@ -51,27 +53,32 @@ async fn find_by_id(
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ClientOrderUpdateJson {
+    pub order_city_id: i32,
+    pub order_status: String,
+    pub payment_status: String,
+}
+
 #[put("/client_orders/{order_id}")]
 async fn update(
     order_id: web::Path<i32>,
-    request: web::Json<ClientOrderUpdateRequest>,
+    request: web::Json<ClientOrderUpdateJson>,
     context: web::Data<AppContext>,
     claims: JwtClaim,
-) -> impl Responder {
+) -> Result<HttpResponse, HttpResponse> {
+    let request = ClientOrderUpdateRequest::try_from(request.into_inner())
+        .map_err(|error| HttpResponse::BadRequest().json(ErrorJson { error }))?;
     let result = context
         .client_order_repository
-        .update(
-            claims.user_account_id,
-            order_id.into_inner(),
-            request.into_inner(),
-        )
+        .update(claims.user_account_id, order_id.into_inner(), request)
         .await;
 
     match result {
-        Ok(order) => HttpResponse::Ok().json(order),
+        Ok(order) => Ok(HttpResponse::Ok().json(order)),
         Err(e) => {
             tracing::error!("{}", e);
-            HttpResponse::BadRequest().body("ClientOrder not found")
+            Err(HttpResponse::BadRequest().body("ClientOrder not found"))
         }
     }
 }

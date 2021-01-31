@@ -167,7 +167,7 @@ impl ClientOrderRepository for PostgresClientOrderRepository {
             "#,
         )
         .bind(request.order_city_id)
-        .bind(request.order_status)
+        .bind(request.order_status.as_ref())
         .bind(request.payment_status)
         .bind(account_id)
         .bind(id)

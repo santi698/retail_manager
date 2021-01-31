@@ -1,21 +1,38 @@
+use std::convert::{TryFrom, TryInto};
+
 use serde::{Deserialize, Serialize};
+use types::PaymentStatus;
 
-use crate::types;
+use crate::types::{self, OrderStatus};
 
-#[derive(Serialize, Deserialize, Debug)]
+use super::routes::ClientOrderUpdateJson;
+
+#[derive(Deserialize, Debug)]
 pub struct ClientOrderCreateRequest {
     pub client_id: i32,
     pub order_city_id: i32,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct ClientOrderUpdateRequest {
     pub order_city_id: i32,
-    pub order_status: String,
-    pub payment_status: String,
+    pub order_status: OrderStatus,
+    pub payment_status: PaymentStatus,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+impl TryFrom<ClientOrderUpdateJson> for ClientOrderUpdateRequest {
+    type Error = String;
+
+    fn try_from(value: ClientOrderUpdateJson) -> Result<Self, Self::Error> {
+        Ok(Self {
+            order_city_id: value.order_city_id,
+            order_status: value.order_status.try_into()?,
+            payment_status: value.payment_status.try_into()?,
+        })
+    }
+}
+
+#[derive(Deserialize, Debug)]
 pub struct ClientOrderAddItemRequest {
     pub product_id: i32,
     pub quantity: f64,
@@ -29,8 +46,8 @@ pub struct ClientOrder {
     pub ordered_at: chrono::NaiveDateTime,
     pub client_id: i32,
     pub order_city_id: i32,
-    pub order_status: String,
-    pub payment_status: String,
+    pub order_status: OrderStatus,
+    pub payment_status: PaymentStatus,
     pub total_price: f64,
     pub address: Option<String>,
 }

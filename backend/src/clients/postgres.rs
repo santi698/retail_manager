@@ -1,3 +1,5 @@
+use std::convert::TryInto;
+
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
 
@@ -85,8 +87,8 @@ impl ClientRepository for PostgresClientRepository {
         .bind(account_id)
         .bind(&request.first_name)
         .bind(&request.last_name)
-        .bind(&request.email.as_deref())
-        .bind(&request.phone_number.as_deref())
+        .bind(&request.email)
+        .bind(&request.phone_number)
         .bind(&request.residence_city_id)
         .bind(&request.address)
         .map(client_from_row)
@@ -125,8 +127,8 @@ impl ClientRepository for PostgresClientRepository {
         )
         .bind(&request.first_name)
         .bind(&request.last_name)
-        .bind(&request.email.as_deref())
-        .bind(&request.phone_number.as_deref())
+        .bind(&request.email)
+        .bind(&request.phone_number)
         .bind(&request.residence_city_id)
         .bind(&request.address)
         .bind(account_id)
@@ -141,10 +143,10 @@ impl ClientRepository for PostgresClientRepository {
 
 fn client_from_row(row: PgRow) -> Client {
     let email_str: Option<String> = row.get("email");
-    let email: Option<Email> = email_str.map(|s| s.parse().expect("Invalid email"));
+    let email: Option<Email> = email_str.map(|s| s.try_into().expect("Invalid email"));
     let phone_number_str: Option<String> = row.get("phone_number");
     let phone_number: Option<PhoneNumber> =
-        phone_number_str.map(|n| n.parse().expect("Invalid phone number"));
+        phone_number_str.map(|n| n.try_into().expect("Invalid phone number"));
     Client {
         account_id: row.get("account_id"),
         client_id: row.get("client_id"),

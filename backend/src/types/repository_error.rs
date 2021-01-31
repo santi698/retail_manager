@@ -39,10 +39,9 @@ impl From<sqlx::error::Error> for RepositoryError {
             | sqlx::Error::ColumnNotFound(_)
             | sqlx::Error::Decode(_) => Self::MappingError(error.into()),
 
-            sqlx::Error::UrlParse(_)
-            | sqlx::Error::PoolTimedOut(_)
-            | sqlx::Error::PoolClosed
-            | sqlx::Error::Io(_) => Self::ConnectionError(error.into()),
+            sqlx::Error::PoolTimedOut | sqlx::Error::PoolClosed | sqlx::Error::Io(_) => {
+                Self::ConnectionError(error.into())
+            }
 
             sqlx::Error::Database(_) | sqlx::Error::Protocol(_) | sqlx::Error::Tls(_) => {
                 Self::Unknown(error.into())

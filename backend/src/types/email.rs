@@ -1,22 +1,14 @@
-use serde::{Deserialize, Serialize};
-use std::str::FromStr;
+use std::convert::TryFrom;
 
-#[derive(Debug, Serialize, Deserialize)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
 pub struct Email(String);
 
-impl FromStr for Email {
-    type Err = Box<dyn std::error::Error>;
+impl TryFrom<String> for Email {
+    type Error = String;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Email(s.to_string()))
-    }
-}
-
-use std::ops::Deref;
-impl Deref for Email {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        Ok(Email(s))
     }
 }

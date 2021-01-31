@@ -5,15 +5,14 @@ lazy_static! {
     static ref VALIDATION_RE: Regex = Regex::new(r"(\d[\-. ]?){7}\d").unwrap();
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, sqlx::Type)]
 pub struct PhoneNumber(String);
 
-use std::str::FromStr;
-impl FromStr for PhoneNumber {
-    type Err = ValidationError;
+impl TryFrom<String> for PhoneNumber {
+    type Error = ValidationError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if VALIDATION_RE.is_match(s) {
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        if VALIDATION_RE.is_match(&s) {
             Ok(PhoneNumber(s.trim().to_string()))
         } else {
             Err(ValidationError::new(
@@ -25,16 +24,7 @@ impl FromStr for PhoneNumber {
     }
 }
 
-use std::ops::Deref;
-impl Deref for PhoneNumber {
-    type Target = str;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-use std::fmt::Display;
+use std::{convert::TryFrom, fmt::Display};
 
 use super::ValidationError;
 impl Display for PhoneNumber {

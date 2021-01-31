@@ -70,7 +70,7 @@ impl Clone for AppContext {
 }
 
 pub async fn run() -> anyhow::Result<Server> {
-    let db_pool = PgPool::new(&CONFIG.database_url).await?;
+    let db_pool = PgPool::connect(&CONFIG.database_url).await?;
     tracing::info!(
         "Server listening on {}:{}",
         CONFIG.http_host,

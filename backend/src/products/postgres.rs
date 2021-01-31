@@ -1,5 +1,5 @@
-use sqlx::postgres::{PgPool, PgRow};
-use sqlx::Row;
+use sqlx::postgres::{PgDone, PgPool, PgRow};
+use sqlx::{Done, Row};
 
 use crate::types;
 
@@ -137,7 +137,7 @@ impl ProductRepository for PostgresProductRepository {
 
     #[tracing::instrument(name = "product_repository.delete", skip(self))]
     async fn delete(&self, account_id: i32, product_code: i32) -> types::RepositoryResult<u64> {
-        let deleted = sqlx::query(
+        let deleted: PgDone = sqlx::query(
             r#"
                 DELETE FROM products
                  WHERE   account_id = $1
@@ -149,6 +149,6 @@ impl ProductRepository for PostgresProductRepository {
         .execute(&self.pool)
         .await?;
 
-        Ok(deleted)
+        Ok(deleted.rows_affected())
     }
 }
