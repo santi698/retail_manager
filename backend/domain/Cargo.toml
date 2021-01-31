@@ -1,0 +1,17 @@
+[package]
+name = "domain"
+version = "0.1.0"
+authors = ["Santiago Ocamica <santi6982@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "^0.1.42"
+chrono = { version = "^0.4.19", features = ['serde'] }
+lazy_static = "^1.4.0"
+rand = "^0.8.2"
+regex = "^1.4.3"
+rust-argon2 = "^0.8.3"
+serde = { version = "^1.0.121", features = ['derive'] }
+sqlx = { version = "^0.4.2", features = ['runtime-actix-native-tls', 'postgres', 'macros', 'chrono', 'uuid'] }
