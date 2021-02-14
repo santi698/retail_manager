@@ -1,16 +1,6 @@
 import React from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import styled from "styled-components";
-import { OrdersView } from "./views/OrdersView";
-import { StatsView } from "./views/StatsView";
-import { ClientsView } from "./views/ClientsView";
-import { ProductsView } from "./views/ProductsView";
-import { ProductsProvider } from "./contexts/ProductsContext";
-import { MeasurementUnitsProvider } from "./contexts/MeasurementUnitsContext";
-import { ClientsProvider } from "./contexts/ClientsContext";
-import { ClientOrdersProvider } from "./contexts/ClientOrdersContext";
-import { CitiesProvider } from "./contexts/CitiesContext";
-import { NavBar } from "./NavBar";
 import {
   ChakraProvider,
   Stack,
@@ -20,16 +10,25 @@ import {
   StatHelpText,
   Container,
 } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+import { AuthProvider } from "./auth/AuthContext";
+
+import { OrdersView } from "./client_orders/views/OrdersView";
+import { StatsView } from "./common/views/StatsView";
+import { ClientsView } from "./clients/ClientsView";
+import { ProductsView } from "./products/views/ProductsView";
+import { CreateOrderView } from "./client_orders/views/CreateOrderView";
+import { CreateClientView } from "./clients/CreateClientView";
+import { EditClientView } from "./clients/EditClientView";
+import { ShowClientView } from "./clients/ShowClientView";
+import { EditOrderView } from "./client_orders/views/EditOrderView";
+import { CreateProductView } from "./products/views/CreateProductView";
+import { EditProductView } from "./products/views/EditProductView";
+import { ShowProductView } from "./products/views/ShowProductView";
+
+import { NavBar } from "./NavBar";
 import theme from "./theme";
-import { CreateOrderView } from "./views/CreateOrderView";
-import { CreateClientView } from "./views/CreateClientView";
-import { EditClientView } from "./views/EditClientView";
-import { ShowClientView } from "./views/ShowClientView";
-import { AuthProvider } from "./contexts/AuthContext";
-import { EditOrderView } from "./views/EditOrderView";
-import { CreateProductView } from "./views/CreateProductView";
-import { EditProductView } from "./views/EditProductView";
-import { ShowProductView } from "./views/ShowProductView";
 
 const Layout = styled.div`
   display: grid;
@@ -39,27 +38,15 @@ const Layout = styled.div`
   grid-template-rows: 100%;
 `;
 
-const GLOBAL_REFETCH_INTERVAL = 600000;
+const queryClient = new QueryClient();
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ChakraProvider theme={theme} resetCSS>
-      <AuthProvider>
-        <CitiesProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-          <ClientOrdersProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-            <ClientsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-              <ProductsProvider refetchInterval={GLOBAL_REFETCH_INTERVAL}>
-                <MeasurementUnitsProvider
-                  refetchInterval={GLOBAL_REFETCH_INTERVAL}
-                >
-                  {children}
-                </MeasurementUnitsProvider>
-              </ProductsProvider>
-            </ClientsProvider>
-          </ClientOrdersProvider>
-        </CitiesProvider>
-      </AuthProvider>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme} resetCSS>
+        <AuthProvider>{children}</AuthProvider>
+      </ChakraProvider>
+    </QueryClientProvider>
   );
 }
 

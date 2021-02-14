@@ -3,6 +3,7 @@ use std::convert::TryFrom;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[sqlx(rename = "VARCHAR")]
 #[sqlx(rename_all = "lowercase")]
 pub enum OrderStatus {
     Draft,
