@@ -3,8 +3,9 @@ use std::convert::TryFrom;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, sqlx::Type)]
+#[serde(rename_all = "snake_case")]
 #[sqlx(rename = "VARCHAR")]
-#[sqlx(rename_all = "lowercase")]
+#[sqlx(rename_all = "snake_case")]
 pub enum OrderStatus {
     Draft,
     Confirmed,
@@ -20,7 +21,7 @@ impl TryFrom<String> for OrderStatus {
             "draft" => Ok(Self::Draft),
             "confirmed" => Ok(Self::Confirmed),
             "delivered" => Ok(Self::Delivered),
-            "Canceled" => Ok(Self::Canceled),
+            "canceled" => Ok(Self::Canceled),
             _ => Err(format!("Invalid order status {}", value)),
         }
     }

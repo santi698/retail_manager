@@ -14,15 +14,15 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 import { AuthProvider } from "./auth/AuthContext";
 
-import { OrdersView } from "./client_orders/views/OrdersView";
+import { OrdersView } from "./customer_orders/views/OrdersView";
 import { StatsView } from "./common/views/StatsView";
-import { ClientsView } from "./clients/ClientsView";
+import { CustomersView } from "./customers/CustomersView";
 import { ProductsView } from "./products/views/ProductsView";
-import { CreateOrderView } from "./client_orders/views/CreateOrderView";
-import { CreateClientView } from "./clients/CreateClientView";
-import { EditClientView } from "./clients/EditClientView";
-import { ShowClientView } from "./clients/ShowClientView";
-import { EditOrderView } from "./client_orders/views/EditOrderView";
+import { CreateOrderView } from "./customer_orders/views/CreateOrderView";
+import { CreateCustomerView } from "./customers/CreateCustomerView";
+import { EditCustomerView } from "./customers/EditCustomerView";
+import { ShowCustomerView } from "./customers/ShowCustomerView";
+import { EditOrderView } from "./customer_orders/views/EditOrderView";
 import { CreateProductView } from "./products/views/CreateProductView";
 import { EditProductView } from "./products/views/EditProductView";
 import { ShowProductView } from "./products/views/ShowProductView";
@@ -63,10 +63,16 @@ function App() {
               <Route path="/orders/:id" element={<OrdersView />} />
               <Route path="/orders/:id/edit" element={<EditOrderView />} />
               <Route path="/orders/create" element={<CreateOrderView />} />
-              <Route path="/clients" element={<ClientsView />} />
-              <Route path="/clients/create" element={<CreateClientView />} />
-              <Route path="/clients/:id/edit" element={<EditClientView />} />
-              <Route path="/clients/:id" element={<ShowClientView />} />
+              <Route path="/customers" element={<CustomersView />} />
+              <Route
+                path="/customers/create"
+                element={<CreateCustomerView />}
+              />
+              <Route
+                path="/customers/:id/edit"
+                element={<EditCustomerView />}
+              />
+              <Route path="/customers/:id" element={<ShowCustomerView />} />
               <Route path="/products" element={<ProductsView />} />
               <Route path="/products/create" element={<CreateProductView />} />
               <Route

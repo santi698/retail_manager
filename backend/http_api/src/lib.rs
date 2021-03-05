@@ -4,20 +4,21 @@ extern crate lazy_static;
 #[macro_use]
 extern crate async_trait;
 
+use crate::customers::PostgresCustomerRepository;
+use ::customers::{CustomerOrderRepository, CustomerRepository};
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::web::scope;
 use actix_web::{dev::Server, http, App, HttpServer};
 use chrono::Duration;
 use cities::PostgresCityRepository;
-use client_orders::PostgresClientOrderRepository;
-use clients::PostgresClientRepository;
 use config::CONFIG;
+use customer_orders::PostgresCustomerOrderRepository;
 use domain::{
-    CityRepository, ClientOrderRepository, ClientRepository, EmailAndPasswordIdentityRepository,
-    MeasurementUnitRepository, ProductRepository, UserRepository,
+    CityRepository, EmailAndPasswordIdentityRepository, MeasurementUnitRepository, UserRepository,
 };
 use identities::PostgresEmailAndPasswordIdentityRepository;
+use inventory::ProductRepository;
 use measurement_units::PostgresMeasurementUnitRepository;
 use products::PostgresProductRepository;
 use sqlx::PgPool;
@@ -27,9 +28,9 @@ use users::PostgresUserRepository;
 
 mod auth;
 mod cities;
-mod client_orders;
-mod clients;
 mod config;
+mod customer_orders;
+mod customers;
 mod identities;
 mod measurement_units;
 mod products;
@@ -40,8 +41,8 @@ mod users;
 struct AppContext {
     pub db_pool: PgPool,
     pub city_repository: Box<dyn CityRepository<Error = RepositoryError>>,
-    pub client_order_repository: Box<dyn ClientOrderRepository<Error = RepositoryError>>,
-    pub client_repository: Box<dyn ClientRepository<Error = RepositoryError>>,
+    pub customer_order_repository: Box<dyn CustomerOrderRepository<Error = RepositoryError>>,
+    pub customer_repository: Box<dyn CustomerRepository<Error = RepositoryError>>,
     pub measurement_unit_repository: Box<dyn MeasurementUnitRepository<Error = RepositoryError>>,
     pub product_repository: Box<dyn ProductRepository<Error = RepositoryError>>,
     pub email_and_password_identity_repository:
@@ -53,8 +54,10 @@ impl AppContext {
     pub fn new(db_pool: PgPool) -> Self {
         AppContext {
             city_repository: Box::new(PostgresCityRepository::new(db_pool.clone())),
-            client_order_repository: Box::new(PostgresClientOrderRepository::new(db_pool.clone())),
-            client_repository: Box::new(PostgresClientRepository::new(db_pool.clone())),
+            customer_order_repository: Box::new(PostgresCustomerOrderRepository::new(
+                db_pool.clone(),
+            )),
+            customer_repository: Box::new(PostgresCustomerRepository::new(db_pool.clone())),
             product_repository: Box::new(PostgresProductRepository::new(db_pool.clone())),
             measurement_unit_repository: Box::new(PostgresMeasurementUnitRepository::new(
                 db_pool.clone(),
@@ -105,8 +108,8 @@ pub async fn run() -> anyhow::Result<Server> {
                 scope("/api")
                     .wrap(auth::Auth)
                     .configure(products::init)
-                    .configure(clients::init)
-                    .configure(client_orders::init)
+                    .configure(customers::init)
+                    .configure(customer_orders::init)
                     .configure(cities::init)
                     .configure(measurement_units::init),
             )

@@ -1,7 +1,7 @@
 use crate::{auth::JwtClaim, AppContext};
 
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use domain::{ProductCreateRequest, ProductUpdateRequest};
+use inventory::{ProductCreateRequest, ProductUpdateRequest};
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);

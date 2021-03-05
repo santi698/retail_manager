@@ -10,7 +10,9 @@ edition = "2018"
 path = "src/lib.rs"
 
 [dependencies]
+customers = { path = "../customers" }
 domain = { path = "../domain" }
+inventory = { path = "../inventory" }
 
 actix-cors = "^0.5.4"
 actix-identity = "^0.3.1"

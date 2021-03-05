@@ -4,7 +4,7 @@ use types::RepositoryError;
 
 use crate::types;
 
-use domain::{Product, ProductCreateRequest, ProductRepository, ProductUpdateRequest};
+use inventory::{Product, ProductCreateRequest, ProductRepository, ProductUpdateRequest};
 
 fn product_from_row(row: PgRow) -> Product {
     Product {

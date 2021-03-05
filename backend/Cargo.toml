@@ -2,5 +2,7 @@
 
 members = [
   "domain",
+  "customers",
+  "inventory",
   "http_api"
 ]
