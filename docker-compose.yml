@@ -46,3 +46,7 @@ services:
       - POSTGRES_USER=retail_manager
       - POSTGRES_PASSWORD=retail_manager
       - POSTGRES_DB=retail_manager
+    volumes:
+      - "dbdata:/var/lib/postgresql/data"
+volumes:
+  postgres:
