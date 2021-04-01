@@ -2,3 +2,4 @@ target
 docker-compose.yml
 movine.toml
 Dockerfile.migrator
+.git

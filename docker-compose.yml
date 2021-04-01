@@ -1,7 +1,7 @@
 version: "3.7"
 services:
-  web:
-    build: .
+  api:
+    build: backend
     ports:
       - "5000:5000"
     links:
@@ -24,13 +24,22 @@ services:
       - FRONTEND_BASE_URL=http://192.168.0.112:3000
   migrator:
     build:
-      context: .
+      context: backend
       dockerfile: Dockerfile.migrator
     depends_on:
       - postgres
     command: ["/bin/sh", "-c", "movine init && movine up"]
     environment:
       - DATABASE_URL=postgres://retail_manager:retail_manager@postgres:5432/retail_manager
+  frontend:
+    build:
+      context: frontend
+      args:
+        REACT_APP_API_URL: http://192.168.0.112:5000
+        REACT_APP_DOMAIN: http://192.168.0.112:3000
+        PORT: '3000'
+    ports:
+      - "3000:3000"
   postgres:
     image: postgres
     environment:

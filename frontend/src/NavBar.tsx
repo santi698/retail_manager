@@ -61,7 +61,7 @@ export function NavBar() {
         </NavLink>
       </li>
       <li>
-        <NavLink to="/clients" title="Clientes">
+        <NavLink to="/customers" title="Clientes">
           <IconButton
             aria-label="Clientes"
             icon={<BsFillPeopleFill />}

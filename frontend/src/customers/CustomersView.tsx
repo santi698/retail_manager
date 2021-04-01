@@ -15,7 +15,7 @@ export function CustomersView() {
   const cities = useCities();
   return (
     <ViewContainer>
-      <ViewTitle>Customeres</ViewTitle>
+      <ViewTitle>Clientes</ViewTitle>
       <Flex justify="space-between">
         <Box />
         <Box>
@@ -25,7 +25,7 @@ export function CustomersView() {
             leftIcon={<BsPlus size="1.5em" />}
             to="/customers/create"
           >
-            Nuevo customere
+            Nuevo cliente
           </InvisibleButton>
         </Box>
       </Flex>
