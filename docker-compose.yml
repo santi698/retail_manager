@@ -37,9 +37,9 @@ services:
       args:
         REACT_APP_API_URL: http://192.168.0.112:5000
         REACT_APP_DOMAIN: http://192.168.0.112:3000
-        PORT: '3000'
+        NGINX_PORT: '80'
     ports:
-      - "3000:3000"
+      - "3000:80"
   postgres:
     image: postgres
     environment:

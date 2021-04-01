@@ -1,4 +1,4 @@
-FROM node:12-slim
+FROM node:12-slim as builder
 
 WORKDIR /app
 
@@ -15,4 +15,6 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-CMD npx serve build -s -p ${PORT}
+FROM nginx:1.19.9-alpine
+
+COPY --from=builder /app/build /usr/share/nginx/html
