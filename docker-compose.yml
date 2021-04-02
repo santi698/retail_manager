@@ -1,6 +1,9 @@
 version: "3.3"
 services:
   api:
+    deploy:
+      replicas: 1
+      endpoint_mode: vip
     build: backend
     ports:
       - "5000:5000"
@@ -23,6 +26,7 @@ services:
       - CORS_ALLOWED_ORIGIN=http://192.168.0.112:3000
       - FRONTEND_BASE_URL=http://192.168.0.112:3000
   migrator:
+    restart: 'no'
     build:
       context: backend
       dockerfile: Dockerfile.migrator
@@ -32,6 +36,9 @@ services:
     environment:
       - DATABASE_URL=postgres://retail_manager:retail_manager@postgres:5432/retail_manager
   frontend:
+    deploy:
+      replicas: 1
+      endpoint_mode: vip
     build:
       context: frontend
       args:
