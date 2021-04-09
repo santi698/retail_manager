@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import { getCurrentUser } from "./UserService";
 
 export function useCurrentUser() {
-  return useQuery("user", getCurrentUser);
+  return useQuery("user", getCurrentUser, { retry: false });
 }
 
 export interface RequireAuthProps {
