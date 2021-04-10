@@ -11,7 +11,7 @@ export function CreateProductView() {
   const refetchProducts = useRefetchProducts();
   return (
     <ViewContainer>
-      <ViewTitle>Cargar cliente nuevo</ViewTitle>
+      <ViewTitle>Cargar producto nuevo</ViewTitle>
       <CreateProductForm
         onSubmit={({ measurement_unit_id, product_name, price }) => {
           createProduct({
