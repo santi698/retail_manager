@@ -8,7 +8,6 @@ export function OrderItemsTable({ items }: { items: CustomerOrderItem[] }) {
     <Table>
       <thead>
         <tr>
-          <th>#</th>
           <th>Cod.</th>
           <th>Nombre</th>
           <th>Precio unitario</th>

@@ -36,7 +36,6 @@ export function OrderRow({
   return (
     <>
       <tr>
-        <td />
         <td>{order.order_id}</td>
         <td style={{ width: "10em" }}>
           {city.status === "success" && city.data.name}

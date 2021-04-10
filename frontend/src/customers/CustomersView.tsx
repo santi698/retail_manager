@@ -32,7 +32,7 @@ export function CustomersView() {
       <Table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>Id</th>
             <th>Nombre</th>
             <th>Email</th>
             <th>Teléfono</th>
@@ -45,7 +45,7 @@ export function CustomersView() {
             cities.status === "success" &&
             customers.data.map((customer) => (
               <tr key={customer.customer_id}>
-                <td />
+                <td>{customer.customer_id}</td>
                 <td>{`${customer.first_name} ${customer.last_name}`}</td>
                 <td>{customer.email}</td>
                 <td>{customer.phone_number}</td>

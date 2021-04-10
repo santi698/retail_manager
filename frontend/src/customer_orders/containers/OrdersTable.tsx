@@ -17,7 +17,6 @@ export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
     <Table>
       <thead>
         <tr>
-          <th>#</th>
           <th>Id. de pedido</th>
           <th>Ciudad</th>
           <th>Fecha</th>

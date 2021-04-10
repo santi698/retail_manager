@@ -27,7 +27,6 @@ export function OrderItemRow({ item }: { item: CustomerOrderItem }) {
   const priceDifference = normalPrice - item.selling_price;
   return (
     <tr>
-      <td />
       <td>{product.product_code}</td>
       <td style={{ width: "16em" }}>{product.product_name}</td>
       <td>

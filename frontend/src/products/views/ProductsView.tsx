@@ -30,7 +30,7 @@ export function ProductsView() {
       <Table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>Código</th>
             <th>Nombre</th>
             <th>Precio de lista</th>
             <th />
@@ -40,7 +40,7 @@ export function ProductsView() {
           {products.status === "success" &&
             products.data.map((product) => (
               <tr key={product.product_code}>
-                <td />
+                <td>{product.product_code}</td>
                 <td>{product.product_name}</td>
                 <td>
                   <Currency>{product.list_unit_price}</Currency>
