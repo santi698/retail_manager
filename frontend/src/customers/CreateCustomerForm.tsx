@@ -154,7 +154,7 @@ export function CreateCustomerForm({
               <FormLabel>Ciudad</FormLabel>
               <Select
                 name="residence_city_id"
-                placeholder="Selecciona la ciudad del customere"
+                placeholder="Selecciona la ciudad del cliente"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.residence_city_id}
@@ -188,7 +188,7 @@ export function CreateCustomerForm({
                 colorScheme="purple"
                 isLoading={isSubmitting}
               >
-                Crear customere
+                Crear cliente
               </Button>
             </Stack>
           </Stack>

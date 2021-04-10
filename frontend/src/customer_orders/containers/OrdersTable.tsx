@@ -21,7 +21,7 @@ export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
           <th>Id. de pedido</th>
           <th>Ciudad</th>
           <th>Fecha</th>
-          <th>Customere</th>
+          <th>Cliente</th>
           <th>Estado del pago</th>
           <th>Estado del pedido</th>
           <th className="currency">Total</th>

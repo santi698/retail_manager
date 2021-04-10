@@ -20,10 +20,10 @@ function CreateOrderForm() {
     return (
       <Stack direction="row">
         <CardButton onClick={() => setIsNewCustomer(true)}>
-          Customere nuevo
+          Cliente nuevo
         </CardButton>
         <CardButton onClick={() => setIsNewCustomer(false)}>
-          Customere existente
+          Cliente existente
         </CardButton>
       </Stack>
     );

@@ -166,7 +166,7 @@ export function EditCustomerForm({
               <FormLabel>Ciudad</FormLabel>
               <Select
                 name="residence_city_id"
-                placeholder="Selecciona la ciudad del customere"
+                placeholder="Selecciona la ciudad del cliente"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.residence_city_id}
@@ -200,7 +200,7 @@ export function EditCustomerForm({
                 colorScheme="purple"
                 isLoading={isSubmitting}
               >
-                Guardar customere
+                Guardar cliente
               </Button>
               <Button
                 as={Link}

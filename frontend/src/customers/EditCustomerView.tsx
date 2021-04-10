@@ -14,7 +14,7 @@ export function EditCustomerView() {
   const customerId = parseInt(match.params.id);
   return (
     <ViewContainer>
-      <ViewTitle>Editar customere</ViewTitle>
+      <ViewTitle>Editar cliente</ViewTitle>
       <EditCustomerForm
         customerId={customerId}
         onSubmit={({

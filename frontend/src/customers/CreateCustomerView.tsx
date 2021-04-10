@@ -11,7 +11,7 @@ export function CreateCustomerView() {
   const refetchCustomers = useRefetchCustomers();
   return (
     <ViewContainer>
-      <ViewTitle>Cargar customere nuevo</ViewTitle>
+      <ViewTitle>Cargar cliente nuevo</ViewTitle>
       <CreateCustomerForm
         onSubmit={({
           first_name,

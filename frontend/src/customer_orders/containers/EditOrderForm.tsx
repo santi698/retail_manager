@@ -106,7 +106,7 @@ export function EditOrderForm({
           errors.order_city_id = "Debe elegir una ciudad";
         }
         if (values.customer_id === "") {
-          errors.customer_id = "Debe elegir un customere";
+          errors.customer_id = "Debe elegir un cliente";
         }
         return errors;
       }}
@@ -155,10 +155,10 @@ export function EditOrderForm({
               }
               isRequired
             >
-              <FormLabel>Customere</FormLabel>
+              <FormLabel>Cliente</FormLabel>
               <Select
                 name="customer_id"
-                placeholder="Selecciona el customere"
+                placeholder="Selecciona el cliente"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.customer_id}

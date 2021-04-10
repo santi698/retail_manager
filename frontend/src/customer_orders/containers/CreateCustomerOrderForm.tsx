@@ -42,7 +42,7 @@ export function CreateCustomerOrderForm({
           errors.order_city_id = "La ciudad es obligatoria";
         }
         if (values.customer_id === "") {
-          errors.customer_id = "El customere es oblicatorio";
+          errors.customer_id = "El cliente es oblicatorio";
         }
         return errors;
       }}
@@ -90,10 +90,10 @@ export function CreateCustomerOrderForm({
               }
               isRequired
             >
-              <FormLabel>Customere</FormLabel>
+              <FormLabel>Cliente</FormLabel>
               <Select
                 name="customer_id"
-                placeholder="Selecciona el customere"
+                placeholder="Selecciona el cliente"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.customer_id}
