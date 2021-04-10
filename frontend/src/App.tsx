@@ -1,21 +1,12 @@
 import React from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import styled from "styled-components";
-import {
-  ChakraProvider,
-  Stack,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Container,
-} from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { AuthProvider } from "./auth/AuthContext";
 
 import { OrdersView } from "./customer_orders/views/OrdersView";
-import { StatsView } from "./common/views/StatsView";
 import { CustomersView } from "./customers/CustomersView";
 import { ProductsView } from "./products/views/ProductsView";
 import { CreateOrderView } from "./customer_orders/views/CreateOrderView";
@@ -33,8 +24,8 @@ import theme from "./theme";
 const Layout = styled.div`
   display: grid;
   min-height: 100vh;
-  grid-template-columns: 80px 1fr 240px;
-  grid-template-areas: "navBar main sidebar";
+  grid-template-columns: 80px 1fr;
+  grid-template-areas: "navBar main";
   grid-template-rows: 100%;
 `;
 
@@ -58,7 +49,7 @@ function App() {
           <NavBar />
           <div style={{ gridArea: "main", padding: "48px" }}>
             <Routes>
-              <Route path="/" element={<StatsView />} />
+              <Route path="/" element={<OrdersView />} />
               <Route path="/orders" element={<OrdersView />} />
               <Route path="/orders/:id" element={<OrdersView />} />
               <Route path="/orders/:id/edit" element={<EditOrderView />} />
@@ -85,15 +76,6 @@ function App() {
               />
             </Routes>
           </div>
-          <Container background="#f9f8ff" centerContent>
-            <Stack padding="4">
-              <Stat>
-                <StatLabel>Pedidos</StatLabel>
-                <StatNumber>43</StatNumber>
-                <StatHelpText>12/08 - 28/08</StatHelpText>
-              </Stat>
-            </Stack>
-          </Container>
         </Layout>
       </AppProviders>
     </BrowserRouter>

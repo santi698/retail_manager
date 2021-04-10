@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BsFillBarChartFill,
-  BsBagFill,
-  BsFillTagFill,
-  BsFillPeopleFill,
-} from "react-icons/bs";
+import { BsBagFill, BsFillTagFill, BsFillPeopleFill } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { IconButton } from "@chakra-ui/react";
@@ -27,17 +22,6 @@ const Wrapper = styled.ul`
 export function NavBar() {
   return (
     <Wrapper>
-      <li>
-        <NavLink to="/" end title="Vista General">
-          <IconButton
-            aria-label="Vista General"
-            icon={<BsFillBarChartFill />}
-            size="lg"
-            variant="ghost"
-            colorScheme="purple"
-          />
-        </NavLink>
-      </li>
       <li>
         <NavLink to="/orders" title="Pedidos">
           <IconButton
