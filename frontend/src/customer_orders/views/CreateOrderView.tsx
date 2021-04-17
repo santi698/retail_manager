@@ -16,10 +16,11 @@ function CreateOrderForm() {
   const navigate = useNavigate();
   if (cities.status !== "success" || customers.status !== "success")
     return null;
+
   if (isNewCustomer === null) {
     return (
       <Stack direction="row">
-        <CardButton onClick={() => setIsNewCustomer(true)}>
+        <CardButton onClick={() => navigate("/customers/create")}>
           Cliente nuevo
         </CardButton>
         <CardButton onClick={() => setIsNewCustomer(false)}>
@@ -29,9 +30,6 @@ function CreateOrderForm() {
     );
   }
 
-  if (isNewCustomer === true) {
-    return <></>;
-  }
   return (
     <CreateCustomerOrderForm
       onSubmit={(customerOrder) => {
