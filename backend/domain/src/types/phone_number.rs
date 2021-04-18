@@ -7,6 +7,7 @@ lazy_static::lazy_static! {
 }
 
 #[derive(Debug, Serialize, Deserialize, sqlx::Type)]
+#[sqlx(transparent)]
 pub struct PhoneNumber(String);
 
 use std::convert::TryFrom;
@@ -31,5 +32,11 @@ use std::fmt;
 impl fmt::Display for PhoneNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+impl Into<String> for PhoneNumber {
+    fn into(self) -> String {
+        self.0
     }
 }

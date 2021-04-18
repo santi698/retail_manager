@@ -244,8 +244,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
                 account_id, product_id, customer_order_id, quantity, selling_price
             )
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING account_id, customer_order_item_id, product_id, customer_order_id,
-                      quantity, selling_price
+            RETURNING *
         "#,
         )
         .bind(account_id)

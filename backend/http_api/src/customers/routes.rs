@@ -50,9 +50,9 @@ async fn create(
         .create(claims.user_account_id, request.into_inner())
         .await;
     match result {
-        Ok(customers) => HttpResponse::Ok().json(customers),
+        Ok(customer) => HttpResponse::Ok().json(customer),
         Err(e) => {
-            tracing::error!("{}", e);
+            tracing::error!("{:?}", e);
             HttpResponse::BadRequest().body("Error trying create a new customer")
         }
     }

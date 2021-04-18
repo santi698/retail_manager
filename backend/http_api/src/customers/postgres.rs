@@ -49,7 +49,7 @@ impl CustomerRepository for PostgresCustomerRepository {
                 SELECT *
                 FROM customers
                 WHERE account_id = $1
-                  AND  customer_id = $2
+                  AND customer_id = $2
             "#,
         )
         .bind(account_id)
@@ -79,13 +79,7 @@ impl CustomerRepository for PostgresCustomerRepository {
                     address
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
-                RETURNING customer_id,
-                          first_name,
-                          last_name,
-                          email,
-                          phone_number,
-                          residence_city_id,
-                          address
+                RETURNING *
             "#,
         )
         .bind(account_id)
@@ -120,13 +114,7 @@ impl CustomerRepository for PostgresCustomerRepository {
                     address = $6
                 WHERE account_id = $7
                   AND  customer_id = $8
-                RETURNING customer_id,
-                          first_name,
-                          last_name,
-                          email,
-                          phone_number,
-                          residence_city_id,
-                          address
+                RETURNING *
             "#,
         )
         .bind(&request.first_name)
