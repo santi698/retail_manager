@@ -70,7 +70,8 @@ export function OrdersView() {
 
                 setFilters((prev) => ({
                   ...prev,
-                  order_status: OrderStatus.from(value).value,
+                  order_status:
+                    value === "" ? "" : OrderStatus.from(value).value,
                 }));
               }}
               placeholder="Todos los estados"
@@ -92,7 +93,8 @@ export function OrdersView() {
                 const value = e.target.value;
                 setFilters((prev) => ({
                   ...prev,
-                  payment_status: PaymentStatus.from(value).value,
+                  payment_status:
+                    value === "" ? "" : PaymentStatus.from(value).value,
                 }));
               }}
               value={filters.payment_status}
