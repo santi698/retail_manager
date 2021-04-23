@@ -117,6 +117,7 @@ export function EditOrderForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
         setFieldValue,
@@ -278,6 +279,7 @@ export function EditOrderForm({
                 type="submit"
                 colorScheme="purple"
                 isLoading={isSubmitting}
+                isDisabled={!isValid}
                 onClick={() => setFieldValue("order_status", "confirmed")}
               >
                 Guardar y terminar pedido
@@ -287,6 +289,7 @@ export function EditOrderForm({
                 colorScheme="purple"
                 variant="ghost"
                 isLoading={isSubmitting}
+                isDisabled={!isValid}
               >
                 Guardar
               </Button>

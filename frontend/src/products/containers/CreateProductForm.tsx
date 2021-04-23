@@ -58,6 +58,7 @@ export function CreateProductForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -126,6 +127,7 @@ export function CreateProductForm({
               <Button
                 type="submit"
                 colorScheme="purple"
+                disabled={!isValid}
                 isLoading={isSubmitting}
               >
                 Crear producto

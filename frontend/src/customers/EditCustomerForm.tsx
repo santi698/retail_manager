@@ -77,6 +77,7 @@ export function EditCustomerForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -199,6 +200,7 @@ export function EditCustomerForm({
                 type="submit"
                 colorScheme="purple"
                 isLoading={isSubmitting}
+                disabled={!isValid}
               >
                 Guardar cliente
               </Button>

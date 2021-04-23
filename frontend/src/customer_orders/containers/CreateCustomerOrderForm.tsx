@@ -53,6 +53,7 @@ export function CreateCustomerOrderForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -120,6 +121,7 @@ export function CreateCustomerOrderForm({
               <Button
                 colorScheme="purple"
                 isLoading={isSubmitting}
+                disabled={!isValid}
                 type="submit"
               >
                 Guardar y agregar productos

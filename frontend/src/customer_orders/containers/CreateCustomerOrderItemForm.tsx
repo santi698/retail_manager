@@ -106,6 +106,7 @@ export function CreateCustomerOrderItemForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -187,6 +188,7 @@ export function CreateCustomerOrderItemForm({
               size="sm"
               type="submit"
               isLoading={isSubmitting}
+              disabled={!isValid}
               rightIcon={<AddIcon />}
             >
               Agregar producto

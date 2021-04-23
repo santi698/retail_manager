@@ -65,6 +65,7 @@ export function CreateCustomerForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -187,6 +188,7 @@ export function CreateCustomerForm({
                 type="submit"
                 colorScheme="purple"
                 isLoading={isSubmitting}
+                disabled={!isValid}
               >
                 Crear cliente
               </Button>

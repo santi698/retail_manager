@@ -65,6 +65,7 @@ export function EditProductForm({
         values,
         handleSubmit,
         isSubmitting,
+        isValid,
         errors,
         touched,
       }) => (
@@ -116,6 +117,7 @@ export function EditProductForm({
               <Button
                 type="submit"
                 colorScheme="purple"
+                disabled={!isValid}
                 isLoading={isSubmitting}
               >
                 Guardar producto
