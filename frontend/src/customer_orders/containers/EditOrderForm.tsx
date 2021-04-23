@@ -287,7 +287,6 @@ export function EditOrderForm({
                 colorScheme="purple"
                 variant="ghost"
                 isLoading={isSubmitting}
-                onClick={() => setFieldValue("order_status", "confirmed")}
               >
                 Guardar
               </Button>
