@@ -41,9 +41,6 @@ fn customer_order_from_row(row: PgRow) -> CustomerOrder {
         order_status: row
             .try_get("order_status")
             .expect("Error trying to get order_status from row"),
-        payment_status: row
-            .try_get("payment_status")
-            .expect("Error trying to get payment_status from row"),
         total_price: row
             .try_get("total_price")
             .expect("Error trying to get total_price from row"),
@@ -163,15 +160,13 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
             r#"
                    UPDATE customer_orders
                       SET order_city_id = $1,
-                          order_status = $2,
-                          payment_status = $3
+                          order_status = $2
                     WHERE account_id = $4
                       AND order_id = $5
             "#,
         )
         .bind(request.order_city_id)
         .bind(request.order_status.as_ref())
-        .bind(request.payment_status)
         .bind(account_id)
         .bind(id)
         .execute(&self.pool)

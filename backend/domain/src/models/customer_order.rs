@@ -15,7 +15,6 @@ pub struct CustomerOrderCreateRequest {
 pub struct CustomerOrderUpdateRequest {
     pub order_city_id: i32,
     pub order_status: OrderStatus,
-    pub payment_status: PaymentStatus,
 }
 
 #[derive(Deserialize, Debug)]
@@ -33,7 +32,6 @@ pub struct CustomerOrder {
     pub customer_id: i32,
     pub order_city_id: i32,
     pub order_status: OrderStatus,
-    pub payment_status: PaymentStatus,
     pub total_price: f64,
     pub address: Option<String>,
 }

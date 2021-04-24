@@ -59,7 +59,6 @@ async fn find_by_id(
 pub struct CustomerOrderUpdateJson {
     pub order_city_id: i32,
     pub order_status: String,
-    pub payment_status: String,
 }
 
 impl TryFrom<CustomerOrderUpdateJson> for CustomerOrderUpdateRequest {
@@ -69,7 +68,6 @@ impl TryFrom<CustomerOrderUpdateJson> for CustomerOrderUpdateRequest {
         Ok(Self {
             order_city_id: value.order_city_id,
             order_status: value.order_status.try_into()?,
-            payment_status: value.payment_status.try_into()?,
         })
     }
 }
