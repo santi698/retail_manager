@@ -9,7 +9,6 @@ import { Currency } from "../common/components/Currency";
 import { Table } from "../common/components/Table";
 import { StatusBadge } from "../common/components/StatusBadge";
 import { orderStatusToColorVariant } from "../customer_orders/orderStatusToColorVariant";
-import { paymentStatusToColorVariant } from "../customer_orders/paymentStatusToColorVariant";
 import { EditIcon } from "@chakra-ui/icons";
 
 export function ShowCustomerView() {
@@ -93,16 +92,6 @@ export function ShowCustomerView() {
                       options={[]}
                       onChange={() => {}}
                       value={order.order_status.value}
-                    />
-                  </td>
-                  <td>
-                    <StatusBadge
-                      colorVariant={paymentStatusToColorVariant(
-                        order.payment_status.value
-                      )}
-                      options={[]}
-                      onChange={() => {}}
-                      value={order.payment_status.value}
                     />
                   </td>
                   <td>

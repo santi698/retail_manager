@@ -10,11 +10,8 @@ import { OrderItemsTable } from "./OrderItemsTable";
 import { useCity } from "../../cities/useCity";
 import { BsCaretUpFill, BsCaretDownFill } from "react-icons/bs";
 import { InvisibleButton } from "../../common/components/InvisibleButton";
-import { orderStatusToColorVariant } from "../orderStatusToColorVariant";
-import { paymentStatusToColorVariant } from "../paymentStatusToColorVariant";
 import { Button, Stack } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
-import { PaymentStatus } from "../PaymentStatus";
 import { OrderStatus } from "../OrderStatus";
 
 export function OrderRow({
@@ -51,22 +48,6 @@ export function OrderRow({
               {customer.first_name} {customer.last_name}
             </>
           )}
-        </td>
-        <td>
-          <StatusBadge
-            colorVariant={order.payment_status.colorVariant()}
-            options={order.payment_status.validTransitions().map((status) => ({
-              value: status.value,
-              label: status.label(),
-            }))}
-            onChange={(e) =>
-              onChange({
-                ...order,
-                payment_status: PaymentStatus.from(e.currentTarget.value),
-              })
-            }
-            value={order.payment_status.label()}
-          />
         </td>
         <td>
           <StatusBadge

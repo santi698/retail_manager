@@ -5,17 +5,11 @@ import {
   RetailManagerApi,
 } from "../../common/services/RetailManagerApi";
 import { OrderStatus } from "../OrderStatus";
-import { PaymentStatus } from "../PaymentStatus";
 
-function mapApiCustomerOrder({
-  order_status,
-  payment_status,
-  ...rest
-}: ApiCustomerOrder) {
+function mapApiCustomerOrder({ order_status, ...rest }: ApiCustomerOrder) {
   return {
     ...rest,
     order_status: OrderStatus.from(order_status),
-    payment_status: PaymentStatus.from(payment_status),
   };
 }
 

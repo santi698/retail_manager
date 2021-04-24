@@ -39,7 +39,6 @@ export interface ApiCustomerOrder {
   ordered_at: string;
   order_city_id: number;
   order_status: string;
-  payment_status: string;
   total_price: number;
   address: string | null;
 }

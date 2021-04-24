@@ -40,7 +40,6 @@ export interface EditOrderRequest {
   customer_id: string;
   order_city_id: string;
   order_status: string;
-  payment_status: string;
   total_price: string;
   address: string;
 }
@@ -50,7 +49,6 @@ function customerOrderToForm(order: CustomerOrder): EditOrderRequest {
     customer_id: order.customer_id.toString(),
     order_city_id: order.order_city_id.toString(),
     order_status: order.order_status.value,
-    payment_status: order.payment_status.value,
     total_price: order.total_price.toString(),
     address: order.address || "",
   };

@@ -17,12 +17,10 @@ import {
 import { Link } from "react-router-dom";
 import { ViewContainer } from "../../common/components/ViewContainer";
 import { OrderStatus, OrderStatusValue } from "../OrderStatus";
-import { PaymentStatus, PaymentStatusValue } from "../PaymentStatus";
 
 export interface OrdersViewFilters {
   order_city_id: string;
   order_status: OrderStatusValue | "";
-  payment_status: PaymentStatusValue | "";
 }
 
 export function OrdersView() {
@@ -31,7 +29,6 @@ export function OrdersView() {
   const [filters, setFilters] = useState<OrdersViewFilters>({
     order_city_id: "",
     order_status: "",
-    payment_status: "",
   });
 
   return (
@@ -84,28 +81,6 @@ export function OrdersView() {
               ))}
             </Select>
           </FormControl>
-          <FormControl>
-            <FormLabel>Estado del pago</FormLabel>
-            <Select
-              id="payment_status"
-              placeholder="Todos los estados"
-              onChange={(e) => {
-                const value = e.target.value;
-                setFilters((prev) => ({
-                  ...prev,
-                  payment_status:
-                    value === "" ? "" : PaymentStatus.from(value).value,
-                }));
-              }}
-              value={filters.payment_status}
-            >
-              {["pending", "collected", "canceled"].map((status) => (
-                <option key={status} value={status}>
-                  {PaymentStatus.from(status).label()}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
         </Stack>
         <Box>
           <InvisibleButton
@@ -131,11 +106,6 @@ export function OrdersView() {
                 (order) =>
                   filters.order_status === "" ||
                   order.order_status.value === filters.order_status
-              )
-              .filter(
-                (order) =>
-                  filters.payment_status === "" ||
-                  order.payment_status.value === filters.payment_status
               )}
           />
         )}
