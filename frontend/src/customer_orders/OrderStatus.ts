@@ -3,6 +3,7 @@ import { ColorVariant } from "../common/components/StatusBadge";
 export enum OrderStatusValue {
   Draft = "draft",
   Confirmed = "confirmed",
+  Paid = "paid",
   Delivered = "delivered",
   Canceled = "canceled",
 }
@@ -10,6 +11,7 @@ export enum OrderStatusValue {
 const LABELS: Record<OrderStatusValue, string> = {
   [OrderStatusValue.Draft]: "Borrador",
   [OrderStatusValue.Confirmed]: "Confirmado",
+  [OrderStatusValue.Paid]: "Pagado",
   [OrderStatusValue.Delivered]: "Entregado",
   [OrderStatusValue.Canceled]: "Cancelado",
 };
@@ -25,6 +27,9 @@ export class OrderStatus {
       }
       case "confirmed": {
         return new OrderStatus(OrderStatusValue.Confirmed);
+      }
+      case "paid": {
+        return new OrderStatus(OrderStatusValue.Paid);
       }
       case "delivered": {
         return new OrderStatus(OrderStatusValue.Delivered);
@@ -57,6 +62,13 @@ export class OrderStatus {
         return [
           new OrderStatus(OrderStatusValue.Delivered),
           new OrderStatus(OrderStatusValue.Canceled),
+          new OrderStatus(OrderStatusValue.Paid),
+        ];
+      }
+      case OrderStatusValue.Paid: {
+        return [
+          new OrderStatus(OrderStatusValue.Delivered),
+          new OrderStatus(OrderStatusValue.Canceled),
         ];
       }
       case OrderStatusValue.Delivered:
@@ -73,6 +85,9 @@ export class OrderStatus {
       }
       case OrderStatusValue.Confirmed: {
         return ColorVariant.Blue;
+      }
+      case OrderStatusValue.Paid: {
+        return ColorVariant.Cyan;
       }
       case OrderStatusValue.Delivered: {
         return ColorVariant.Green;

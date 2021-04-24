@@ -1,7 +1,6 @@
 use async_trait::async_trait;
 
 use serde::{Deserialize, Serialize};
-use types::PaymentStatus;
 
 use crate::types::{self, OrderStatus};
 

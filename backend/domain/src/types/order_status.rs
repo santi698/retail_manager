@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 pub enum OrderStatus {
     Draft,
     Confirmed,
+    Paid,
     Delivered,
     Canceled,
 }
@@ -20,6 +21,7 @@ impl TryFrom<String> for OrderStatus {
         match value.as_str() {
             "draft" => Ok(Self::Draft),
             "confirmed" => Ok(Self::Confirmed),
+            "paid" => Ok(Self::Paid),
             "delivered" => Ok(Self::Delivered),
             "canceled" => Ok(Self::Canceled),
             _ => Err(format!("Invalid order status {}", value)),
@@ -32,6 +34,7 @@ impl AsRef<str> for OrderStatus {
         match self {
             OrderStatus::Draft => "draft",
             OrderStatus::Confirmed => "confirmed",
+            OrderStatus::Paid => "paid",
             OrderStatus::Delivered => "delivered",
             OrderStatus::Canceled => "canceled",
         }

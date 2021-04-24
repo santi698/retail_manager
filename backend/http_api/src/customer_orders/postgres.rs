@@ -161,8 +161,8 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
                    UPDATE customer_orders
                       SET order_city_id = $1,
                           order_status = $2
-                    WHERE account_id = $4
-                      AND order_id = $5
+                    WHERE account_id = $3
+                      AND order_id = $4
             "#,
         )
         .bind(request.order_city_id)
