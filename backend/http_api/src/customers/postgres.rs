@@ -6,7 +6,7 @@ use types::RepositoryError;
 
 use crate::types;
 
-use customers::{Customer, CustomerCreateRequest, CustomerRepository, CustomerUpdateRequest};
+use customer_orders::{Customer, CustomerCreateRequest, CustomerRepository, CustomerUpdateRequest};
 use domain::{Email, PhoneNumber};
 
 #[derive(Debug)]

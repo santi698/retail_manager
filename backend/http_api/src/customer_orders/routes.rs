@@ -3,7 +3,7 @@ use std::convert::{TryFrom, TryInto};
 use crate::{auth::JwtClaim, types::ErrorJson, AppContext};
 
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use customers::{
+use customer_orders::{
     CustomerOrderAddItemRequest, CustomerOrderCreateRequest, CustomerOrderUpdateRequest,
 };
 use serde::Deserialize;

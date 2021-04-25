@@ -1,6 +1,6 @@
 use crate::types;
 
-use customers::{
+use customer_orders::{
     CustomerOrder, CustomerOrderAddItemRequest, CustomerOrderCreateRequest, CustomerOrderItem,
     CustomerOrderRepository, CustomerOrderUpdateRequest,
 };

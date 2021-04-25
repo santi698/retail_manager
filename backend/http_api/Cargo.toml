@@ -10,7 +10,7 @@ edition = "2018"
 path = "src/lib.rs"
 
 [dependencies]
-customers = { path = "../customers" }
+customer_orders = { path = "../customer_orders" }
 domain = { path = "../domain" }
 inventory = { path = "../inventory" }
 

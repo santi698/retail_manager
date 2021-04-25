@@ -785,7 +785,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "customers"
+name = "customer_orders"
 version = "0.1.0"
 dependencies = [
  "async-trait",
@@ -1218,7 +1218,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "chrono",
- "customers",
+ "customer_orders",
  "domain",
  "dotenv",
  "envy",

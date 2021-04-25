@@ -4,8 +4,9 @@ extern crate lazy_static;
 #[macro_use]
 extern crate async_trait;
 
+use crate::customer_orders::PostgresCustomerOrderRepository;
 use crate::customers::PostgresCustomerRepository;
-use ::customers::{CustomerOrderRepository, CustomerRepository};
+use ::customer_orders::{CustomerOrderRepository, CustomerRepository};
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::web::scope;
@@ -13,7 +14,6 @@ use actix_web::{dev::Server, http, App, HttpServer};
 use chrono::Duration;
 use cities::PostgresCityRepository;
 use config::CONFIG;
-use customer_orders::PostgresCustomerOrderRepository;
 use domain::{
     CityRepository, EmailAndPasswordIdentityRepository, MeasurementUnitRepository, UserRepository,
 };
