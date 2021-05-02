@@ -25,8 +25,8 @@ import { useCustomers } from "../../customers/useCustomers";
 import { Table } from "../../common/components/Table";
 import { useCustomerOrderItems } from "../hooks/useCustomerOrderItems";
 import {
-  CustomerOrderItemForm,
   CreateCustomerOrderItemForm,
+  CustomerOrderItemValues,
 } from "./CreateCustomerOrderItemForm";
 import {
   createCustomerOrderItem,
@@ -55,14 +55,14 @@ function customerOrderToForm(order: CustomerOrder): EditOrderRequest {
 }
 
 function createCustomerOrderItemRequestFromForm(
-  form: CustomerOrderItemForm,
+  form: CustomerOrderItemValues,
   customer_order_id: number
 ): CreateCustomerOrderItemRequest {
   return {
     customer_order_id,
     product_id: parseInt(form.product_id),
-    quantity: parseFloat(form.quantity),
-    selling_price: parseFloat(form.selling_price),
+    quantity: form.quantity,
+    selling_price: form.selling_price,
   };
 }
 

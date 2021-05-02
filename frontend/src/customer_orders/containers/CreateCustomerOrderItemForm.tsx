@@ -14,11 +14,21 @@ import React, { useEffect } from "react";
 import { formatCurrency } from "../../common/components/Currency";
 import { useMeasurementUnits } from "../../products/hooks/useMeasurementUnits";
 import { useProducts } from "../../products/hooks/useProducts";
+import {
+  isValidDecimal,
+  parseDecimal,
+} from "../../common/services/decimalNumbers";
 
 export interface CustomerOrderItemForm {
   product_id: string;
   quantity: string;
   selling_price: string;
+}
+
+export interface CustomerOrderItemValues {
+  product_id: string;
+  quantity: number;
+  selling_price: number;
 }
 
 const INITIAL_ORDER_ITEM: CustomerOrderItemForm = {
@@ -55,7 +65,7 @@ function SellingPriceField(props: Omit<InputProps, "name">) {
 export function CreateCustomerOrderItemForm({
   onSubmit,
 }: {
-  onSubmit: (values: CustomerOrderItemForm) => void;
+  onSubmit: (values: CustomerOrderItemValues) => void;
 }) {
   const products = useProducts();
   const measurementUnits = useMeasurementUnits();
@@ -67,7 +77,11 @@ export function CreateCustomerOrderItemForm({
     <Formik
       initialValues={INITIAL_ORDER_ITEM}
       onSubmit={(values, { setSubmitting }) => {
-        onSubmit(values);
+        onSubmit({
+          ...values,
+          selling_price: parseDecimal(values.selling_price),
+          quantity: parseDecimal(values.quantity),
+        });
         setSubmitting(false);
       }}
       validate={(values) => {
@@ -79,22 +93,14 @@ export function CreateCustomerOrderItemForm({
 
         if (values.quantity === "") {
           errors.quantity = "La cantidad es obligatoria.";
-        } else {
-          try {
-            parseFloat(values.quantity);
-          } catch (e) {
-            errors.quantity = "La cantidad tiene que ser un número.";
-          }
+        } else if (!isValidDecimal(values.quantity)) {
+          errors.quantity = "La cantidad tiene que ser un número.";
         }
 
         if (values.selling_price === "") {
           errors.selling_price = "La cantidad es obligatoria.";
-        } else {
-          try {
-            parseFloat(values.selling_price);
-          } catch (e) {
-            errors.selling_price = "La cantidad tiene que ser un número.";
-          }
+        } else if (!isValidDecimal(values.selling_price)) {
+          errors.selling_price = "La cantidad tiene que ser un número.";
         }
 
         return errors;
