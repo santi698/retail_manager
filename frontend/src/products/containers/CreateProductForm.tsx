@@ -10,6 +10,7 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import { useMeasurementUnits } from "../hooks/useMeasurementUnits";
+import { isValidDecimal } from "../../common/services/decimalNumbers";
 
 export interface CreateProductRequest {
   product_name: string;
@@ -43,8 +44,8 @@ export function CreateProductForm({
         }
         if (values.price === "") {
           errors.price = "El precio del producto es obligatorio";
-        } else if (!values.price.match(/\d+[.,]\d+/)) {
-          errors.price = "El precio debe ser un número decimal";
+        } else if (!isValidDecimal(values.price)) {
+          errors.price = "El precio debe ser un número";
         }
         if (values.measurement_unit_id === "") {
           errors.measurement_unit_id = "La unidad de medida es obligatoria";

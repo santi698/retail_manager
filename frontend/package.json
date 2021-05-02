@@ -21,6 +21,8 @@
     "formik": "^2.2.6",
     "framer-motion": "^3.2.1",
     "history": "^5.0.0",
+    "multi-number-parse": "^1.1.0",
+    "parse-formatted-number": "^1.1.0",
     "react": "^16",
     "react-dom": "^16",
     "react-icons": "^4.1.0",
@@ -51,5 +53,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/multi-number-parse": "^1.1.0"
   }
 }
