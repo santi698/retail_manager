@@ -13,6 +13,7 @@ path = "src/lib.rs"
 customer_orders = { path = "../customer_orders" }
 domain = { path = "../domain" }
 inventory = { path = "../inventory" }
+pricing = { path = "../pricing" }
 
 actix-cors = "^0.5.4"
 actix-identity = "^0.3.1"

@@ -6,7 +6,9 @@ extern crate async_trait;
 
 use crate::customer_orders::PostgresCustomerOrderRepository;
 use crate::customers::PostgresCustomerRepository;
+use crate::pricing::PostgresProductPriceRepository;
 use ::customer_orders::{CustomerOrderRepository, CustomerRepository};
+use ::pricing::ProductPriceRepository;
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::web::scope;
@@ -33,6 +35,7 @@ mod customer_orders;
 mod customers;
 mod identities;
 mod measurement_units;
+mod pricing;
 mod products;
 pub mod telemetry;
 mod types;
@@ -48,6 +51,7 @@ struct AppContext {
     pub email_and_password_identity_repository:
         Box<dyn EmailAndPasswordIdentityRepository<Error = RepositoryError>>,
     pub user_repository: Box<dyn UserRepository<Error = RepositoryError>>,
+    pub product_price_repository: Box<dyn ProductPriceRepository<Error = RepositoryError>>,
 }
 
 impl AppContext {
@@ -58,6 +62,9 @@ impl AppContext {
                 db_pool.clone(),
             )),
             customer_repository: Box::new(PostgresCustomerRepository::new(db_pool.clone())),
+            product_price_repository: Box::new(PostgresProductPriceRepository::new(
+                db_pool.clone(),
+            )),
             product_repository: Box::new(PostgresProductRepository::new(db_pool.clone())),
             measurement_unit_repository: Box::new(PostgresMeasurementUnitRepository::new(
                 db_pool.clone(),
@@ -110,6 +117,7 @@ pub async fn run() -> anyhow::Result<Server> {
                     .configure(products::init)
                     .configure(customers::init)
                     .configure(customer_orders::init)
+                    .configure(pricing::init)
                     .configure(cities::init)
                     .configure(measurement_units::init),
             )

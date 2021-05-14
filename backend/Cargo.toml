@@ -4,5 +4,6 @@ members = [
   "domain",
   "customer_orders",
   "inventory",
-  "http_api"
+  "http_api",
+  "pricing"
 ]
