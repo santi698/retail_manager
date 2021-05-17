@@ -19,7 +19,6 @@ export function ProductsView() {
         <Box>
           <InvisibleButton
             as={Link}
-            colorScheme="purple"
             leftIcon={<BsPlus size="1.5em" />}
             to="/products/create"
           >

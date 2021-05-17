@@ -275,7 +275,6 @@ export function EditOrderForm({
             <Stack direction="row">
               <Button
                 type="submit"
-                colorScheme="purple"
                 isLoading={isSubmitting}
                 isDisabled={!isValid}
                 onClick={() => setFieldValue("order_status", "confirmed")}
@@ -284,7 +283,6 @@ export function EditOrderForm({
               </Button>
               <Button
                 type="submit"
-                colorScheme="purple"
                 variant="ghost"
                 isLoading={isSubmitting}
                 isDisabled={!isValid}

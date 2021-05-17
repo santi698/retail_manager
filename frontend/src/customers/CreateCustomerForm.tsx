@@ -121,7 +121,6 @@ export function CreateCustomerForm({
               </InputGroup>
             </FormControl>
             <FormControl
-              colorScheme="purple"
               id="phone_number"
               isInvalid={
                 errors.phone_number !== undefined &&
@@ -186,7 +185,6 @@ export function CreateCustomerForm({
             <Stack direction="row">
               <Button
                 type="submit"
-                colorScheme="purple"
                 isLoading={isSubmitting}
                 disabled={!isValid}
               >

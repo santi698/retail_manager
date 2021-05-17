@@ -119,7 +119,6 @@ export function CreateCustomerOrderForm({
             </FormControl>
             <Stack direction="row">
               <Button
-                colorScheme="purple"
                 isLoading={isSubmitting}
                 disabled={!isValid}
                 type="submit"

@@ -21,7 +21,6 @@ export function CustomersView() {
         <Box>
           <InvisibleButton
             as={Link}
-            colorScheme="purple"
             leftIcon={<BsPlus size="1.5em" />}
             to="/customers/create"
           >

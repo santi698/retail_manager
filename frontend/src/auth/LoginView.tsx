@@ -27,17 +27,15 @@ export function LoginView() {
         spacing="8"
         w="md"
       >
-        <FormControl colorScheme="purple" id="email">
+        <FormControl id="email">
           <FormLabel>Dirección de Email</FormLabel>
           <Input type="email" name="email" />
         </FormControl>
-        <FormControl colorScheme="purple" id="password">
+        <FormControl id="password">
           <FormLabel>Contraseña</FormLabel>
           <Input type="password" name="password" />
         </FormControl>
-        <Button colorScheme="purple" type="submit">
-          Iniciar sesión
-        </Button>
+        <Button type="submit">Iniciar sesión</Button>
       </Stack>
     </Flex>
   );

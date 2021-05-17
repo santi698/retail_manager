@@ -85,7 +85,6 @@ export function OrdersView() {
         <Box>
           <InvisibleButton
             as={Link}
-            colorScheme="purple"
             leftIcon={<BsPlus size="1.5em" />}
             to="/orders/create"
           >

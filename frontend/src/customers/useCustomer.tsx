@@ -5,7 +5,7 @@ import { getCustomer } from "./CustomersService";
 export function useCustomer(id: number | undefined) {
   return useQuery<Customer>(
     ["customers", id],
-    ({ queryKey }) => getCustomer(queryKey[1]),
+    ({ queryKey }) => getCustomer(queryKey[1] as number),
     {
       enabled: id !== undefined,
     }

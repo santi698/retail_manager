@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import styled from "styled-components";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { AuthProvider } from "./auth/AuthContext";
@@ -24,7 +24,7 @@ import theme from "./theme";
 const Layout = styled.div`
   display: grid;
   min-height: 100vh;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 160px 1fr;
   grid-template-areas: "navBar main";
   grid-template-rows: 100%;
 `;
@@ -47,35 +47,43 @@ function App() {
       <AppProviders>
         <Layout>
           <NavBar />
-          <div style={{ gridArea: "main", padding: "48px" }}>
-            <Routes>
-              <Route path="/" element={<OrdersView />} />
-              <Route path="/orders" element={<OrdersView />} />
-              <Route path="/orders/:id" element={<OrdersView />} />
-              <Route path="/orders/:id/edit" element={<EditOrderView />} />
-              <Route path="/orders/create" element={<CreateOrderView />} />
-              <Route path="/customers" element={<CustomersView />} />
-              <Route
-                path="/customers/create"
-                element={<CreateCustomerView />}
-              />
-              <Route
-                path="/customers/:id/edit"
-                element={<EditCustomerView />}
-              />
-              <Route path="/customers/:id" element={<ShowCustomerView />} />
-              <Route path="/products" element={<ProductsView />} />
-              <Route path="/products/create" element={<CreateProductView />} />
-              <Route
-                path="/products/:product_code"
-                element={<ShowProductView />}
-              />
-              <Route
-                path="/products/:product_code/edit"
-                element={<EditProductView />}
-              />
-            </Routes>
-          </div>
+          <Box>
+            <Container
+              maxW="container.xl"
+              style={{ gridArea: "main", padding: "48px" }}
+            >
+              <Routes>
+                <Route path="/" element={<OrdersView />} />
+                <Route path="/orders" element={<OrdersView />} />
+                <Route path="/orders/:id" element={<OrdersView />} />
+                <Route path="/orders/:id/edit" element={<EditOrderView />} />
+                <Route path="/orders/create" element={<CreateOrderView />} />
+                <Route path="/customers" element={<CustomersView />} />
+                <Route
+                  path="/customers/create"
+                  element={<CreateCustomerView />}
+                />
+                <Route
+                  path="/customers/:id/edit"
+                  element={<EditCustomerView />}
+                />
+                <Route path="/customers/:id" element={<ShowCustomerView />} />
+                <Route path="/products" element={<ProductsView />} />
+                <Route
+                  path="/products/create"
+                  element={<CreateProductView />}
+                />
+                <Route
+                  path="/products/:product_code"
+                  element={<ShowProductView />}
+                />
+                <Route
+                  path="/products/:product_code/edit"
+                  element={<EditProductView />}
+                />
+              </Routes>
+            </Container>
+          </Box>
         </Layout>
       </AppProviders>
     </BrowserRouter>

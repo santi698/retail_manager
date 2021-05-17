@@ -116,18 +116,12 @@ export function EditProductForm({
             <Stack direction="row">
               <Button
                 type="submit"
-                colorScheme="purple"
                 disabled={!isValid}
                 isLoading={isSubmitting}
               >
                 Guardar producto
               </Button>
-              <Button
-                as={Link}
-                colorScheme="purple"
-                variant="ghost"
-                to={`/products/${productCode}`}
-              >
+              <Button as={Link} variant="ghost" to={`/products/${productCode}`}>
                 Cancelar y Volver
               </Button>
             </Stack>

@@ -127,7 +127,6 @@ export function CreateProductForm({
             <Stack direction="row">
               <Button
                 type="submit"
-                colorScheme="purple"
                 disabled={!isValid}
                 isLoading={isSubmitting}
               >

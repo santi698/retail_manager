@@ -133,7 +133,6 @@ export function EditCustomerForm({
               </InputGroup>
             </FormControl>
             <FormControl
-              colorScheme="purple"
               id="phone_number"
               isInvalid={
                 errors.phone_number !== undefined &&
@@ -198,18 +197,12 @@ export function EditCustomerForm({
             <Stack direction="row">
               <Button
                 type="submit"
-                colorScheme="purple"
                 isLoading={isSubmitting}
                 disabled={!isValid}
               >
                 Guardar cliente
               </Button>
-              <Button
-                as={Link}
-                colorScheme="purple"
-                variant="ghost"
-                to={`/customers/${customerId}`}
-              >
+              <Button as={Link} variant="ghost" to={`/customers/${customerId}`}>
                 Cancelar y Volver
               </Button>
             </Stack>
