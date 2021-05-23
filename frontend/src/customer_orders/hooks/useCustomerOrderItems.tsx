@@ -1,5 +1,5 @@
-import { CustomerOrderItem } from "../CustomerOrderItem";
 import { useQuery } from "react-query";
+import { CustomerOrderItem } from "../CustomerOrderItem";
 import { getCustomerOrderItems } from "../services/CustomerOrdersService";
 
 export function useCustomerOrderItems(id: number) {

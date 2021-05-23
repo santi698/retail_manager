@@ -1,7 +1,5 @@
-import React from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import { ViewTitle } from "../../common/components/ViewTitle";
-import { ViewContainer } from "../../common/components/ViewContainer";
 import { EditOrderForm } from "../containers/EditOrderForm";
 import { useRefetchCustomerOrders } from "../hooks/useRefetchCustomerOrders";
 import { editCustomerOrder } from "../services/CustomerOrdersService";
@@ -14,7 +12,7 @@ export function EditOrderView() {
   if (!match) return null;
   const customerOrderId = parseInt(match.params.id);
   return (
-    <ViewContainer>
+    <>
       <ViewTitle>Completar Pedido</ViewTitle>
       <EditOrderForm
         customerOrderId={customerOrderId}
@@ -37,6 +35,6 @@ export function EditOrderView() {
           });
         }}
       />
-    </ViewContainer>
+    </>
   );
 }

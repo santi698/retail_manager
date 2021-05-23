@@ -1,5 +1,3 @@
-import React from "react";
-
 const currencyFormatter = new Intl.NumberFormat(navigator.language, {
   currency: "ARS",
   style: "currency",

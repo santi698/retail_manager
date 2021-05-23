@@ -32,8 +32,8 @@ export function NavBar() {
     <VStack
       spacing="3rem"
       py={3}
-      background="brand.20"
-      boxShadow="0 0 8px rgba(200, 200, 200, 0.3)"
+      bg="white"
+      borderRight="1px solid var(--chakra-colors-brand-100)"
       position="relative"
     >
       <Center>

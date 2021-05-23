@@ -1,6 +1,7 @@
-import React from "react";
+import { ButtonHTMLAttributes, MouseEvent } from "react";
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { OrderStatus } from "../../customer_orders/OrderStatus";
 
 export enum ColorVariant {
   Purple,
@@ -20,7 +21,7 @@ function colorVariantToString(variant: ColorVariant): string {
       return "purple";
     }
     case ColorVariant.Green: {
-      return "green";
+      return "teal";
     }
     case ColorVariant.Yellow: {
       return "yellow";
@@ -58,20 +59,26 @@ export interface StatusBadgeOption {
   label: string;
 }
 export interface StatusBadgeProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  onChange: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  colorVariant: ColorVariant;
-  options: StatusBadgeOption[];
-  value: string;
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
+  onChange?: (e: MouseEvent<HTMLButtonElement>) => void;
+  value: OrderStatus;
 }
 
-export function StatusBadge({
-  colorVariant,
-  options,
-  value,
-  onChange,
-  ...rest
-}: StatusBadgeProps) {
+export function StatusBadge({ value, onChange, ...rest }: StatusBadgeProps) {
+  const colorVariant = value.colorVariant();
+  const options = value.validTransitions().map((status) => ({
+    value: status.value,
+    label: status.label(),
+  }));
+
+  if (!onChange) {
+    return (
+      <Button as="div" colorScheme={colorVariantToString(colorVariant)}>
+        {value.label()}
+      </Button>
+    );
+  }
+
   return (
     <Menu>
       {({ isOpen }) => (
@@ -84,7 +91,7 @@ export function StatusBadge({
             rightIcon={<ChevronDownIcon />}
             {...rest}
           >
-            {value}
+            {value.label()}
           </MenuButton>
           <MenuList>
             {options.map(({ value, label }) => (

@@ -1,10 +1,10 @@
 import React from "react";
+import { Tbody, Th, Thead, Tr, Table } from "@chakra-ui/table";
 import { CustomerOrder } from "../CustomerOrder";
-import { OrderRow } from "./OrderRow";
-import { Table } from "../../common/components/Table";
 import { useCustomers } from "../../customers/useCustomers";
 import { editCustomerOrder } from "../services/CustomerOrdersService";
 import { useRefetchCustomerOrders } from "../hooks/useRefetchCustomerOrders";
+import { OrderRow } from "./OrderRow";
 
 export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
   const refetchCustomerOrders = useRefetchCustomerOrders();
@@ -15,19 +15,18 @@ export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
 
   return (
     <Table>
-      <thead>
-        <tr>
-          <th>Id. de pedido</th>
-          <th>Ciudad</th>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Estado del pago</th>
-          <th>Estado del pedido</th>
-          <th className="currency">Total</th>
-          <th />
-        </tr>
-      </thead>
-      <tbody>
+      <Thead>
+        <Tr>
+          <Th>Id. de pedido</Th>
+          <Th>Ciudad</Th>
+          <Th>Fecha</Th>
+          <Th>Cliente</Th>
+          <Th>Estado del pedido</Th>
+          <Th className="currency">Total</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      <Tbody>
         {orders.map((order) => {
           if (customers === null) return null;
           const customer = customers.data.find(
@@ -48,7 +47,7 @@ export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
             />
           );
         })}
-      </tbody>
+      </Tbody>
     </Table>
   );
 }

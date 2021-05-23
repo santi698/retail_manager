@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Button, Stack } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import { ViewTitle } from "../../common/components/ViewTitle";
-import { Stack } from "@chakra-ui/react";
-import { CardButton } from "../../common/components/CardButton";
 import { useCities } from "../../cities/useCities";
 import { useCustomers } from "../../customers/useCustomers";
-import { ViewContainer } from "../../common/components/ViewContainer";
 import { CreateCustomerOrderForm } from "../containers/CreateCustomerOrderForm";
-import { useNavigate } from "react-router-dom";
 import { createCustomerOrder } from "../services/CustomerOrdersService";
 
 function CreateOrderForm() {
@@ -20,12 +18,12 @@ function CreateOrderForm() {
   if (isNewCustomer === null) {
     return (
       <Stack direction="row">
-        <CardButton onClick={() => navigate("/customers/create")}>
+        <Button onClick={() => navigate("/customers/create")}>
           Cliente nuevo
-        </CardButton>
-        <CardButton onClick={() => setIsNewCustomer(false)}>
+        </Button>
+        <Button onClick={() => setIsNewCustomer(false)}>
           Cliente existente
-        </CardButton>
+        </Button>
       </Stack>
     );
   }
@@ -47,9 +45,9 @@ function CreateOrderForm() {
 
 export function CreateOrderView() {
   return (
-    <ViewContainer>
+    <>
       <ViewTitle>Cargar nuevo pedido</ViewTitle>
       <CreateOrderForm />
-    </ViewContainer>
+    </>
   );
 }

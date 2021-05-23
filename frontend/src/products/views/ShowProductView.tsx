@@ -1,5 +1,3 @@
-import React from "react";
-import { ViewContainer } from "../../common/components/ViewContainer";
 import { Link, useMatch } from "react-router-dom";
 import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
@@ -21,7 +19,7 @@ export function ShowProductView() {
   if (measurementUnit === undefined) return null;
 
   return (
-    <ViewContainer>
+    <>
       <Box
         border="1px solid"
         padding={2}
@@ -49,6 +47,6 @@ export function ShowProductView() {
           {product.data.list_unit_price}
         </Text>
       </Box>
-    </ViewContainer>
+    </>
   );
 }

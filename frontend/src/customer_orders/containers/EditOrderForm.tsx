@@ -16,18 +16,19 @@ import {
   ModalBody,
   IconButton,
   Text,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Table,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useCities } from "../../cities/useCities";
 import { CustomerOrder } from "../CustomerOrder";
 import { useCustomerOrder } from "../hooks/useCustomerOrder";
 import { useCustomers } from "../../customers/useCustomers";
-import { Table } from "../../common/components/Table";
 import { useCustomerOrderItems } from "../hooks/useCustomerOrderItems";
-import {
-  CreateCustomerOrderItemForm,
-  CustomerOrderItemValues,
-} from "./CreateCustomerOrderItemForm";
 import {
   createCustomerOrderItem,
   CreateCustomerOrderItemRequest,
@@ -35,6 +36,11 @@ import {
 } from "../services/CustomerOrdersService";
 import { Currency } from "../../common/components/Currency";
 import { useProducts } from "../../products/hooks/useProducts";
+import { InvisibleButton } from "../../common/components/InvisibleButton";
+import {
+  CreateCustomerOrderItemForm,
+  CustomerOrderItemValues,
+} from "./CreateCustomerOrderItemForm";
 
 export interface EditOrderRequest {
   customer_id: string;
@@ -105,6 +111,10 @@ export function EditOrderForm({
         }
         if (values.customer_id === "") {
           errors.customer_id = "Debe elegir un cliente";
+        }
+
+        if (parseInt(values.total_price) <= 0) {
+          errors.total_price = "Debe agregar al menos un producto";
         }
         return errors;
       }}
@@ -181,28 +191,28 @@ export function EditOrderForm({
               <FormErrorMessage>{errors.customer_id}</FormErrorMessage>
             </FormControl>
             <Table>
-              <thead>
-                <tr>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Precio de venta</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
+              <Thead>
+                <Tr>
+                  <Th>Producto</Th>
+                  <Th>Cantidad</Th>
+                  <Th>Precio de venta</Th>
+                  <Th />
+                </Tr>
+              </Thead>
+              <Tbody>
                 {orderItems.data.map((item) => {
                   const product = products.data.find(
                     (product) => product.product_code === item.product_id
                   )!;
                   const removeLabel = `Eliminar ${product.product_name} del pedido`;
                   return (
-                    <tr key={product.product_code}>
-                      <td>{product.product_name}</td>
-                      <td>{item.quantity}</td>
-                      <td>
+                    <Tr key={product.product_code}>
+                      <Td>{product.product_name}</Td>
+                      <Td>{item.quantity}</Td>
+                      <Td>
                         <Currency>{item.selling_price}</Currency>
-                      </td>
-                      <td>
+                      </Td>
+                      <Td>
                         <IconButton
                           aria-label={removeLabel}
                           colorScheme="red"
@@ -218,16 +228,16 @@ export function EditOrderForm({
                         >
                           <DeleteIcon />
                         </IconButton>
-                      </td>
-                    </tr>
+                      </Td>
+                    </Tr>
                   );
                 })}
-                <tr>
-                  <td>
+                <Tr>
+                  <Td>
                     <Text fontWeight="bold">Total</Text>
-                  </td>
-                  <td />
-                  <td>
+                  </Td>
+                  <Td />
+                  <Td>
                     <Text fontWeight="bold">
                       <Currency>
                         {orderItems.data.reduce(
@@ -236,14 +246,14 @@ export function EditOrderForm({
                         ) || 0}
                       </Currency>
                     </Text>
-                  </td>
-                  <td />
-                </tr>
-                <tr>
-                  <td colSpan={3}>
-                    <Button onClick={onOpen} leftIcon={<AddIcon />}>
+                  </Td>
+                  <Td />
+                </Tr>
+                <Tr>
+                  <Td colSpan={3}>
+                    <InvisibleButton onClick={onOpen} leftIcon={<AddIcon />}>
                       Agregar otro producto al pedido
-                    </Button>
+                    </InvisibleButton>
 
                     <Modal isOpen={isOpen} onClose={onClose}>
                       <ModalOverlay>
@@ -268,9 +278,9 @@ export function EditOrderForm({
                         </ModalContent>
                       </ModalOverlay>
                     </Modal>
-                  </td>
-                </tr>
-              </tbody>
+                  </Td>
+                </Tr>
+              </Tbody>
             </Table>
             <Stack direction="row">
               <Button

@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { Formik, useField, useFormikContext } from "formik";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { formatCurrency } from "../../common/components/Currency";
 import { useMeasurementUnits } from "../../products/hooks/useMeasurementUnits";
 import { useProducts } from "../../products/hooks/useProducts";
@@ -42,23 +42,34 @@ function SellingPriceField(props: Omit<InputProps, "name">) {
   const {
     values: { product_id, quantity },
     setFieldValue,
+    touched,
   } = useFormikContext<CustomerOrderItemForm>();
   const [field] = useField(name);
   const products = useProducts();
 
   useEffect(() => {
     if (products.status !== "success") return;
-    if (product_id.trim() !== "" && quantity.trim() !== "") {
-      setFieldValue(
-        name,
-        (products.data.find(
-          (product) => product.product_code === parseInt(product_id)
-        )?.list_unit_price || 0) * parseFloat(quantity)
-      );
-    }
-  }, [product_id, quantity, products, setFieldValue, name]);
+    if (!(touched.product_id && touched.quantity)) return;
+    if (product_id.trim() === "" || quantity.trim() === "") return;
+
+    const product = products.data.find(
+      (product) => product.product_code === parseInt(product_id)
+    );
+
+    setFieldValue(name, (product?.list_unit_price || 0) * parseFloat(quantity));
+  }, [
+    product_id,
+    quantity,
+    products.status,
+    products.data,
+    setFieldValue,
+    name,
+    touched.product_id,
+    touched.quantity,
+  ]);
 
   if (products.status !== "success") return null;
+
   return <Input {...props} {...field} />;
 }
 

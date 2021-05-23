@@ -1,26 +1,26 @@
 import React from "react";
+import { Tbody, Th, Thead, Tr, Table } from "@chakra-ui/table";
 import { CustomerOrderItem } from "../CustomerOrderItem";
 import { OrderItemRow } from "./OrderItemRow";
-import { Table } from "../../common/components/Table";
 
 export function OrderItemsTable({ items }: { items: CustomerOrderItem[] }) {
   return (
     <Table>
-      <thead>
-        <tr>
-          <th>Cod.</th>
-          <th>Nombre</th>
-          <th>Precio unitario</th>
-          <th>Cantidad</th>
-          <th>Precio de venta</th>
-          <th>Descuento</th>
-        </tr>
-      </thead>
-      <tbody>
+      <Thead>
+        <Tr>
+          <Th>Cod.</Th>
+          <Th>Nombre</Th>
+          <Th>Precio unitario</Th>
+          <Th>Cantidad</Th>
+          <Th>Precio de venta</Th>
+          <Th>Descuento</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
         {items.map((item) => (
           <OrderItemRow item={item} key={item.customer_order_item_id} />
         ))}
-      </tbody>
+      </Tbody>
     </Table>
   );
 }

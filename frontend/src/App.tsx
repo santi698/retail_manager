@@ -1,11 +1,14 @@
+import "@fontsource/raleway/400.css";
+import "@fontsource/raleway/700.css";
+import "@fontsource/nunito-sans/400.css";
+
 import React from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import styled from "styled-components";
 import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { AuthProvider } from "./auth/AuthContext";
-
 import { OrdersView } from "./customer_orders/views/OrdersView";
 import { CustomersView } from "./customers/CustomersView";
 import { ProductsView } from "./products/views/ProductsView";
@@ -47,13 +50,17 @@ function App() {
       <AppProviders>
         <Layout>
           <NavBar />
-          <Box>
+          <Box bg="brand.50" p="6">
             <Container
               maxW="container.xl"
-              style={{ gridArea: "main", padding: "48px" }}
+              style={{ gridArea: "main" }}
+              bg="white"
+              py="6"
+              px="12"
+              border="1px solid var(--chakra-colors-gray-100)"
             >
               <Routes>
-                <Route path="/" element={<OrdersView />} />
+                <Route path="/" element={<Navigate to="/orders" replace />} />
                 <Route path="/orders" element={<OrdersView />} />
                 <Route path="/orders/:id" element={<OrdersView />} />
                 <Route path="/orders/:id/edit" element={<EditOrderView />} />

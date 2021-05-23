@@ -5,18 +5,16 @@
   "dependencies": {
     "@chakra-ui/icons": "^1.0.13",
     "@chakra-ui/react": "^1.6.1",
+    "@chakra-ui/theme-tools": "^1.1.7",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@fontsource/nunito-sans": "^4.3.0",
+    "@fontsource/raleway": "^4.3.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^13.1.9",
-    "@types/jest": "^26.0.20",
-    "@types/node": "^12.19.15",
-    "@types/react": "^17.0.5",
-    "@types/react-dom": "^17.0.5",
-    "@types/styled-components": "^5.1.9",
     "env-cmd": "^10.1.0",
-    "formik": "^2.2.6",
+    "formik": "^2.2.8",
     "framer-motion": "^4",
     "history": "^5.0.0",
     "multi-number-parse": "^1.1.0",
@@ -52,6 +50,14 @@
     ]
   },
   "devDependencies": {
-    "@types/multi-number-parse": "^1.1.0"
+    "@types/jest": "^26.0.20",
+    "@types/multi-number-parse": "^1.1.0",
+    "@types/node": "^12.19.15",
+    "@types/react": "^17.0.5",
+    "@types/react-dom": "^17.0.5",
+    "@types/styled-components": "^5.1.9",
+    "@typescript-eslint/parser": "^4.24.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.23.3"
   }
 }

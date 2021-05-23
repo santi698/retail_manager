@@ -1,6 +1,3 @@
-import React from "react";
-import { ViewTitle } from "../components/ViewTitle";
-import { ViewContainer } from "../components/ViewContainer";
 import {
   SimpleGrid,
   Stat,
@@ -8,10 +5,11 @@ import {
   StatNumber,
   StatHelpText,
 } from "@chakra-ui/react";
+import { ViewTitle } from "../components/ViewTitle";
 
 export function StatsView() {
   return (
-    <ViewContainer>
+    <>
       <ViewTitle>Vista General</ViewTitle>
       <SimpleGrid columns={2}>
         <Stat>
@@ -25,6 +23,6 @@ export function StatsView() {
           <StatHelpText>12/08 - 28/08</StatHelpText>
         </Stat>
       </SimpleGrid>
-    </ViewContainer>
+    </>
   );
 }

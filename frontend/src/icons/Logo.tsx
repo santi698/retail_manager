@@ -15,10 +15,9 @@ export function Logo({ size = 48, ...rest }: LogoProps) {
       viewBox="0 0 133 133"
       {...rest}
     >
-      <path fill="#fff" d="M0 0h133v133H0z" />
-      <path fill="#5551FF" d="M20.882 20.882h90.353v45.176H20.882z" />
-      <path fill="#16C8BE" d="M20.882 67.941h56.471v43.294H20.882z" />
-      <path fill="#FF8577" d="M79.235 67.941h32v43.294h-32z" />
+      <path fill="#5451FF" d="M20.882 20.882h90.353v45.176H20.882z" />
+      <path fill="#45D7DA" d="M20.882 67.941h56.471v43.294H20.882z" />
+      <path fill="#FF9594" d="M79.235 67.941h32v43.294h-32z" />
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"

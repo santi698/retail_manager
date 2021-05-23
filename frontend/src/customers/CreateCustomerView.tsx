@@ -1,7 +1,5 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ViewTitle } from "../common/components/ViewTitle";
-import { ViewContainer } from "../common/components/ViewContainer";
 import { CreateCustomerForm } from "./CreateCustomerForm";
 import { createCustomer } from "./CustomersService";
 import { useRefetchCustomers } from "./useRefetchCustomers";
@@ -10,7 +8,7 @@ export function CreateCustomerView() {
   const navigate = useNavigate();
   const refetchCustomers = useRefetchCustomers();
   return (
-    <ViewContainer>
+    <>
       <ViewTitle>Cargar cliente nuevo</ViewTitle>
       <CreateCustomerForm
         onSubmit={({
@@ -34,6 +32,6 @@ export function CreateCustomerView() {
           });
         }}
       />
-    </ViewContainer>
+    </>
   );
 }

@@ -14,8 +14,8 @@ import {
 import { PhoneIcon, AtSignIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { useCities } from "../cities/useCities";
-import { useCustomer } from "./useCustomer";
 import { Customer } from "../domain/Customer";
+import { useCustomer } from "./useCustomer";
 
 export interface EditCustomerRequest {
   first_name: string;

@@ -1,9 +1,10 @@
-import React from "react";
-import { Heading } from "@chakra-ui/react";
+import { Heading, HeadingProps } from "@chakra-ui/react";
 
-export function ViewTitle({ children }: { children: React.ReactNode }) {
+interface ViewTitleProps extends HeadingProps {}
+
+export function ViewTitle({ children, ...rest }: ViewTitleProps) {
   return (
-    <Heading as="h1" fontSize="4xl" fontWeight="bold" mb={4}>
+    <Heading as="h1" fontSize="4xl" fontWeight="bold" mb={8} {...rest}>
       {children}
     </Heading>
   );

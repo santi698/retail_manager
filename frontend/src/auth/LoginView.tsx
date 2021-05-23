@@ -1,18 +1,21 @@
 import {
   Button,
+  Center,
   Flex,
   FormControl,
   FormLabel,
+  Heading,
+  HStack,
   Input,
   Stack,
 } from "@chakra-ui/react";
-import React from "react";
 import { API_URL } from "../config";
+import { Logo } from "../icons/Logo";
 
 export function LoginView() {
   return (
     <Flex
-      bg="gray.100"
+      bg="brand.50"
       alignItems="center"
       justifyContent="center"
       height="100vh"
@@ -26,7 +29,16 @@ export function LoginView() {
         padding="10"
         spacing="8"
         w="md"
+        boxShadow="sm"
       >
+        <Center>
+          <HStack>
+            <Logo size={60} />
+            <Heading as="h1" color="black" fontSize="3.5rem">
+              Kauu
+            </Heading>
+          </HStack>
+        </Center>
         <FormControl id="email">
           <FormLabel>Dirección de Email</FormLabel>
           <Input type="email" name="email" />

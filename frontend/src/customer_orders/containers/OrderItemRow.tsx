@@ -1,4 +1,5 @@
 import React from "react";
+import { Td, Tr } from "@chakra-ui/table";
 import { CustomerOrderItem } from "../CustomerOrderItem";
 import { Currency } from "../../common/components/Currency";
 import { Number } from "../../common/components/Number";
@@ -26,16 +27,16 @@ export function OrderItemRow({ item }: { item: CustomerOrderItem }) {
   const normalPrice = product.list_unit_price * item.quantity;
   const priceDifference = normalPrice - item.selling_price;
   return (
-    <tr>
-      <td>{product.product_code}</td>
-      <td style={{ width: "16em" }}>{product.product_name}</td>
-      <td>
+    <Tr>
+      <Td>{product.product_code}</Td>
+      <Td style={{ width: "16em" }}>{product.product_name}</Td>
+      <Td>
         <Currency>{product.list_unit_price}</Currency>
-      </td>
-      <td>
+      </Td>
+      <Td>
         <Number>{item.quantity}</Number> {measurementUnit.symbol}
-      </td>
-      <td className="currency">
+      </Td>
+      <Td className="currency">
         <Currency>{item.selling_price}</Currency>
         {priceDifference !== 0 && (
           <>
@@ -46,10 +47,10 @@ export function OrderItemRow({ item }: { item: CustomerOrderItem }) {
             </span>
           </>
         )}
-      </td>
-      <td>
+      </Td>
+      <Td>
         <Percentage>{priceDifference / normalPrice}</Percentage>
-      </td>
-    </tr>
+      </Td>
+    </Tr>
   );
 }

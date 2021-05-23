@@ -1,15 +1,23 @@
-import React from "react";
-import { useCustomer } from "./useCustomer";
-import { ViewContainer } from "../common/components/ViewContainer";
-import { useCities } from "../cities/useCities";
 import { Link, useMatch } from "react-router-dom";
-import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Stack,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  Table,
+  TableCaption,
+} from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
+import { useCities } from "../cities/useCities";
 import { useCustomerOrders } from "../customer_orders/hooks/useCustomerOrders";
 import { Currency } from "../common/components/Currency";
-import { Table } from "../common/components/Table";
 import { StatusBadge } from "../common/components/StatusBadge";
-import { orderStatusToColorVariant } from "../customer_orders/orderStatusToColorVariant";
-import { EditIcon } from "@chakra-ui/icons";
+import { useCustomer } from "./useCustomer";
 
 export function ShowCustomerView() {
   const match = useMatch("/customers/:id");
@@ -31,78 +39,63 @@ export function ShowCustomerView() {
     (order) => order.customer_id === customer.data.customer_id
   );
   return (
-    <ViewContainer>
-      <Box
-        border="1px solid"
-        padding={2}
-        borderColor="gray.300"
-        borderRadius="9px"
-      >
+    <>
+      <Stack direction="row" marginY={2}>
         <Heading as="h2" fontSize="2xl" mb={2}>
           {customer.data.first_name} {customer.data.last_name}
         </Heading>
-        <Stack direction="row" marginY={2}>
-          <Button
-            as={Link}
-            leftIcon={<EditIcon />}
-            size="sm"
-            to={`/customers/${customer.data.customer_id}/edit`}
-          >
-            Editar
-          </Button>
-        </Stack>
-        <Text fontSize="lg" lineHeight="1.5">
-          <strong>Teléfono:</strong> {customer.data.phone_number}
-        </Text>
-        <Text fontSize="lg" lineHeight="1.5">
-          <strong>Email:</strong> {customer.data.email}
-        </Text>
-        <Text fontSize="lg" lineHeight="1.5">
-          <strong>Ciudad:</strong>{" "}
-          {
-            cities.data.find(
-              (city) => city.id === customer.data.residence_city_id
-            )?.name
-          }
-        </Text>
-        <Text fontSize="lg" lineHeight="1.5">
-          <strong>Dirección:</strong> {customer.data.address}
-        </Text>
+        <Button
+          as={Link}
+          leftIcon={<EditIcon />}
+          size="sm"
+          to={`/customers/${customer.data.customer_id}/edit`}
+        >
+          Editar
+        </Button>
+      </Stack>
+      <Text fontSize="lg" lineHeight="1.5">
+        <strong>Teléfono:</strong> {customer.data.phone_number}
+      </Text>
+      <Text fontSize="lg" lineHeight="1.5">
+        <strong>Email:</strong> {customer.data.email}
+      </Text>
+      <Text fontSize="lg" lineHeight="1.5">
+        <strong>Ciudad:</strong>{" "}
+        {
+          cities.data.find(
+            (city) => city.id === customer.data.residence_city_id
+          )?.name
+        }
+      </Text>
+      <Text fontSize="lg" lineHeight="1.5">
+        <strong>Dirección:</strong> {customer.data.address}
+      </Text>
 
-        <Box mt={2} width="300px">
-          <Heading fontSize="xl">Pedidos</Heading>
-          <Table>
-            <thead>
-              <tr>
-                <th>No. de pedido</th>
-                <th>Estado del pedido</th>
-                <th>Estado del pago</th>
-                <th>Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customerOrders.map((order) => (
-                <tr>
-                  <td>{order.order_id}</td>
-                  <td>
-                    <StatusBadge
-                      colorVariant={orderStatusToColorVariant(
-                        order.order_status.value
-                      )}
-                      options={[]}
-                      onChange={() => {}}
-                      value={order.order_status.value}
-                    />
-                  </td>
-                  <td>
-                    <Currency>{order.total_price}</Currency>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Box>
-      </Box>
-    </ViewContainer>
+      <Table>
+        <TableCaption fontSize="xl" placement="top">
+          Pedidos
+        </TableCaption>
+        <Thead>
+          <Tr>
+            <Th>No. de pedido</Th>
+            <Th>Estado del pedido</Th>
+            <Th>Monto</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {customerOrders.map((order) => (
+            <Tr>
+              <Td>{order.order_id}</Td>
+              <Td>
+                <StatusBadge value={order.order_status} />
+              </Td>
+              <Td>
+                <Currency>{order.total_price}</Currency>
+              </Td>
+            </Tr>
+          ))}
+        </Tbody>
+      </Table>
+    </>
   );
 }

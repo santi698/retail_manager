@@ -1,8 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { LoginView } from "./LoginView";
-import { APP_DOMAIN } from "../config";
 import { useQuery } from "react-query";
+import { APP_DOMAIN } from "../config";
+import { LoginView } from "./LoginView";
 import { getCurrentUser } from "./UserService";
 
 export function useCurrentUser() {
