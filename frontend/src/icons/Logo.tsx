@@ -12,17 +12,17 @@ export function Logo({ size = 48, ...rest }: LogoProps) {
       height={size}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 133 133"
+      viewBox="0 0 64 64"
       {...rest}
     >
-      <path fill="#5451FF" d="M20.882 20.882h90.353v45.176H20.882z" />
-      <path fill="#45D7DA" d="M20.882 67.941h56.471v43.294H20.882z" />
-      <path fill="#FF9594" d="M79.235 67.941h32v43.294h-32z" />
+      <path fill="#fff" d="M0 0h64v64H0z" />
+      <path fill="#5451FF" stroke="#000" stroke-width="3" d="M5 7h54v25H5z" />
+      <path fill="#45D7DA" stroke="#000" stroke-width="3" d="M5 32h34v25H5z" />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M19 115V19h96v96H19zm90.667-50.667v-40H24.333v40h85.334zm0 45.334v-40H80.333v40h29.334zm-34.667 0v-40H24.333v40H75z"
-        fill="#000"
+        fill="#FF9594"
+        stroke="#000"
+        stroke-width="3"
+        d="M39 32h20v25H39z"
       />
     </svg>
   );

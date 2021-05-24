@@ -33,8 +33,8 @@ export function LoginView() {
       >
         <Center>
           <HStack>
-            <Logo size={60} />
-            <Heading as="h1" color="black" fontSize="3.5rem">
+            <Logo size={64} />
+            <Heading as="h1" color="black" fontSize="70px" fontWeight="black">
               Kauu
             </Heading>
           </HStack>

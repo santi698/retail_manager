@@ -1,5 +1,6 @@
 import "@fontsource/raleway/400.css";
 import "@fontsource/raleway/700.css";
+import "@fontsource/raleway/900.css";
 import "@fontsource/nunito-sans/400.css";
 
 import React from "react";
