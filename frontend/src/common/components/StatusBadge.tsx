@@ -71,7 +71,7 @@ export function StatusBadge({ value, onChange, ...rest }: StatusBadgeProps) {
     label: status.label(),
   }));
 
-  if (!onChange) {
+  if (!onChange || options.length === 0) {
     return (
       <Button as="div" colorScheme={colorVariantToString(colorVariant)}>
         {value.label()}
@@ -86,7 +86,6 @@ export function StatusBadge({ value, onChange, ...rest }: StatusBadgeProps) {
           <MenuButton
             isActive={isOpen}
             colorScheme={colorVariantToString(colorVariant)}
-            disabled={options.length === 0}
             as={Button}
             rightIcon={<ChevronDownIcon />}
             {...rest}

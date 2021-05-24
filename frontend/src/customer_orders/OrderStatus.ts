@@ -50,6 +50,28 @@ export class OrderStatus {
     return LABELS[this.value];
   }
 
+  isEditable() {
+    if (
+      [OrderStatusValue.Draft, OrderStatusValue.Confirmed].includes(this.value)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  isFinished() {
+    if (
+      [
+        OrderStatusValue.Draft,
+        OrderStatusValue.Confirmed,
+        OrderStatusValue.Paid,
+      ].includes(this.value)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   validTransitions(): OrderStatus[] {
     switch (this.value) {
       case OrderStatusValue.Draft: {

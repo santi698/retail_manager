@@ -56,6 +56,7 @@ export function CreateCustomerOrderForm({
         isValid,
         errors,
         touched,
+        dirty,
       }) => (
         <form onSubmit={handleSubmit} noValidate>
           <Stack spacing="4">
@@ -120,7 +121,7 @@ export function CreateCustomerOrderForm({
             <Stack direction="row">
               <Button
                 isLoading={isSubmitting}
-                disabled={!isValid}
+                disabled={!dirty || !isValid}
                 type="submit"
               >
                 Guardar y agregar productos

@@ -10,13 +10,18 @@ import {
   Stack,
   Button,
   VStack,
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { OrdersTable } from "../containers/OrdersTable";
 import { useCustomerOrders } from "../hooks/useCustomerOrders";
 import { useCities } from "../../cities/useCities";
 import { ViewTitle } from "../../common/components/ViewTitle";
-import { OrderStatus, OrderStatusValue } from "../OrderStatus";
+import { OrderStatusValue } from "../OrderStatus";
 
 export interface OrdersViewFilters {
   order_city_id: string;
@@ -59,31 +64,6 @@ export function OrdersView() {
                   ))}
               </Select>
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="order_status">Estado del pedido</FormLabel>
-              <Select
-                id="order_status"
-                onChange={(e) => {
-                  const value = e.target.value;
-
-                  setFilters((prev) => ({
-                    ...prev,
-                    order_status:
-                      value === "" ? "" : OrderStatus.from(value).value,
-                  }));
-                }}
-                placeholder="Todos los estados"
-                value={filters.order_status}
-              >
-                {["draft", "confirmed", "delivered", "canceled"].map(
-                  (status) => (
-                    <option key={status} value={status}>
-                      {OrderStatus.from(status).label()}
-                    </option>
-                  )
-                )}
-              </Select>
-            </FormControl>
           </Stack>
           <Box>
             <Button
@@ -95,23 +75,40 @@ export function OrdersView() {
             </Button>
           </Box>
         </Flex>
-        <Box>
-          {customerOrders.status === "success" && (
-            <OrdersTable
-              orders={customerOrders.data
-                .filter(
-                  (order) =>
-                    filters.order_city_id === "" ||
-                    order.order_city_id === parseInt(filters.order_city_id)
-                )
-                .filter(
-                  (order) =>
-                    filters.order_status === "" ||
-                    order.order_status.value === filters.order_status
-                )}
-            />
-          )}
-        </Box>
+        <Tabs variant="enclosed">
+          <TabList>
+            <Tab>Pedidos pendientes</Tab>
+            <Tab>Pedidos finalizados</Tab>
+          </TabList>
+          <TabPanels>
+            {customerOrders.status === "success" && (
+              <TabPanel>
+                <OrdersTable
+                  orders={customerOrders.data
+                    .filter(
+                      (order) =>
+                        filters.order_city_id === "" ||
+                        order.order_city_id === parseInt(filters.order_city_id)
+                    )
+                    .filter((order) => order.order_status.isFinished())}
+                />
+              </TabPanel>
+            )}
+            {customerOrders.status === "success" && (
+              <TabPanel>
+                <OrdersTable
+                  orders={customerOrders.data
+                    .filter(
+                      (order) =>
+                        filters.order_city_id === "" ||
+                        order.order_city_id === parseInt(filters.order_city_id)
+                    )
+                    .filter((order) => !order.order_status.isFinished())}
+                />
+              </TabPanel>
+            )}
+          </TabPanels>
+        </Tabs>
       </VStack>
     </>
   );

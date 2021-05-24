@@ -16,14 +16,9 @@ export function Logo({ size = 48, ...rest }: LogoProps) {
       {...rest}
     >
       <path fill="#fff" d="M0 0h64v64H0z" />
-      <path fill="#5451FF" stroke="#000" stroke-width="3" d="M5 7h54v25H5z" />
-      <path fill="#45D7DA" stroke="#000" stroke-width="3" d="M5 32h34v25H5z" />
-      <path
-        fill="#FF9594"
-        stroke="#000"
-        stroke-width="3"
-        d="M39 32h20v25H39z"
-      />
+      <path fill="#5451FF" stroke="#000" strokeWidth="3" d="M5 7h54v25H5z" />
+      <path fill="#45D7DA" stroke="#000" strokeWidth="3" d="M5 32h34v25H5z" />
+      <path fill="#FF9594" stroke="#000" strokeWidth="3" d="M39 32h20v25H39z" />
     </svg>
   );
 }

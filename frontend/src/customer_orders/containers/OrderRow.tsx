@@ -19,7 +19,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
-import { MouseEvent } from "react";
 import { Currency } from "../../common/components/Currency";
 import { Customer } from "../../domain/Customer";
 import { CustomerOrder } from "../CustomerOrder";
@@ -45,14 +44,7 @@ export function OrderRow({
 
   return (
     <>
-      <Tr
-        _hover={{ background: "gray.50" }}
-        role="button"
-        onClick={(e: MouseEvent<HTMLTableRowElement>) => {
-          if ((e.target as HTMLElement).tagName === "BUTTON") return;
-          onOpen();
-        }}
-      >
+      <Tr _hover={{ background: "gray.50" }}>
         <Td>{order.order_id}</Td>
         <Td style={{ width: "10em" }}>
           {city.status === "success" && city.data.name}
@@ -82,16 +74,18 @@ export function OrderRow({
         </Td>
         <Td className="currency">{<Currency>{order.total_price}</Currency>}</Td>
         <Td>
-          <Stack direction="row">
-            <Button
-              as={Link}
-              leftIcon={<EditIcon />}
-              size="xs"
-              variant="ghost"
-              to={`/orders/${order.order_id}/edit`}
-            >
-              Editar
-            </Button>
+          <Stack direction="row" justify="flex-end">
+            {order.order_status.isEditable() && (
+              <Button
+                as={Link}
+                leftIcon={<EditIcon />}
+                size="xs"
+                variant="ghost"
+                to={`/orders/${order.order_id}/edit`}
+              >
+                Editar
+              </Button>
+            )}
             <Button leftIcon={<BsEyeFill />} onClick={onOpen} size="xs">
               Ver pedido
             </Button>

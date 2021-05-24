@@ -46,22 +46,20 @@ function SellingPriceField(props: Omit<InputProps, "name">) {
   } = useFormikContext<CustomerOrderItemForm>();
   const [field] = useField(name);
   const products = useProducts();
+  const product = products.data?.find(
+    (product) => product.product_code === parseInt(product_id)
+  );
 
   useEffect(() => {
-    if (products.status !== "success") return;
+    if (!product) return;
     if (!(touched.product_id && touched.quantity)) return;
     if (product_id.trim() === "" || quantity.trim() === "") return;
-
-    const product = products.data.find(
-      (product) => product.product_code === parseInt(product_id)
-    );
 
     setFieldValue(name, (product?.list_unit_price || 0) * parseFloat(quantity));
   }, [
     product_id,
     quantity,
-    products.status,
-    products.data,
+    product,
     setFieldValue,
     name,
     touched.product_id,
@@ -81,8 +79,9 @@ export function CreateCustomerOrderItemForm({
   const products = useProducts();
   const measurementUnits = useMeasurementUnits();
 
-  if (products.status !== "success" || measurementUnits.status !== "success")
+  if (products.status !== "success" || measurementUnits.status !== "success") {
     return null;
+  }
 
   return (
     <Formik
@@ -126,93 +125,106 @@ export function CreateCustomerOrderItemForm({
         isValid,
         errors,
         touched,
-      }) => (
-        <form onSubmit={handleSubmit} noValidate>
-          <Stack direction="column">
-            <FormControl
-              id="product_id"
-              isInvalid={
-                errors.product_id !== undefined && touched.product_id === true
-              }
-              isRequired
-              size="sm"
-            >
-              <FormLabel>Producto</FormLabel>
-              <Select
-                name="product_id"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                placeholder="Seleccioná un producto"
+        dirty,
+      }) => {
+        const currentProduct = products.data.find(
+          ({ product_code }) => product_code === parseInt(values.product_id)
+        );
+
+        const currentMeasurementUnit = measurementUnits.data.find(
+          ({ id }) => id === currentProduct?.measurement_unit_id
+        );
+        console.log(dirty, isValid);
+        return (
+          <form onSubmit={handleSubmit} noValidate>
+            <Stack direction="column">
+              <FormControl
+                id="product_id"
+                isInvalid={
+                  errors.product_id !== undefined && touched.product_id === true
+                }
+                isRequired
                 size="sm"
-                value={values.product_id}
               >
-                {products.data.map((product) => (
-                  <option
-                    key={product.product_code}
-                    value={product.product_code}
-                  >
-                    {product.product_name} (
-                    {formatCurrency(product.list_unit_price)}
-                    {" / "}
-                    {
-                      measurementUnits.data.find(
-                        (unit) => unit.id === product.measurement_unit_id
-                      )?.symbol
-                    }
-                    )
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.product_id}</FormErrorMessage>
-            </FormControl>
-            <FormControl
-              id="quantity"
-              isInvalid={
-                errors.quantity !== undefined && touched.quantity === true
-              }
-              isRequired
-            >
-              <FormLabel>Cantidad</FormLabel>
-              <Input
-                name="quantity"
-                onBlur={handleBlur}
-                onChange={handleChange}
+                <FormLabel>Producto</FormLabel>
+                <Select
+                  name="product_id"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Seleccioná un producto"
+                  size="sm"
+                  value={values.product_id}
+                >
+                  {products.data.map((product) => (
+                    <option
+                      key={product.product_code}
+                      value={product.product_code}
+                    >
+                      {product.product_name} (
+                      {formatCurrency(product.list_unit_price)}
+                      {" / "}
+                      {
+                        measurementUnits.data.find(
+                          (unit) => unit.id === product.measurement_unit_id
+                        )?.symbol
+                      }
+                      )
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>{errors.product_id}</FormErrorMessage>
+              </FormControl>
+              <FormControl
+                id="quantity"
+                isInvalid={
+                  errors.quantity !== undefined && touched.quantity === true
+                }
+                isRequired
+              >
+                <FormLabel>
+                  Cantidad{" "}
+                  {currentMeasurementUnit &&
+                    `(${
+                      currentMeasurementUnit?.symbol === ""
+                        ? currentMeasurementUnit.unit_name
+                        : currentMeasurementUnit?.symbol
+                    })`}
+                </FormLabel>
+                <Input
+                  name="quantity"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  size="sm"
+                  value={values.quantity}
+                />
+                <FormErrorMessage>{errors.quantity}</FormErrorMessage>
+              </FormControl>
+              <FormControl
+                id="selling_price"
+                isDisabled={values.product_id === "" || values.quantity === ""}
+                isInvalid={
+                  errors.selling_price !== undefined &&
+                  touched.selling_price === true
+                }
+                isRequired
+              >
+                <FormLabel>Precio de venta ($)</FormLabel>
+                <SellingPriceField size="sm" />
+                <FormErrorMessage>{errors.selling_price}</FormErrorMessage>
+              </FormControl>
+              <Button
                 size="sm"
-                value={values.quantity}
-              />
-              <FormErrorMessage>{errors.quantity}</FormErrorMessage>
-            </FormControl>
-            <FormControl
-              id="selling_price"
-              isDisabled={values.product_id === "" || values.quantity === ""}
-              defaultValue={
-                products.data.find(
-                  (product) =>
-                    product.product_code === parseInt(values.product_id)
-                )?.list_unit_price
-              }
-              isInvalid={
-                errors.selling_price !== undefined &&
-                touched.selling_price === true
-              }
-              isRequired
-            >
-              <FormLabel>Precio de venta</FormLabel>
-              <SellingPriceField size="sm" />
-              <FormErrorMessage>{errors.selling_price}</FormErrorMessage>
-            </FormControl>
-            <Button
-              size="sm"
-              type="submit"
-              isLoading={isSubmitting}
-              disabled={!isValid}
-              rightIcon={<AddIcon />}
-            >
-              Agregar producto
-            </Button>
-          </Stack>
-        </form>
-      )}
+                type="submit"
+                isLoading={isSubmitting}
+                disabled={!dirty || !isValid}
+                rightIcon={<AddIcon />}
+              >
+                Agregar producto
+              </Button>
+            </Stack>
+          </form>
+        );
+      }}
     </Formik>
   );
 }
