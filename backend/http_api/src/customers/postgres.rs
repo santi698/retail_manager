@@ -31,7 +31,7 @@ impl CustomerRepository for PostgresCustomerRepository {
                 SELECT *
                 FROM customers
                 WHERE account_id = $1
-                ORDER BY customer_id;
+                ORDER BY customer_id DESC;
             "#,
         )
         .bind(account_id)

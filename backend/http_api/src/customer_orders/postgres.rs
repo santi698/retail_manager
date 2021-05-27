@@ -90,7 +90,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
                        ) AS total_price
                   FROM customer_orders
                   WHERE account_id = $1
-                 ORDER BY order_id;
+                  ORDER BY customer_orders.ordered_at DESC
             "#,
         )
         .bind(account_id)
@@ -215,6 +215,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
               FROM customer_order_items
              WHERE account_id = $1
                AND customer_order_id = $2
+             ORDER BY customer_orders_items.customer_order_item_id
         "#,
         )
         .bind(account_id)
