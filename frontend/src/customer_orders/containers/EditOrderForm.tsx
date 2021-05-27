@@ -253,13 +253,13 @@ export function EditOrderForm({
                 <Tr>
                   <Td colSpan={3}>
                     <InvisibleButton onClick={onOpen} leftIcon={<AddIcon />}>
-                      Agregar otro producto al pedido
+                      Agregar ítem al pedido
                     </InvisibleButton>
 
                     <Modal isOpen={isOpen} onClose={onClose}>
                       <ModalOverlay>
                         <ModalContent>
-                          <ModalHeader>Agregar producto al pedido</ModalHeader>
+                          <ModalHeader>Agregar ítem al pedido</ModalHeader>
                           <ModalCloseButton />
                           <ModalBody>
                             <CreateCustomerOrderItemForm
@@ -290,7 +290,7 @@ export function EditOrderForm({
                 isDisabled={!isValid}
                 onClick={() => setFieldValue("order_status", "confirmed")}
               >
-                Guardar y terminar pedido
+                Guardar y confirmar pedido
               </Button>
               <Button
                 type="submit"
@@ -298,7 +298,7 @@ export function EditOrderForm({
                 isLoading={isSubmitting}
                 isDisabled={!isValid}
               >
-                Guardar
+                Guardar como borrador
               </Button>
             </Stack>
           </Stack>
