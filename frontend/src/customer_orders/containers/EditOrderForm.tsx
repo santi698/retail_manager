@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import {
   Stack,
@@ -22,6 +22,7 @@ import {
   Tbody,
   Td,
   Table,
+  Skeleton,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useCities } from "../../cities/useCities";
@@ -32,11 +33,12 @@ import { useCustomerOrderItems } from "../hooks/useCustomerOrderItems";
 import {
   createCustomerOrderItem,
   CreateCustomerOrderItemRequest,
-  deleteCustomerOrderItem,
+  useDeleteCustomerOrderItem,
 } from "../services/CustomerOrdersService";
 import { Currency } from "../../common/components/Currency";
 import { useProducts } from "../../products/hooks/useProducts";
 import { InvisibleButton } from "../../common/components/InvisibleButton";
+import { CustomerOrderItem } from "../CustomerOrderItem";
 import {
   CreateCustomerOrderItemForm,
   CustomerOrderItemValues,
@@ -86,6 +88,7 @@ export function EditOrderForm({
   const order = useCustomerOrder(customerOrderId);
   const products = useProducts();
   const orderItems = useCustomerOrderItems(customerOrderId);
+  const deleteOrderItemMutation = useDeleteCustomerOrderItem();
   const { isOpen, onOpen, onClose } = useDisclosure();
   if (
     cities.status !== "success" ||
@@ -129,7 +132,6 @@ export function EditOrderForm({
         errors,
         touched,
         setFieldValue,
-        dirty,
       }) => (
         <form onSubmit={handleSubmit} noValidate>
           <Stack spacing="4">
@@ -201,44 +203,23 @@ export function EditOrderForm({
                 </Tr>
               </Thead>
               <Tbody>
-                {orderItems.data.map((item) => {
-                  const product = products.data.find(
-                    (product) => product.product_code === item.product_id
-                  )!;
-                  const removeLabel = `Eliminar ${product.product_name} del pedido`;
-                  return (
-                    <Tr key={product.product_code}>
-                      <Td>{product.product_name}</Td>
-                      <Td>{item.quantity}</Td>
-                      <Td isNumeric>
-                        <Currency>{item.selling_price}</Currency>
-                      </Td>
-                      <Td isNumeric>
-                        <IconButton
-                          aria-label={removeLabel}
-                          colorScheme="red"
-                          onClick={() => {
-                            deleteCustomerOrderItem({
-                              customer_order_id: item.customer_order_id,
-                              customer_order_item_id:
-                                item.customer_order_item_id,
-                            }).then(() => orderItems.refetch());
-                          }}
-                          size="sm"
-                          title={removeLabel}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Td>
-                    </Tr>
-                  );
-                })}
+                {orderItems.data.map((item) => (
+                  <OrderItemRow
+                    item={item}
+                    onDelete={() => {
+                      deleteOrderItemMutation.mutate({
+                        customer_order_id: item.customer_order_id,
+                        customer_order_item_id: item.customer_order_item_id,
+                      });
+                    }}
+                    key={item.customer_order_item_id}
+                  />
+                ))}
                 <Tr>
                   <Td>
                     <Text fontWeight="bold">Total</Text>
                   </Td>
-                  <Td />
-                  <Td>
+                  <Td colSpan={2} isNumeric>
                     <Text fontWeight="bold">
                       <Currency>
                         {orderItems.data.reduce(
@@ -251,7 +232,7 @@ export function EditOrderForm({
                   <Td />
                 </Tr>
                 <Tr>
-                  <Td colSpan={3}>
+                  <Td colSpan={4}>
                     <InvisibleButton onClick={onOpen} leftIcon={<AddIcon />}>
                       Agregar ítem al pedido
                     </InvisibleButton>
@@ -305,5 +286,56 @@ export function EditOrderForm({
         </form>
       )}
     </Formik>
+  );
+}
+
+function OrderItemRow({
+  item,
+  onDelete,
+}: {
+  item: CustomerOrderItem;
+  onDelete: () => void;
+}) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const products = useProducts();
+  if (products.status !== "success" || products.isLoading)
+    return (
+      <Tr>
+        <Td colSpan={4}>
+          <Skeleton height={"20px"} my={2} w="100%" />
+        </Td>
+      </Tr>
+    );
+  const product = products.data.find(
+    (product) => product.product_code === item.product_id
+  )!;
+  const removeLabel = `Eliminar ${product.product_name} del pedido`;
+  return (
+    <Tr>
+      <Td>{product.product_name}</Td>
+      <Td>{item.quantity}</Td>
+      <Td isNumeric>
+        <Currency>{item.selling_price}</Currency>
+      </Td>
+      <Td isNumeric>
+        <IconButton
+          isLoading={isDeleting}
+          aria-label={removeLabel}
+          colorScheme="red"
+          onClick={async () => {
+            setIsDeleting(true);
+            try {
+              await onDelete();
+            } finally {
+              setIsDeleting(false);
+            }
+          }}
+          size="sm"
+          title={removeLabel}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </Td>
+    </Tr>
   );
 }

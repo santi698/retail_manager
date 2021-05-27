@@ -8,6 +8,7 @@ import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import styled from "styled-components";
 import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import { AuthProvider } from "./auth/AuthContext";
 import { OrdersView } from "./customer_orders/views/OrdersView";
@@ -49,6 +50,7 @@ function App() {
   return (
     <BrowserRouter>
       <AppProviders>
+        <ReactQueryDevtools initialIsOpen={false} />
         <Layout>
           <NavBar />
           <Box bg="brand.50" p="6">

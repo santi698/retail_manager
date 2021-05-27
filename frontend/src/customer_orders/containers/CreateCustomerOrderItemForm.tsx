@@ -134,7 +134,6 @@ export function CreateCustomerOrderItemForm({
         const currentMeasurementUnit = measurementUnits.data.find(
           ({ id }) => id === currentProduct?.measurement_unit_id
         );
-        console.log(dirty, isValid);
         return (
           <form onSubmit={handleSubmit} noValidate>
             <Stack direction="column">

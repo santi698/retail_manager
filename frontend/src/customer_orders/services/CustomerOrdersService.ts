@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "react-query";
 import { CustomerOrderItem } from "../CustomerOrderItem";
 import { CustomerOrder } from "../CustomerOrder";
 import {
@@ -29,9 +30,9 @@ export async function getCustomerOrder(id: number): Promise<CustomerOrder> {
 }
 
 export async function getCustomerOrders(): Promise<CustomerOrder[]> {
-  return RetailManagerApi.get<ApiCustomerOrder[]>(
-    `/api/customer_orders`
-  ).then((orders) => orders.map(mapApiCustomerOrder));
+  return RetailManagerApi.get<ApiCustomerOrder[]>(`/api/customer_orders`).then(
+    (orders) => orders.map(mapApiCustomerOrder)
+  );
 }
 
 export async function editCustomerOrder(
@@ -74,4 +75,41 @@ export function deleteCustomerOrderItem({
   return RetailManagerApi.delete(
     `/api/customer_orders/${customer_order_id}/items/${customer_order_item_id}`
   );
+}
+
+interface DeleteContext {
+  previousItems: CustomerOrderItem[] | undefined;
+  newItems: CustomerOrderItem[];
+}
+
+export function useDeleteCustomerOrderItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    unknown,
+    Error,
+    DeleteCustomerOrderItemRequest,
+    DeleteContext
+  >("deleteCustomerOrderItem", deleteCustomerOrderItem, {
+    onMutate: async ({ customer_order_id, customer_order_item_id }) => {
+      const queryKey = ["customer_order_items", customer_order_id];
+      await queryClient.cancelQueries(queryKey);
+      const previousItems =
+        queryClient.getQueryData<CustomerOrderItem[]>(queryKey);
+      const newItems = (previousItems || []).filter(
+        (item) => item.customer_order_item_id !== customer_order_item_id
+      );
+      queryClient.setQueryData(queryKey, newItems);
+
+      return { previousItems, newItems };
+    },
+    onSettled: (_data, _error, { customer_order_id }) => {
+      const queryKey = ["customer_order_items", customer_order_id];
+      queryClient.invalidateQueries(queryKey);
+    },
+    onError: (_error, { customer_order_id }, context) => {
+      const queryKey = ["customer_order_items", customer_order_id];
+      queryClient.setQueryData(queryKey, context?.previousItems);
+    },
+  });
 }

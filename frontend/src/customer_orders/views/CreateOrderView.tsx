@@ -35,7 +35,6 @@ function CreateOrderForm() {
           customer_id: parseInt(customerOrder.customer_id),
           order_city_id: parseInt(customerOrder.order_city_id),
         }).then((order) => {
-          console.log(order);
           navigate(`/orders/${order.order_id}/edit`);
         });
       }}
