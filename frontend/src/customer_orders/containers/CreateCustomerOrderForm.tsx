@@ -124,7 +124,7 @@ export function CreateCustomerOrderForm({
                 disabled={!dirty || !isValid}
                 type="submit"
               >
-                Guardar y agregar productos
+                Continuar
               </Button>
             </Stack>
           </Stack>
