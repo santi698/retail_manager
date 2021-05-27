@@ -126,7 +126,6 @@ export function CreateCustomerForm({
                 errors.phone_number !== undefined &&
                 touched.phone_number === true
               }
-              isRequired
             >
               <FormLabel>Teléfono</FormLabel>
               <InputGroup>

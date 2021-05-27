@@ -10,10 +10,10 @@ export function OrderItemsTable({ items }: { items: CustomerOrderItem[] }) {
         <Tr>
           <Th>Cod.</Th>
           <Th>Nombre</Th>
-          <Th>Precio unitario</Th>
-          <Th>Cantidad</Th>
-          <Th>Precio de venta</Th>
-          <Th>Descuento</Th>
+          <Th isNumeric>Precio unitario</Th>
+          <Th isNumeric>Cantidad</Th>
+          <Th isNumeric>Precio de venta</Th>
+          <Th isNumeric>Descuento</Th>
         </Tr>
       </Thead>
       <Tbody>

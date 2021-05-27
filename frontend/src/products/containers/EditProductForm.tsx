@@ -1,4 +1,3 @@
-import React from "react";
 import { Formik } from "formik";
 import {
   Stack,
@@ -7,27 +6,27 @@ import {
   FormErrorMessage,
   Button,
   FormControl,
-  Select,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { Product } from "../domain/Product";
 import { useProduct } from "../hooks/useProduct";
 import { useMeasurementUnits } from "../hooks/useMeasurementUnits";
+import { ProductWithPrice } from "../domain/ProductWithPrice";
+import { isValidDecimal } from "../../common/services/decimalNumbers";
 
-export interface EditProductRequest {
+export interface EditProductFormValues {
   product_name: string;
-  measurement_unit_id: string;
+  list_unit_price: string;
 }
 
-function productToForm(product: Product): EditProductRequest {
+function productToForm(product: ProductWithPrice): EditProductFormValues {
   return {
     product_name: product.product_name || "",
-    measurement_unit_id: product.measurement_unit_id.toString() || "",
+    list_unit_price: product.list_unit_price.toString() || "",
   };
 }
 
 export interface EditClientFormProps {
-  onSubmit: (values: EditProductRequest) => void;
+  onSubmit: (values: EditProductFormValues) => void;
   productCode: number;
 }
 
@@ -50,11 +49,11 @@ export function EditProductForm({
       }}
       validate={(values) => {
         const errors: Record<string, string> = {};
-        if (values.product_name === "") {
-          errors.product_name = "La ciudad es obligatoria";
-        }
-        if (values.measurement_unit_id === "") {
-          errors.measurement_unit_id = "La unidad de medida es obligatoria";
+        if (
+          values.list_unit_price !== "" &&
+          !isValidDecimal(values.list_unit_price)
+        ) {
+          errors.list_unit_price = "El precio debe ser un número";
         }
         return errors;
       }}
@@ -89,29 +88,23 @@ export function EditProductForm({
               <FormErrorMessage>{errors.product_name}</FormErrorMessage>
             </FormControl>
             <FormControl
-              id="measurement_unit_id"
+              id="list_unit_price"
               isInvalid={
-                errors.measurement_unit_id !== undefined &&
-                touched.measurement_unit_id === true
+                errors.list_unit_price !== undefined &&
+                touched.list_unit_price === true
               }
               isRequired
             >
-              <FormLabel>Unidad de medida</FormLabel>
-              <Select
-                name="measurement_unit_id"
-                placeholder="Selecciona la unidad de medida"
+              <FormLabel>Precio</FormLabel>
+              <Input
+                name="list_unit_price"
+                placeholder="99,99"
                 required
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.measurement_unit_id}
-              >
-                {measurementUnits.data.map((measurementUnit) => (
-                  <option key={measurementUnit.id} value={measurementUnit.id}>
-                    {measurementUnit.unit_name} ({measurementUnit.symbol})
-                  </option>
-                ))}
-              </Select>
-              <FormErrorMessage>{errors.measurement_unit_id}</FormErrorMessage>
+                value={values.list_unit_price}
+              />
+              <FormErrorMessage>{errors.list_unit_price}</FormErrorMessage>
             </FormControl>
             <Stack direction="row">
               <Button

@@ -22,8 +22,8 @@ export function OrdersTable({ orders }: { orders: CustomerOrder[] | null }) {
           <Th>Fecha</Th>
           <Th>Cliente</Th>
           <Th>Estado del pedido</Th>
-          <Th className="currency">Total</Th>
-          <Th />
+          <Th isNumeric>Total</Th>
+          <Th isNumeric>Acciones</Th>
         </Tr>
       </Thead>
       <Tbody>

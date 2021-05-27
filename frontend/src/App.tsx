@@ -59,6 +59,7 @@ function App() {
               py="6"
               px="12"
               border="1px solid var(--chakra-colors-gray-100)"
+              borderRadius="9px"
             >
               <Routes>
                 <Route path="/" element={<Navigate to="/orders" replace />} />

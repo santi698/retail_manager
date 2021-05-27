@@ -8,8 +8,9 @@ import {
   Tbody,
   Table,
   VStack,
+  HStack,
 } from "@chakra-ui/react";
-import { BsPlus } from "react-icons/bs";
+import { BsEyeFill, BsPlus } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { ViewTitle } from "../../common/components/ViewTitle";
@@ -36,8 +37,8 @@ export function ProductsView() {
             <Tr>
               <Th>Código</Th>
               <Th>Nombre</Th>
-              <Th>Precio de lista</Th>
-              <Th />
+              <Th isNumeric>Precio de lista</Th>
+              <Th isNumeric>Acciones</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -46,18 +47,29 @@ export function ProductsView() {
                 <Tr key={product.product_code}>
                   <Td>{product.product_code}</Td>
                   <Td>{product.product_name}</Td>
-                  <Td>
+                  <Td isNumeric>
                     <Currency>{product.list_unit_price}</Currency>
                   </Td>
-                  <Td>
-                    <Button
-                      as={Link}
-                      leftIcon={<EditIcon />}
-                      size="xs"
-                      to={`/products/${product.product_code}/edit`}
-                    >
-                      Editar
-                    </Button>
+                  <Td isNumeric>
+                    <HStack justify="flex-end">
+                      <Button
+                        as={Link}
+                        leftIcon={<EditIcon />}
+                        variant="ghost"
+                        size="xs"
+                        to={`/products/${product.product_code}/edit`}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        as={Link}
+                        leftIcon={<BsEyeFill />}
+                        size="xs"
+                        to={`/products/${product.product_code}`}
+                      >
+                        Ver producto
+                      </Button>
+                    </HStack>
                   </Td>
                 </Tr>
               ))}

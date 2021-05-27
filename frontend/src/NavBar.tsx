@@ -31,7 +31,7 @@ export function NavBar() {
   return (
     <VStack
       spacing="3rem"
-      py={3}
+      py={6}
       bg="white"
       borderRight="1px solid var(--chakra-colors-brand-100)"
       position="relative"

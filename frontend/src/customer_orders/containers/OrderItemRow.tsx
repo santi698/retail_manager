@@ -30,25 +30,23 @@ export function OrderItemRow({ item }: { item: CustomerOrderItem }) {
     <Tr>
       <Td>{product.product_code}</Td>
       <Td style={{ width: "16em" }}>{product.product_name}</Td>
-      <Td>
+      <Td isNumeric>
         <Currency>{product.list_unit_price}</Currency>
       </Td>
-      <Td>
+      <Td isNumeric>
         <Number>{item.quantity}</Number> {measurementUnit.symbol}
       </Td>
-      <Td className="currency">
-        <Currency>{item.selling_price}</Currency>
+      <Td isNumeric>
         {priceDifference !== 0 && (
           <>
-            {" "}
-            /{" "}
             <span style={{ textDecoration: "line-through" }}>
               <Currency>{normalPrice}</Currency>
             </span>
           </>
-        )}
+        )}{" "}
+        <Currency>{item.selling_price}</Currency>
       </Td>
-      <Td>
+      <Td isNumeric>
         <Percentage>{priceDifference / normalPrice}</Percentage>
       </Td>
     </Tr>

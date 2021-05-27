@@ -20,7 +20,22 @@ export async function createProduct(
 
 export async function editProduct(
   product_code: number,
-  product: Omit<Product, "product_code">
+  product: Pick<Product, "product_name">
 ) {
   return RetailManagerApi.put(`/api/products/${product_code}`, product);
+}
+
+export interface ProductPrice {
+  product_code: number;
+  valid_since: string;
+  price: number;
+}
+
+export async function setProductPrice(
+  product_code: number,
+  price: number
+): Promise<ProductPrice> {
+  return RetailManagerApi.post(`/api/product_prices/${product_code}`, {
+    price,
+  });
 }

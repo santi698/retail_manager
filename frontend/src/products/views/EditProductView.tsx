@@ -1,8 +1,9 @@
 import { useMatch, useNavigate } from "react-router-dom";
 import { ViewTitle } from "../../common/components/ViewTitle";
 import { EditProductForm } from "../containers/EditProductForm";
-import { editProduct } from "../services/ProductsService";
+import { editProduct, setProductPrice } from "../services/ProductsService";
 import { useRefetchProducts } from "../hooks/useRefetchProducts";
+import { parseDecimal } from "../../common/services/decimalNumbers";
 
 export function EditProductView() {
   const match = useMatch("/products/:product_code/edit");
@@ -15,11 +16,13 @@ export function EditProductView() {
       <ViewTitle>Editar producto</ViewTitle>
       <EditProductForm
         productCode={productCode}
-        onSubmit={({ product_name, measurement_unit_id }) => {
-          editProduct(productCode, {
-            product_name,
-            measurement_unit_id: parseInt(measurement_unit_id),
-          }).then(() => {
+        onSubmit={async ({ product_name, list_unit_price }) => {
+          Promise.allSettled([
+            editProduct(productCode, {
+              product_name,
+            }),
+            setProductPrice(productCode, parseDecimal(list_unit_price)),
+          ]).then(() => {
             refetchProducts();
             navigate(`/products/${productCode}`);
           });

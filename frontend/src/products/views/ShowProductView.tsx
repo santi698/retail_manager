@@ -1,8 +1,10 @@
 import { Link, useMatch } from "react-router-dom";
-import { Box, Button, Heading, Stack, Text } from "@chakra-ui/react";
+import { Button, Heading, HStack, Text } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useProduct } from "../hooks/useProduct";
 import { useMeasurementUnits } from "../hooks/useMeasurementUnits";
+import { Currency } from "../../common/components/Currency";
+import { getDisplayName } from "../domain/MeasurementUnit";
 
 export function ShowProductView() {
   const match = useMatch("/products/:product_code");
@@ -20,16 +22,11 @@ export function ShowProductView() {
 
   return (
     <>
-      <Box
-        border="1px solid"
-        padding={2}
-        borderColor="gray.300"
-        borderRadius="9px"
-      >
-        <Heading as="h2" fontSize="2xl" mb={2}>
-          #{product.data.product_code} {product.data.product_name}
-        </Heading>
-        <Stack direction="row" marginY={2}>
+      <>
+        <HStack marginY={2}>
+          <Heading as="h2" fontSize="2xl" mb={2}>
+            #{product.data.product_code} {product.data.product_name}
+          </Heading>
           <Button
             as={Link}
             leftIcon={<EditIcon />}
@@ -38,15 +35,13 @@ export function ShowProductView() {
           >
             Editar
           </Button>
-        </Stack>
+        </HStack>
         <Text fontSize="lg" lineHeight="1.5">
-          <strong>Unidad de medida:</strong> {measurementUnit.unit_name}
+          <strong>Precio de lista actual:</strong>{" "}
+          <Currency>{product.data.list_unit_price}</Currency> /{" "}
+          {getDisplayName(measurementUnit)}
         </Text>
-        <Text fontSize="lg" lineHeight="1.5">
-          <strong>Precio de lista por unidad de medida actual:</strong>{" "}
-          {product.data.list_unit_price}
-        </Text>
-      </Box>
+      </>
     </>
   );
 }

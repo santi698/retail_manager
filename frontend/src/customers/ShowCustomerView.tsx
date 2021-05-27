@@ -2,7 +2,6 @@ import { Link, useMatch } from "react-router-dom";
 import {
   Button,
   Heading,
-  Stack,
   Tbody,
   Td,
   Text,
@@ -11,6 +10,7 @@ import {
   Tr,
   Table,
   TableCaption,
+  HStack,
 } from "@chakra-ui/react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useCities } from "../cities/useCities";
@@ -40,7 +40,7 @@ export function ShowCustomerView() {
   );
   return (
     <>
-      <Stack direction="row" marginY={2}>
+      <HStack marginY={2}>
         <Heading as="h2" fontSize="2xl" mb={2}>
           {customer.data.first_name} {customer.data.last_name}
         </Heading>
@@ -52,7 +52,7 @@ export function ShowCustomerView() {
         >
           Editar
         </Button>
-      </Stack>
+      </HStack>
       <Text fontSize="lg" lineHeight="1.5">
         <strong>Teléfono:</strong> {customer.data.phone_number}
       </Text>
@@ -79,7 +79,7 @@ export function ShowCustomerView() {
           <Tr>
             <Th>No. de pedido</Th>
             <Th>Estado del pedido</Th>
-            <Th>Monto</Th>
+            <Th isNumeric>Monto</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -89,7 +89,7 @@ export function ShowCustomerView() {
               <Td>
                 <StatusBadge value={order.order_status} />
               </Td>
-              <Td>
+              <Td isNumeric>
                 <Currency>{order.total_price}</Currency>
               </Td>
             </Tr>

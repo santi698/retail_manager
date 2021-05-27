@@ -1,6 +1,5 @@
 import {
   Button,
-  Stack,
   Flex,
   Box,
   Thead,
@@ -10,6 +9,7 @@ import {
   Td,
   Table,
   VStack,
+  HStack,
 } from "@chakra-ui/react";
 import { EditIcon, ViewIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
@@ -45,7 +45,7 @@ export function CustomersView() {
               <Th>Email</Th>
               <Th>Teléfono</Th>
               <Th>Ciudad</Th>
-              <Th>Acciones</Th>
+              <Th isNumeric>Acciones</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -64,8 +64,8 @@ export function CustomersView() {
                       )?.name
                     }
                   </Td>
-                  <Td>
-                    <Stack direction="row">
+                  <Td isNumeric>
+                    <HStack justify="flex-end">
                       <Button
                         as={Link}
                         leftIcon={<ViewIcon />}
@@ -82,7 +82,7 @@ export function CustomersView() {
                       >
                         Editar
                       </Button>
-                    </Stack>
+                    </HStack>
                   </Td>
                 </Tr>
               ))}

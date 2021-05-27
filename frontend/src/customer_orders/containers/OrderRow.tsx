@@ -72,8 +72,8 @@ export function OrderRow({
             value={order.order_status}
           />
         </Td>
-        <Td className="currency">{<Currency>{order.total_price}</Currency>}</Td>
-        <Td>
+        <Td isNumeric>{<Currency>{order.total_price}</Currency>}</Td>
+        <Td isNumeric>
           <Stack direction="row" justify="flex-end">
             {order.order_status.isEditable() && (
               <Button

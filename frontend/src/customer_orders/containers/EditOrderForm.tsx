@@ -196,8 +196,8 @@ export function EditOrderForm({
                 <Tr>
                   <Th>Producto</Th>
                   <Th>Cantidad</Th>
-                  <Th>Precio de venta</Th>
-                  <Th />
+                  <Th isNumeric>Precio de venta</Th>
+                  <Th isNumeric>Acciones</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -210,10 +210,10 @@ export function EditOrderForm({
                     <Tr key={product.product_code}>
                       <Td>{product.product_name}</Td>
                       <Td>{item.quantity}</Td>
-                      <Td>
+                      <Td isNumeric>
                         <Currency>{item.selling_price}</Currency>
                       </Td>
-                      <Td>
+                      <Td isNumeric>
                         <IconButton
                           aria-label={removeLabel}
                           colorScheme="red"

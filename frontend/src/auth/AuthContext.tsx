@@ -1,6 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { useQuery } from "react-query";
+import { Spinner } from "@chakra-ui/spinner";
+import { Center } from "@chakra-ui/layout";
 import { APP_DOMAIN } from "../config";
 import { LoginView } from "./LoginView";
 import { getCurrentUser } from "./UserService";
@@ -21,7 +23,12 @@ function RequireAuth({ children }: RequireAuthProps) {
     return null;
   }
 
-  if (user.status !== "success") return null;
+  if (user.status !== "success")
+    return (
+      <Center h="100vh" w="100vw">
+        <Spinner color="brand.500" size="xl" />
+      </Center>
+    );
   return <>{children}</>;
 }
 
