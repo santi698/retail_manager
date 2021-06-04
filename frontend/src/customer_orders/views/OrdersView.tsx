@@ -95,7 +95,7 @@ export function OrdersView() {
                         filters.order_city_id === "" ||
                         order.order_city_id === parseInt(filters.order_city_id)
                     )
-                    .filter((order) => order.order_status.isFinished())}
+                    .filter((order) => !order.order_status.isFinished())}
                 />
               )}
             </TabPanel>
@@ -110,7 +110,7 @@ export function OrdersView() {
                         filters.order_city_id === "" ||
                         order.order_city_id === parseInt(filters.order_city_id)
                     )
-                    .filter((order) => !order.order_status.isFinished())}
+                    .filter((order) => order.order_status.isFinished())}
                 />
               )}
             </TabPanel>

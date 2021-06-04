@@ -3,7 +3,9 @@ import { ColorVariant } from "../common/components/StatusBadge";
 export enum OrderStatusValue {
   Draft = "draft",
   Confirmed = "confirmed",
+  PartiallyPaid = "partially_paid",
   Paid = "paid",
+  InTransit = "in_transit",
   Delivered = "delivered",
   Canceled = "canceled",
 }
@@ -11,7 +13,9 @@ export enum OrderStatusValue {
 const LABELS: Record<OrderStatusValue, string> = {
   [OrderStatusValue.Draft]: "Borrador",
   [OrderStatusValue.Confirmed]: "Confirmado",
+  [OrderStatusValue.PartiallyPaid]: "Pago parcial",
   [OrderStatusValue.Paid]: "Pagado",
+  [OrderStatusValue.InTransit]: "En tránsito",
   [OrderStatusValue.Delivered]: "Entregado",
   [OrderStatusValue.Canceled]: "Cancelado",
 };
@@ -28,8 +32,14 @@ export class OrderStatus {
       case "confirmed": {
         return new OrderStatus(OrderStatusValue.Confirmed);
       }
+      case "partially_paid": {
+        return new OrderStatus(OrderStatusValue.PartiallyPaid);
+      }
       case "paid": {
         return new OrderStatus(OrderStatusValue.Paid);
+      }
+      case "in_transit": {
+        return new OrderStatus(OrderStatusValue.InTransit);
       }
       case "delivered": {
         return new OrderStatus(OrderStatusValue.Delivered);
@@ -61,11 +71,9 @@ export class OrderStatus {
 
   isFinished() {
     if (
-      [
-        OrderStatusValue.Draft,
-        OrderStatusValue.Confirmed,
-        OrderStatusValue.Paid,
-      ].includes(this.value)
+      [OrderStatusValue.Delivered, OrderStatusValue.Canceled].includes(
+        this.value
+      )
     ) {
       return true;
     }
@@ -82,15 +90,31 @@ export class OrderStatus {
       }
       case OrderStatusValue.Confirmed: {
         return [
+          new OrderStatus(OrderStatusValue.InTransit),
           new OrderStatus(OrderStatusValue.Delivered),
-          new OrderStatus(OrderStatusValue.Canceled),
           new OrderStatus(OrderStatusValue.Paid),
+          new OrderStatus(OrderStatusValue.PartiallyPaid),
+          new OrderStatus(OrderStatusValue.Canceled),
+        ];
+      }
+      case OrderStatusValue.PartiallyPaid: {
+        return [
+          new OrderStatus(OrderStatusValue.InTransit),
+          new OrderStatus(OrderStatusValue.Paid),
+          new OrderStatus(OrderStatusValue.Delivered),
         ];
       }
       case OrderStatusValue.Paid: {
         return [
           new OrderStatus(OrderStatusValue.Delivered),
           new OrderStatus(OrderStatusValue.Canceled),
+        ];
+      }
+      case OrderStatusValue.InTransit: {
+        return [
+          new OrderStatus(OrderStatusValue.Delivered),
+          new OrderStatus(OrderStatusValue.Confirmed),
+          new OrderStatus(OrderStatusValue.Paid),
         ];
       }
       case OrderStatusValue.Delivered:
@@ -108,8 +132,14 @@ export class OrderStatus {
       case OrderStatusValue.Confirmed: {
         return ColorVariant.Blue;
       }
+      case OrderStatusValue.PartiallyPaid: {
+        return ColorVariant.Teal;
+      }
       case OrderStatusValue.Paid: {
         return ColorVariant.Cyan;
+      }
+      case OrderStatusValue.InTransit: {
+        return ColorVariant.Yellow;
       }
       case OrderStatusValue.Delivered: {
         return ColorVariant.Green;
