@@ -1,7 +1,6 @@
 import {
   Button,
   Center,
-  Flex,
   FormControl,
   FormLabel,
   Heading,
@@ -14,13 +13,7 @@ import { Logo } from "../icons/Logo";
 
 export function LoginView() {
   return (
-    <Flex
-      bg="brand.50"
-      alignItems="center"
-      justifyContent="center"
-      height="100vh"
-      width="100vw"
-    >
+    <Center bg="brand.50" height="100vh" width="100vw">
       <Stack
         action={`${API_URL}/auth/login`}
         as="form"
@@ -49,6 +42,6 @@ export function LoginView() {
         </FormControl>
         <Button type="submit">Iniciar sesión</Button>
       </Stack>
-    </Flex>
+    </Center>
   );
 }

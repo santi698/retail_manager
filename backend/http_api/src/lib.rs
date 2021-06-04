@@ -11,6 +11,7 @@ use ::customer_orders::{CustomerOrderRepository, CustomerRepository};
 use ::pricing::ProductPriceRepository;
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
+use actix_web::cookie;
 use actix_web::web::scope;
 use actix_web::{dev::Server, http, App, HttpServer};
 use chrono::Duration;
@@ -106,6 +107,7 @@ pub async fn run() -> anyhow::Result<Server> {
                 CookieIdentityPolicy::new(&CONFIG.session_secret.clone().into_bytes())
                     .name(&CONFIG.session_name)
                     .secure(CONFIG.session_secure)
+                    .same_site(cookie::SameSite::Lax)
                     .path("/")
                     .max_age(Duration::hours(CONFIG.session_max_age_h).num_seconds()),
             ))

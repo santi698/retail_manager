@@ -1,5 +1,6 @@
 use actix_identity::Identity;
 use actix_web::{
+    delete,
     dev::Body,
     get, post,
     web::{Data, Form, ServiceConfig},
@@ -70,7 +71,7 @@ async fn me(identity_cookie: Identity, context: Data<AppContext>) -> impl Respon
     HttpResponse::Unauthorized().body("Invalid session")
 }
 
-#[get("/logout")]
+#[delete("/logout")]
 async fn logout(identity_cookie: Identity) -> impl Responder {
     identity_cookie.forget();
     HttpResponse::Ok().body(Body::Empty)
