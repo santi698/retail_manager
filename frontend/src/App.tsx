@@ -28,7 +28,8 @@ import { SettingsView } from "./settings/SettingsView";
 
 const Layout = styled.div`
   display: grid;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   grid-template-columns: 200px 1fr;
   grid-template-areas: "navBar main";
   grid-template-rows: 100%;
@@ -52,7 +53,7 @@ function App() {
       <AppProviders>
         <Layout>
           <NavBar />
-          <Box bg="brand.50" p="6">
+          <Box bg="brand.50" p="6" overflow="auto">
             <Container
               maxW="container.xl"
               style={{ gridArea: "main" }}

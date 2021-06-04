@@ -49,7 +49,7 @@ export function NavBar() {
           <Logo size={64} />
         </Center>
 
-        <List spacing={3}>
+        <List spacing={3} width="100%" px={4}>
           <ListItem>
             <NavBarItem to="/orders">
               <HStack justify="flex-start" width="100%">
@@ -84,7 +84,7 @@ export function NavBar() {
           </ListItem>
         </List>
       </VStack>
-      <List spacing={1}>
+      <List spacing={1} width="100%" px={4}>
         <ListItem>
           <Button
             onClick={() => {
