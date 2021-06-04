@@ -106,6 +106,7 @@ export class OrderStatus {
       }
       case OrderStatusValue.Paid: {
         return [
+          new OrderStatus(OrderStatusValue.InTransit),
           new OrderStatus(OrderStatusValue.Delivered),
           new OrderStatus(OrderStatusValue.Canceled),
         ];
@@ -115,6 +116,7 @@ export class OrderStatus {
           new OrderStatus(OrderStatusValue.Delivered),
           new OrderStatus(OrderStatusValue.Confirmed),
           new OrderStatus(OrderStatusValue.Paid),
+          new OrderStatus(OrderStatusValue.PartiallyPaid),
         ];
       }
       case OrderStatusValue.Delivered:
