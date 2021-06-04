@@ -65,4 +65,25 @@ impl CityRepository for PostgresCityRepository {
 
         Ok(product)
     }
+
+    async fn create(
+        &self,
+        account_id: i32,
+        request: domain::CityCreateRequest,
+    ) -> Result<City, Self::Error> {
+        let city = sqlx::query(
+            r#"
+                INSERT INTO cities(account_id, name)
+                VALUES ($1, $2)
+                RETURNING cities.*
+            "#,
+        )
+        .bind(account_id)
+        .bind(request.name)
+        .map(city_from_row)
+        .fetch_one(&self.pool)
+        .await?;
+
+        Ok(city)
+    }
 }

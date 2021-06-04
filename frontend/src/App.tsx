@@ -25,11 +25,12 @@ import { ShowProductView } from "./products/views/ShowProductView";
 
 import { NavBar } from "./NavBar";
 import theme from "./theme";
+import { SettingsView } from "./settings/SettingsView";
 
 const Layout = styled.div`
   display: grid;
   min-height: 100vh;
-  grid-template-columns: 160px 1fr;
+  grid-template-columns: 200px 1fr;
   grid-template-areas: "navBar main";
   grid-template-rows: 100%;
 `;
@@ -65,6 +66,7 @@ function App() {
             >
               <Routes>
                 <Route path="/" element={<Navigate to="/orders" replace />} />
+                <Route path="/settings" element={<SettingsView />} />
                 <Route path="/orders" element={<OrdersView />} />
                 <Route path="/orders/:id" element={<OrdersView />} />
                 <Route path="/orders/:id/edit" element={<EditOrderView />} />

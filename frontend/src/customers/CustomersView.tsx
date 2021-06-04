@@ -16,6 +16,7 @@ import { Link } from "react-router-dom";
 import { BsPlus } from "react-icons/bs";
 import { useCities } from "../cities/useCities";
 import { ViewTitle } from "../common/components/ViewTitle";
+import { TableRowsSkeleton } from "../common/components/TableRowsSkeleton";
 import { useCustomers } from "./useCustomers";
 
 export function CustomersView() {
@@ -49,8 +50,7 @@ export function CustomersView() {
             </Tr>
           </Thead>
           <Tbody>
-            {customers.status === "success" &&
-              cities.status === "success" &&
+            {customers.status === "success" && cities.status === "success" ? (
               customers.data.map((customer) => (
                 <Tr key={customer.customer_id}>
                   <Td>{customer.customer_id}</Td>
@@ -85,7 +85,10 @@ export function CustomersView() {
                     </HStack>
                   </Td>
                 </Tr>
-              ))}
+              ))
+            ) : (
+              <TableRowsSkeleton rows={3} columns={6} />
+            )}
           </Tbody>
         </Table>
       </VStack>

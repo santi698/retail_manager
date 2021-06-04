@@ -1,10 +1,12 @@
 use crate::{auth::JwtClaim, AppContext};
 
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{get, post, web, HttpResponse, Responder};
+use domain::CityCreateRequest;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);
     cfg.service(find_by_id);
+    cfg.service(create);
 }
 
 #[get("/cities")]
@@ -39,6 +41,26 @@ async fn find_by_id(
         Err(e) => {
             tracing::error!("{}", e);
             HttpResponse::BadRequest().body("City not found")
+        }
+    }
+}
+
+#[post("/cities")]
+async fn create(
+    request: web::Json<CityCreateRequest>,
+    context: web::Data<AppContext>,
+    claims: JwtClaim,
+) -> impl Responder {
+    let result = context
+        .city_repository
+        .create(claims.user_account_id, request.into_inner())
+        .await;
+
+    match result {
+        Ok(city) => HttpResponse::Created().json(city),
+        Err(e) => {
+            tracing::error!("{}", e);
+            HttpResponse::BadRequest().body("City could not be created")
         }
     }
 }

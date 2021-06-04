@@ -16,9 +16,14 @@ import { EditIcon } from "@chakra-ui/icons";
 import { ViewTitle } from "../../common/components/ViewTitle";
 import { Currency } from "../../common/components/Currency";
 import { useProducts } from "../hooks/useProducts";
+import { useMeasurementUnits } from "../hooks/useMeasurementUnits";
+import { TableRowsSkeleton } from "../../common/components/TableRowsSkeleton";
+import { MeasurementUnit, getDisplayName } from "../domain/MeasurementUnit";
 
 export function ProductsView() {
   const products = useProducts();
+  const measurementUnits = useMeasurementUnits();
+
   return (
     <>
       <ViewTitle>Productos</ViewTitle>
@@ -37,16 +42,25 @@ export function ProductsView() {
             <Tr>
               <Th>Código</Th>
               <Th>Nombre</Th>
+              <Th>Unidad de medida</Th>
               <Th isNumeric>Precio de lista</Th>
               <Th isNumeric>Acciones</Th>
             </Tr>
           </Thead>
           <Tbody>
             {products.status === "success" &&
+            measurementUnits.status === "success" ? (
               products.data.map((product) => (
                 <Tr key={product.product_code}>
                   <Td>{product.product_code}</Td>
                   <Td>{product.product_name}</Td>
+                  <Td>
+                    {getDisplayName(
+                      measurementUnits.data.find(
+                        ({ id }) => id === product.measurement_unit_id
+                      ) as MeasurementUnit
+                    )}
+                  </Td>
                   <Td isNumeric>
                     <Currency>{product.list_unit_price}</Currency>
                   </Td>
@@ -72,7 +86,10 @@ export function ProductsView() {
                     </HStack>
                   </Td>
                 </Tr>
-              ))}
+              ))
+            ) : (
+              <TableRowsSkeleton rows={3} columns={5} />
+            )}
           </Tbody>
         </Table>
       </VStack>

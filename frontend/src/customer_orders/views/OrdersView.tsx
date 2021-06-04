@@ -56,12 +56,15 @@ export function OrdersView() {
                 }}
                 value={filters.order_city_id}
               >
-                {cities.status === "success" &&
+                {cities.status === "success" ? (
                   cities.data.map((city) => (
                     <option key={city.id} value={city.id}>
                       {city.name}
                     </option>
-                  ))}
+                  ))
+                ) : (
+                  <option disabled>Cargando ciudades...</option>
+                )}
               </Select>
             </FormControl>
           </Stack>
@@ -81,8 +84,10 @@ export function OrdersView() {
             <Tab>Pedidos finalizados</Tab>
           </TabList>
           <TabPanels>
-            {customerOrders.status === "success" && (
-              <TabPanel>
+            <TabPanel>
+              {customerOrders.status !== "success" ? (
+                <OrdersTable isLoading />
+              ) : (
                 <OrdersTable
                   orders={customerOrders.data
                     .filter(
@@ -92,10 +97,12 @@ export function OrdersView() {
                     )
                     .filter((order) => order.order_status.isFinished())}
                 />
-              </TabPanel>
-            )}
-            {customerOrders.status === "success" && (
-              <TabPanel>
+              )}
+            </TabPanel>
+            <TabPanel>
+              {customerOrders.status !== "success" ? (
+                <OrdersTable isLoading />
+              ) : (
                 <OrdersTable
                   orders={customerOrders.data
                     .filter(
@@ -105,8 +112,8 @@ export function OrdersView() {
                     )
                     .filter((order) => !order.order_status.isFinished())}
                 />
-              </TabPanel>
-            )}
+              )}
+            </TabPanel>
           </TabPanels>
         </Tabs>
       </VStack>

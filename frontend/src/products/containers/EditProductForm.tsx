@@ -12,6 +12,7 @@ import { useProduct } from "../hooks/useProduct";
 import { useMeasurementUnits } from "../hooks/useMeasurementUnits";
 import { ProductWithPrice } from "../domain/ProductWithPrice";
 import { isValidDecimal } from "../../common/services/decimalNumbers";
+import { getDisplayName } from "../domain/MeasurementUnit";
 
 export interface EditProductFormValues {
   product_name: string;
@@ -39,6 +40,13 @@ export function EditProductForm({
   if (measurementUnits.status !== "success" || product.status !== "success") {
     return null;
   }
+  const measurementUnit = measurementUnits.data.find(
+    ({ id }) => id === product.data.measurement_unit_id
+  );
+  if (measurementUnit === undefined) {
+    throw new Error("Unknown measurement unit");
+  }
+
   const initialValues = productToForm(product.data);
   return (
     <Formik
@@ -105,6 +113,10 @@ export function EditProductForm({
                 value={values.list_unit_price}
               />
               <FormErrorMessage>{errors.list_unit_price}</FormErrorMessage>
+            </FormControl>
+            <FormControl isReadOnly>
+              <FormLabel>Unidad de medida</FormLabel>
+              <Input disabled value={getDisplayName(measurementUnit)} />
             </FormControl>
             <Stack direction="row">
               <Button

@@ -9,6 +9,7 @@ import {
   ListItem,
   VStack,
 } from "@chakra-ui/react";
+import { SettingsIcon } from "@chakra-ui/icons";
 import { Logo } from "./icons/Logo";
 
 const NavBarItem = ({ children, to }: { children: ReactNode; to: string }) => {
@@ -62,6 +63,14 @@ export function NavBar() {
             <HStack justify="flex-start" width="100%">
               <BsFillPeopleFill />
               <div>Clientes</div>
+            </HStack>
+          </NavBarItem>
+        </ListItem>
+        <ListItem>
+          <NavBarItem to="/settings">
+            <HStack justify="flex-start" width="100%">
+              <SettingsIcon />
+              <div>Configuración</div>
             </HStack>
           </NavBarItem>
         </ListItem>
