@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use domain::OrderStatus;
+use crate::types::OrderStatus;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Debug)]

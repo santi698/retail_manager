@@ -1,8 +1,7 @@
+use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
-use crate::types::RepositoryError;
-
-use domain::{EmailAndPasswordIdentity, EmailAndPasswordIdentityRepository};
+use crate::{EmailAndPasswordIdentity, EmailAndPasswordIdentityRepository, RepositoryError};
 
 #[derive(Debug)]
 pub struct PostgresEmailAndPasswordIdentityRepository {

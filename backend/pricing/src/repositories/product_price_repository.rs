@@ -1,6 +1,9 @@
-use crate::types::RepositoryError;
-use pricing::{ProductPrice, ProductPriceRepository, ProductPriceSetRequest};
+use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
+
+use domain::RepositoryError;
+
+use crate::{ProductPrice, ProductPriceRepository, ProductPriceSetRequest};
 
 fn product_price_from_row(row: PgRow) -> ProductPrice {
     ProductPrice {

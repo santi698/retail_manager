@@ -1,10 +1,10 @@
+use async_trait::async_trait;
 use sqlx::postgres::{PgDone, PgPool, PgRow};
 use sqlx::{Done, Row};
-use types::RepositoryError;
 
-use crate::types;
+use domain::RepositoryError;
 
-use inventory::{Product, ProductCreateRequest, ProductRepository, ProductUpdateRequest};
+use crate::{Product, ProductCreateRequest, ProductRepository, ProductUpdateRequest};
 
 fn product_from_row(row: PgRow) -> Product {
     Product {

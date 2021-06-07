@@ -1,8 +1,7 @@
+use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
 
-use crate::types::RepositoryError;
-
-use domain::{User, UserRepository};
+use crate::{RepositoryError, User, UserRepository};
 
 #[derive(Debug)]
 pub struct PostgresUserRepository {

@@ -1,14 +1,14 @@
-use crate::types;
-
-use customer_orders::{
+pub use crate::models::{
     CustomerOrder, CustomerOrderAddItemRequest, CustomerOrderCreateRequest, CustomerOrderItem,
     CustomerOrderRepository, CustomerOrderUpdateRequest,
 };
+pub use crate::types::OrderStatus;
+use async_trait::async_trait;
+use domain::RepositoryError;
 use sqlx::{
     postgres::{PgPool, PgRow},
     Row,
 };
-use types::RepositoryError;
 
 #[derive(Debug)]
 pub struct PostgresCustomerOrderRepository {
@@ -23,12 +23,12 @@ impl PostgresCustomerOrderRepository {
 
 fn customer_order_from_row(row: PgRow) -> CustomerOrder {
     CustomerOrder {
-        order_id: row
-            .try_get("order_id")
-            .expect("Error trying to get order_id from row"),
         account_id: row
             .try_get("account_id")
             .expect("Error trying to get account_id from row"),
+        order_id: row
+            .try_get("order_id")
+            .expect("Error trying to get order_id from row"),
         ordered_at: row
             .try_get("ordered_at")
             .expect("Error trying to get ordered_at from row"),

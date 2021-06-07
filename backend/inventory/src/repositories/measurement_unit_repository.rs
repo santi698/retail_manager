@@ -1,6 +1,9 @@
-use crate::types::RepositoryError;
-use domain::{MeasurementUnit, MeasurementUnitRepository};
+use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
+
+use domain::RepositoryError;
+
+use crate::{MeasurementUnit, MeasurementUnitRepository};
 
 fn measurement_unit_from_row(row: PgRow) -> MeasurementUnit {
     MeasurementUnit {

@@ -8,10 +8,9 @@ use actix_web::{
 };
 use serde::Deserialize;
 
+use crate::auth::{create_jwt, decode_jwt, JwtClaim};
 use crate::AppContext;
 use crate::CONFIG;
-
-use super::{create_jwt, decode_jwt, JwtClaim};
 
 pub fn init(cfg: &mut ServiceConfig) {
     cfg.service(login);

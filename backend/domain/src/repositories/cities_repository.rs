@@ -1,9 +1,7 @@
+use async_trait::async_trait;
 use sqlx::{postgres::PgRow, PgPool, Row};
-use types::RepositoryError;
 
-use crate::types;
-
-use domain::{City, CityRepository};
+use crate::{City, CityRepository, RepositoryError};
 
 fn city_from_row(row: PgRow) -> City {
     City {
@@ -69,7 +67,7 @@ impl CityRepository for PostgresCityRepository {
     async fn create(
         &self,
         account_id: i32,
-        request: domain::CityCreateRequest,
+        request: crate::CityCreateRequest,
     ) -> Result<City, Self::Error> {
         let city = sqlx::query(
             r#"

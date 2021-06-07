@@ -1,13 +1,14 @@
 use std::convert::TryInto;
 
+use async_trait::async_trait;
 use sqlx::postgres::{PgPool, PgRow};
 use sqlx::Row;
-use types::RepositoryError;
 
-use crate::types;
+use domain::{Email, PhoneNumber, RepositoryError};
 
-use customer_orders::{Customer, CustomerCreateRequest, CustomerRepository, CustomerUpdateRequest};
-use domain::{Email, PhoneNumber};
+pub use crate::models::{
+    Customer, CustomerCreateRequest, CustomerRepository, CustomerUpdateRequest,
+};
 
 #[derive(Debug)]
 pub struct PostgresCustomerRepository {

@@ -15,3 +15,4 @@ regex = "^1.4.3"
 rust-argon2 = "^0.8.3"
 serde = { version = "^1.0.121", features = ['derive'] }
 sqlx = { version = "^0.4.2", features = ['runtime-actix-native-tls', 'postgres', 'macros', 'chrono', 'uuid'] }
+tracing = "^0.1.22"

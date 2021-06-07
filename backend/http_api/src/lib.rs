@@ -1,49 +1,38 @@
 #[macro_use]
 extern crate lazy_static;
 
-#[macro_use]
-extern crate async_trait;
-
-use crate::customer_orders::PostgresCustomerOrderRepository;
-use crate::customers::PostgresCustomerRepository;
-use crate::pricing::PostgresProductPriceRepository;
-use ::customer_orders::{CustomerOrderRepository, CustomerRepository};
-use ::pricing::ProductPriceRepository;
 use actix_cors::Cors;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::cookie;
 use actix_web::web::scope;
 use actix_web::{dev::Server, http, App, HttpServer};
 use chrono::Duration;
-use cities::PostgresCityRepository;
 use config::CONFIG;
-use domain::{
-    CityRepository, EmailAndPasswordIdentityRepository, MeasurementUnitRepository, UserRepository,
+use customer_orders::{
+    CustomerOrderRepository, CustomerRepository, PostgresCustomerOrderRepository,
+    PostgresCustomerRepository,
 };
-use identities::PostgresEmailAndPasswordIdentityRepository;
-use inventory::ProductRepository;
-use measurement_units::PostgresMeasurementUnitRepository;
-use products::PostgresProductRepository;
+use domain::{
+    CityRepository, EmailAndPasswordIdentityRepository, PostgresCityRepository,
+    PostgresEmailAndPasswordIdentityRepository, PostgresUserRepository, RepositoryError,
+    UserRepository,
+};
+use inventory::{
+    MeasurementUnitRepository, PostgresMeasurementUnitRepository, PostgresProductRepository,
+    ProductRepository,
+};
+use pricing::{PostgresProductPriceRepository, ProductPriceRepository};
 use sqlx::PgPool;
 use tracing_actix_web::TracingLogger;
-use types::RepositoryError;
-use users::PostgresUserRepository;
 
 mod auth;
-mod cities;
 mod config;
-mod customer_orders;
-mod customers;
-mod identities;
-mod measurement_units;
-mod pricing;
-mod products;
+mod routes;
 pub mod telemetry;
 mod types;
-mod users;
 
 struct AppContext {
-    pub db_pool: PgPool,
+    pub db_pool: Box<PgPool>,
     pub city_repository: Box<dyn CityRepository<Error = RepositoryError>>,
     pub customer_order_repository: Box<dyn CustomerOrderRepository<Error = RepositoryError>>,
     pub customer_repository: Box<dyn CustomerRepository<Error = RepositoryError>>,
@@ -56,32 +45,32 @@ struct AppContext {
 }
 
 impl AppContext {
-    pub fn new(db_pool: PgPool) -> Self {
+    pub fn new(db_pool: &PgPool) -> Self {
         AppContext {
+            db_pool: Box::new(db_pool.clone()),
             city_repository: Box::new(PostgresCityRepository::new(db_pool.clone())),
             customer_order_repository: Box::new(PostgresCustomerOrderRepository::new(
                 db_pool.clone(),
             )),
             customer_repository: Box::new(PostgresCustomerRepository::new(db_pool.clone())),
-            product_price_repository: Box::new(PostgresProductPriceRepository::new(
-                db_pool.clone(),
-            )),
-            product_repository: Box::new(PostgresProductRepository::new(db_pool.clone())),
             measurement_unit_repository: Box::new(PostgresMeasurementUnitRepository::new(
                 db_pool.clone(),
             )),
+            product_repository: Box::new(PostgresProductRepository::new(db_pool.clone())),
             email_and_password_identity_repository: Box::new(
                 PostgresEmailAndPasswordIdentityRepository::new(db_pool.clone()),
             ),
             user_repository: Box::new(PostgresUserRepository::new(db_pool.clone())),
-            db_pool,
+            product_price_repository: Box::new(PostgresProductPriceRepository::new(
+                db_pool.clone(),
+            )),
         }
     }
 }
 
 impl Clone for AppContext {
     fn clone(&self) -> Self {
-        Self::new(self.db_pool.clone())
+        Self::new(self.db_pool.as_ref())
     }
 }
 
@@ -111,17 +100,17 @@ pub async fn run() -> anyhow::Result<Server> {
                     .path("/")
                     .max_age(Duration::hours(CONFIG.session_max_age_h).num_seconds()),
             ))
-            .data(AppContext::new(db_pool.clone()))
-            .service(scope("/auth").configure(auth::init))
+            .data(AppContext::new(&db_pool))
+            .service(scope("/auth").configure(routes::auth))
             .service(
                 scope("/api")
                     .wrap(auth::Auth)
-                    .configure(products::init)
-                    .configure(customers::init)
-                    .configure(customer_orders::init)
-                    .configure(pricing::init)
-                    .configure(cities::init)
-                    .configure(measurement_units::init),
+                    .configure(routes::products)
+                    .configure(routes::customers)
+                    .configure(routes::customer_orders)
+                    .configure(routes::pricing)
+                    .configure(routes::cities)
+                    .configure(routes::measurement_units),
             )
     })
     .bind(format!("{}:{}", CONFIG.http_host, CONFIG.http_port))?
