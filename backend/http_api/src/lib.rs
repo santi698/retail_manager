@@ -12,14 +12,16 @@ use customer_orders::{
     CustomerOrderRepository, CustomerRepository, PostgresCustomerOrderRepository,
     PostgresCustomerRepository,
 };
+use domain::AccountSettingsRepository;
+use domain::PostgresAccountSettingsRepository;
 use domain::{
     CityRepository, EmailAndPasswordIdentityRepository, PostgresCityRepository,
     PostgresEmailAndPasswordIdentityRepository, PostgresUserRepository, RepositoryError,
     UserRepository,
 };
 use inventory::{
-    MeasurementUnitRepository, PostgresMeasurementUnitRepository, PostgresProductRepository,
-    ProductRepository,
+    InventoryLevelRepository, MeasurementUnitRepository, PostgresInventoryLevelRepository,
+    PostgresMeasurementUnitRepository, PostgresProductRepository, ProductRepository,
 };
 use pricing::{PostgresProductPriceRepository, ProductPriceRepository};
 use sqlx::PgPool;
@@ -33,9 +35,11 @@ mod types;
 
 struct AppContext {
     pub db_pool: Box<PgPool>,
+    pub account_settings_repository: Box<dyn AccountSettingsRepository<Error = RepositoryError>>,
     pub city_repository: Box<dyn CityRepository<Error = RepositoryError>>,
     pub customer_order_repository: Box<dyn CustomerOrderRepository<Error = RepositoryError>>,
     pub customer_repository: Box<dyn CustomerRepository<Error = RepositoryError>>,
+    pub inventory_level_repository: Box<dyn InventoryLevelRepository<Error = RepositoryError>>,
     pub measurement_unit_repository: Box<dyn MeasurementUnitRepository<Error = RepositoryError>>,
     pub product_repository: Box<dyn ProductRepository<Error = RepositoryError>>,
     pub email_and_password_identity_repository:
@@ -48,11 +52,17 @@ impl AppContext {
     pub fn new(db_pool: &PgPool) -> Self {
         AppContext {
             db_pool: Box::new(db_pool.clone()),
+            account_settings_repository: Box::new(PostgresAccountSettingsRepository::new(
+                db_pool.clone(),
+            )),
             city_repository: Box::new(PostgresCityRepository::new(db_pool.clone())),
             customer_order_repository: Box::new(PostgresCustomerOrderRepository::new(
                 db_pool.clone(),
             )),
             customer_repository: Box::new(PostgresCustomerRepository::new(db_pool.clone())),
+            inventory_level_repository: Box::new(PostgresInventoryLevelRepository::new(
+                db_pool.clone(),
+            )),
             measurement_unit_repository: Box::new(PostgresMeasurementUnitRepository::new(
                 db_pool.clone(),
             )),
@@ -105,6 +115,7 @@ pub async fn run() -> anyhow::Result<Server> {
             .service(
                 scope("/api")
                     .wrap(auth::Auth)
+                    .configure(routes::account_settings)
                     .configure(routes::products)
                     .configure(routes::customers)
                     .configure(routes::customer_orders)

@@ -53,13 +53,13 @@ pub trait CustomerOrderRepository {
     async fn create(
         &self,
         account_id: i32,
-        request: CustomerOrderCreateRequest,
+        request: &CustomerOrderCreateRequest,
     ) -> Result<CustomerOrder, Self::Error>;
     async fn update(
         &self,
         account_id: i32,
         id: i32,
-        request: CustomerOrderUpdateRequest,
+        request: &CustomerOrderUpdateRequest,
     ) -> Result<CustomerOrder, Self::Error>;
     async fn find_item(
         &self,
@@ -76,7 +76,7 @@ pub trait CustomerOrderRepository {
         &self,
         account_id: i32,
         order_id: i32,
-        request: CustomerOrderAddItemRequest,
+        request: &CustomerOrderAddItemRequest,
     ) -> Result<CustomerOrderItem, Self::Error>;
     async fn remove_item(
         &self,

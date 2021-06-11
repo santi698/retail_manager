@@ -5,6 +5,7 @@ use std::error;
 pub enum RepositoryError {
     ConnectionError(Box<dyn error::Error>),
     MappingError(Box<dyn error::Error>),
+    FailedInvariant { code: String, message: String },
     NotFound(String),
     Unknown(Box<dyn error::Error>),
 }
@@ -15,6 +16,9 @@ impl Display for RepositoryError {
         match self {
             Self::ConnectionError(e) => write!(f, "Connection error {}", e),
             Self::MappingError(e) => write!(f, "MappingError: {}", e),
+            Self::FailedInvariant { code, message } => {
+                write!(f, "FailedInvariant: ({}) {}", code, message)
+            }
             Self::NotFound(s) => write!(f, "Record {} not found", s),
             Self::Unknown(e) => write!(f, "Unknown error: {}", e),
         }
@@ -24,10 +28,14 @@ impl Display for RepositoryError {
 impl error::Error for RepositoryError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
-            RepositoryError::ConnectionError(e) => Some(e.as_ref()),
-            RepositoryError::MappingError(e) => Some(e.as_ref()),
-            RepositoryError::NotFound(_) => None,
-            RepositoryError::Unknown(e) => Some(e.as_ref()),
+            RepositoryError::ConnectionError(e)
+            | RepositoryError::MappingError(e)
+            | RepositoryError::Unknown(e) => Some(e.as_ref()),
+            RepositoryError::FailedInvariant {
+                code: _,
+                message: _,
+            }
+            | RepositoryError::NotFound(_) => None,
         }
     }
 }

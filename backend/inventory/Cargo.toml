@@ -10,6 +10,7 @@ edition = "2018"
 domain = { path = "../domain" }
 
 async-trait = "^0.1.42"
+chrono = { version = "^0.4.19", features = ['serde'] }
 serde = { version = "^1.0.121", features = ['derive'] }
 sqlx = { version = "^0.4.2", features = ['runtime-actix-native-tls', 'postgres', 'macros', 'chrono', 'uuid'] }
 tracing = "^0.1.22"

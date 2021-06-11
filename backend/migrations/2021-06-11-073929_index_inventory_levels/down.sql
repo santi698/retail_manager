@@ -1,0 +1,1 @@
+DROP INDEX inventory_levels_idx_account_product_timestamp;

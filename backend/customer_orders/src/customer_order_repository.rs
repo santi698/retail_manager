@@ -129,7 +129,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
     async fn create(
         &self,
         account_id: i32,
-        request: CustomerOrderCreateRequest,
+        request: &CustomerOrderCreateRequest,
     ) -> Result<CustomerOrder, Self::Error> {
         let id = sqlx::query(
             r#"
@@ -154,7 +154,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
         &self,
         account_id: i32,
         id: i32,
-        request: CustomerOrderUpdateRequest,
+        request: &CustomerOrderUpdateRequest,
     ) -> Result<CustomerOrder, Self::Error> {
         sqlx::query(
             r#"
@@ -232,7 +232,7 @@ impl CustomerOrderRepository for PostgresCustomerOrderRepository {
         &self,
         account_id: i32,
         order_id: i32,
-        request: CustomerOrderAddItemRequest,
+        request: &CustomerOrderAddItemRequest,
     ) -> Result<CustomerOrderItem, Self::Error> {
         let order_item = sqlx::query(
             r#"

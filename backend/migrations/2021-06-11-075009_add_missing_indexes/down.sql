@@ -1,0 +1,7 @@
+DROP INDEX customer_orders_list_filters;
+DROP INDEX customer_orders_by_customer;
+DROP INDEX customer_order_items_by_customer_order;
+DROP INDEX email_and_password_identities_by_email;
+DROP INDEX customers_by_account_city;
+DROP INDEX cities_by_account;
+DROP INDEX products_by_account;

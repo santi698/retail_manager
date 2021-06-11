@@ -6,6 +6,7 @@ use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use customer_orders::{
     CustomerOrderAddItemRequest, CustomerOrderCreateRequest, CustomerOrderUpdateRequest,
 };
+use inventory::ChangeInventoryLevelRequest;
 use serde::Deserialize;
 
 pub fn init(cfg: &mut web::ServiceConfig) {
@@ -83,7 +84,7 @@ async fn update(
         .map_err(|error| HttpResponse::BadRequest().json(ErrorJson { error }))?;
     let result = context
         .customer_order_repository
-        .update(claims.user_account_id, order_id.into_inner(), request)
+        .update(claims.user_account_id, order_id.into_inner(), &request)
         .await;
 
     match result {
@@ -103,7 +104,7 @@ async fn create(
 ) -> impl Responder {
     let result = context
         .customer_order_repository
-        .create(claims.user_account_id, request.into_inner())
+        .create(claims.user_account_id, &request)
         .await;
 
     match result {
@@ -168,19 +169,45 @@ async fn add_item(
     context: web::Data<AppContext>,
     claims: JwtClaim,
 ) -> impl Responder {
+    let change_inventory_level_result = context
+        .inventory_level_repository
+        .change_level(
+            claims.user_account_id,
+            ChangeInventoryLevelRequest {
+                level_change: -request.quantity,
+                product_code: request.product_id,
+                reason: Some("Item added to order".to_string()),
+            },
+        )
+        .await;
+
+    if let Err(e) = change_inventory_level_result {
+        tracing::error!("{}", e);
+        return HttpResponse::BadRequest().body(e.to_string());
+    }
     let result = context
         .customer_order_repository
-        .add_item(
-            claims.user_account_id,
-            order_id.into_inner(),
-            request.into_inner(),
-        )
+        .add_item(claims.user_account_id, order_id.into_inner(), &request)
         .await;
 
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
         Err(e) => {
             tracing::error!("{}", e);
+            let change_inventory_level_result = context
+                .inventory_level_repository
+                .change_level(
+                    claims.user_account_id,
+                    ChangeInventoryLevelRequest {
+                        level_change: request.quantity,
+                        product_code: request.product_id,
+                        reason: Some("Revert item added to order due to error".to_string()),
+                    },
+                )
+                .await;
+            if let Err(e) = change_inventory_level_result {
+                tracing::error!("CRITICAL: Could not restore inventory level due to {}", e);
+            }
             HttpResponse::BadRequest().body("Error adding item to order")
         }
     }
@@ -198,16 +225,58 @@ async fn remove_item(
     context: web::Data<AppContext>,
     claims: JwtClaim,
 ) -> impl Responder {
-    let result = context
+    let item = context
         .customer_order_repository
-        .remove_item(claims.user_account_id, params.order_id, params.item_id)
+        .find_item(claims.user_account_id, params.order_id, params.item_id)
         .await;
+    match item {
+        Ok(item) => {
+            let change_inventory_level_result = context
+                .inventory_level_repository
+                .change_level(
+                    claims.user_account_id,
+                    ChangeInventoryLevelRequest {
+                        level_change: item.quantity,
+                        product_code: item.product_id,
+                        reason: Some("Item removed from order".to_string()),
+                    },
+                )
+                .await;
 
-    match result {
-        Ok(_) => HttpResponse::NoContent().finish(),
-        Err(e) => {
-            tracing::error!("{}", e);
-            HttpResponse::BadRequest().body("Error removing item from order")
+            if let Err(e) = change_inventory_level_result {
+                tracing::error!("{}", e);
+                return HttpResponse::BadRequest().body(e.to_string());
+            }
+            let result = context
+                .customer_order_repository
+                .remove_item(claims.user_account_id, params.order_id, params.item_id)
+                .await;
+
+            match result {
+                Ok(_) => HttpResponse::NoContent().finish(),
+                Err(e) => {
+                    tracing::error!("{}", e);
+                    let change_inventory_level_result = context
+                        .inventory_level_repository
+                        .change_level(
+                            claims.user_account_id,
+                            ChangeInventoryLevelRequest {
+                                level_change: -item.quantity,
+                                product_code: item.product_id,
+                                reason: Some("Item removal from order failed".to_string()),
+                            },
+                        )
+                        .await;
+                    if let Err(e) = change_inventory_level_result {
+                        tracing::error!("CRITICAL: Could not restore inventory level due to {}", e);
+                    }
+                    HttpResponse::BadRequest().body("Error removing item from order")
+                }
+            }
         }
+        Err(_) => HttpResponse::NotFound().body(format!(
+            "Order item {} not found in order {}",
+            params.item_id, params.order_id
+        )),
     }
 }

@@ -1,7 +1,7 @@
 use crate::{auth::JwtClaim, AppContext};
 
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
-use inventory::{ProductCreateRequest, ProductUpdateRequest};
+use inventory::{ChangeInventoryLevelRequest, ProductCreateRequest, ProductUpdateRequest};
 
 pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(find_all);
@@ -9,6 +9,8 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.service(create);
     cfg.service(update);
     cfg.service(delete);
+    cfg.service(raise_inventory);
+    cfg.service(get_inventory_level);
 }
 
 #[get("/products")]
@@ -38,6 +40,51 @@ async fn find(
         .await;
     match result {
         Ok(product) => HttpResponse::Ok().json(product),
+        _ => HttpResponse::BadRequest().body("Product not found"),
+    }
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct RaiseInventoryLevel {
+    amount: f64,
+}
+
+#[get("/products/{product_code}/inventory_level")]
+async fn get_inventory_level(
+    product_code: web::Path<i32>,
+    context: web::Data<AppContext>,
+    claims: JwtClaim,
+) -> impl Responder {
+    let result = context
+        .inventory_level_repository
+        .current_level(claims.user_account_id, product_code.into_inner())
+        .await;
+    match result {
+        Ok(level) => HttpResponse::Ok().json(level),
+        _ => HttpResponse::BadRequest().body("Product not found"),
+    }
+}
+
+#[post("/products/{product_code}/inventory_level")]
+async fn raise_inventory(
+    product_code: web::Path<i32>,
+    inventory_arrival: web::Json<RaiseInventoryLevel>,
+    context: web::Data<AppContext>,
+    claims: JwtClaim,
+) -> impl Responder {
+    let result = context
+        .inventory_level_repository
+        .change_level(
+            claims.user_account_id,
+            ChangeInventoryLevelRequest {
+                level_change: inventory_arrival.amount,
+                product_code: product_code.into_inner(),
+                reason: Some("Inventory raise".to_string()),
+            },
+        )
+        .await;
+    match result {
+        Ok(level) => HttpResponse::Ok().json(level),
         _ => HttpResponse::BadRequest().body("Product not found"),
     }
 }
