@@ -52,7 +52,10 @@ export function CustomersView() {
           <Tbody>
             {customers.status === "success" && cities.status === "success" ? (
               customers.data.map((customer) => (
-                <Tr key={customer.customer_id}>
+                <Tr
+                  _hover={{ background: "gray.50" }}
+                  key={customer.customer_id}
+                >
                   <Td>{customer.customer_id}</Td>
                   <Td>{`${customer.first_name} ${customer.last_name}`}</Td>
                   <Td>{customer.email}</Td>
@@ -68,19 +71,20 @@ export function CustomersView() {
                     <HStack justify="flex-end">
                       <Button
                         as={Link}
+                        leftIcon={<EditIcon />}
+                        variant="ghost"
+                        size="xs"
+                        to={`/customers/${customer.customer_id}/edit`}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        as={Link}
                         leftIcon={<ViewIcon />}
                         size="xs"
                         to={`/customers/${customer.customer_id}`}
                       >
                         Ver
-                      </Button>
-                      <Button
-                        as={Link}
-                        leftIcon={<EditIcon />}
-                        size="xs"
-                        to={`/customers/${customer.customer_id}/edit`}
-                      >
-                        Editar
                       </Button>
                     </HStack>
                   </Td>

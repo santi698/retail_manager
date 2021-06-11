@@ -51,7 +51,10 @@ export function ProductsView() {
             {products.status === "success" &&
             measurementUnits.status === "success" ? (
               products.data.map((product) => (
-                <Tr key={product.product_code}>
+                <Tr
+                  _hover={{ background: "gray.50" }}
+                  key={product.product_code}
+                >
                   <Td>{product.product_code}</Td>
                   <Td>{product.product_name}</Td>
                   <Td>
