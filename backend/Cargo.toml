@@ -1,9 +1,9 @@
 [workspace]
 
 members = [
-  "domain",
   "customer_orders",
-  "inventory",
+  "domain",
   "http_api",
+  "inventory",
   "pricing"
 ]
